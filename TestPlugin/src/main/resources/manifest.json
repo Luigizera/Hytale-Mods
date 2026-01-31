@@ -1,0 +1,7 @@
+{
+  "Group": "com.ludas",
+  "Name": "TestPlugin",
+  "Version": "1.0.0",
+  "Main": "com.ludas.plugin.TestPlugin",
+  "IncludesAssetPack": true
+}
