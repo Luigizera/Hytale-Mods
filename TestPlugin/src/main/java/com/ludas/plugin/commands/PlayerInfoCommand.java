@@ -20,6 +20,7 @@ import com.ludas.plugin.clazz.Perk;
 import com.ludas.plugin.components.LevelComponent;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
+import java.util.List;
 import java.util.Map;
 
 public class PlayerInfoCommand extends AbstractPlayerCommand {
@@ -46,16 +47,16 @@ public class PlayerInfoCommand extends AbstractPlayerCommand {
             EntityStatMap statMap = store.getComponent(ref, EntityStatsModule.get().getEntityStatMapComponentType());
             if(statMap == null) return;
             Perk outsidePerk = new Perk();
-            Map<String, Perk> perks = level.getPerks(); // TODO: ERRO LOGICO GIGANTESCO
+            List<Perk> perks = level.getPerksAsList(); // TODO: ERRO LOGICO GIGANTESCO
             level.putPerk(outsidePerk);
-            for(var perk : perks.entrySet()) {
+            for(var perk : perks) {
                 TestPlugin.LOGGER.atInfo().log("ENTROU NO LOOP");
-                Perk currentPerk = perk.getValue();
-                if(currentPerk.isEnabled()) {
+                if(perk.isEnabled()) {
                     TestPlugin.LOGGER.atInfo().log("ISENABLED");
-                    Map<Integer, StaticModifier> modifiers = currentPerk.setupModifiers();
+                    Map<Integer, StaticModifier> modifiers = perk.setupModifiers();
                     if(modifiers == null) {
                         TestPlugin.LOGGER.atInfo().log("NULL MODIFIER");
+                        return;
                     };
                     for(var modifier : modifiers.entrySet()) {
                         TestPlugin.LOGGER.atInfo().log("ENTROU NO LOOP 2");
@@ -63,14 +64,14 @@ public class PlayerInfoCommand extends AbstractPlayerCommand {
                         int index = modifier.getKey();
                         StaticModifier stathicc = modifier.getValue();
 
-                        statMap.putModifier(index, currentPerk.getId(), stathicc);
+                        statMap.putModifier(index, perk.getId(), stathicc);
                         //Modifier existing = stats.getModifier(healthIndex, "my_plugin_bonus");
                         //stats.removeModifier(healthIndex, "my_plugin_bonus");
                     }
                 }
                 else {
                     TestPlugin.LOGGER.atInfo().log("ISDISABLED");
-                    Map<Integer, StaticModifier> modifiers = currentPerk.setupModifiers();
+                    Map<Integer, StaticModifier> modifiers = perk.setupModifiers();
                     if(modifiers == null) {
                         TestPlugin.LOGGER.atInfo().log("NULL MODIFIER");
                         break;
@@ -80,7 +81,7 @@ public class PlayerInfoCommand extends AbstractPlayerCommand {
                         int index = modifier.getKey();
                         StaticModifier stathicc = modifier.getValue();
 
-                        statMap.removeModifier(index, currentPerk.getId());
+                        statMap.removeModifier(index, perk.getId());
                         //Modifier existing = stats.getModifier(healthIndex, "my_plugin_bonus");
                         //stats.removeModifier(healthIndex, "my_plugin_bonus");
                     }

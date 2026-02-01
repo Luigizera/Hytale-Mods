@@ -12,6 +12,7 @@ import com.ludas.plugin.clazz.Perk;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class LevelComponent implements Component<EntityStore> {
@@ -40,7 +41,10 @@ public class LevelComponent implements Component<EntityStore> {
     public LevelComponent(LevelComponent other) {
         this.level = other.getLevel();
         this.experienceCurrent = other.getCurrentExperience();
-        this.perks = other.getPerks();
+        List<Perk> otherPerks = other.getPerksAsList();
+        for(Perk perk : otherPerks) {
+            this.perks.put(perk.getId(), perk);
+        }
         this.experienceNextLevel = other.getExperienceToNextLevel();
     }
 
@@ -64,8 +68,9 @@ public class LevelComponent implements Component<EntityStore> {
         return this.level;
     }
 
-    public Map<String, Perk> getPerks() {
-        return perks;
+    public List<Perk> getPerksAsList() {
+        List<Perk> list = perks.values().stream().toList();
+        return list;
     }
 
     public Perk getPerk(Perk perk) {
