@@ -4,9 +4,7 @@ import com.ludas.plugin.commands.*;
 import com.ludas.plugin.commands.collection.LudasCommandCollection;
 import com.ludas.plugin.components.LevelComponent;
 import com.ludas.plugin.components.PoisonComponent;
-import com.ludas.plugin.events.AddLevelSystemEvent;
 import com.ludas.plugin.events.GiveXPEvent;
-import com.ludas.plugin.handlers.AddLevelSystemHandler;
 import com.ludas.plugin.handlers.GiveXPHandler;
 import com.ludas.plugin.systems.LevelSystems;
 import com.ludas.plugin.systems.PoisonSystem;
@@ -81,7 +79,6 @@ public class TestPlugin extends JavaPlugin {
         EventRegistry eventRegistry = getEventRegistry();
 
         eventRegistry.register(GiveXPEvent.class, new GiveXPHandler());
-        eventRegistry.register(AddLevelSystemEvent.class, new AddLevelSystemHandler());
     }
 
 

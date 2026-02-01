@@ -1,5 +1,6 @@
 package com.ludas.plugin.handlers;
 
+import com.ludas.plugin.clazz.Perk;
 import com.ludas.plugin.components.LevelComponent;
 import com.ludas.plugin.events.GiveXPEvent;
 import com.hypixel.hytale.server.core.Message;
@@ -19,6 +20,7 @@ public class GiveXPHandler implements Consumer<GiveXPEvent> {
 
         LevelComponent level = store.getComponent(event.ref(), LevelComponent.getComponentType());
         if (level == null) return;
+
 
         float xp = event.amount();
         boolean leveledUp = level.addExperience(event.amount());

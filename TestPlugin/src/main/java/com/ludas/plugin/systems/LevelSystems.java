@@ -2,7 +2,6 @@ package com.ludas.plugin.systems;
 
 import com.ludas.plugin.TestPlugin;
 import com.ludas.plugin.components.LevelComponent;
-import com.ludas.plugin.events.AddLevelSystemEvent;
 import com.ludas.plugin.events.GiveXPEvent;
 import com.hypixel.hytale.component.*;
 import com.hypixel.hytale.component.query.Query;
@@ -74,12 +73,16 @@ public class LevelSystems {
                                   @NonNullDecl CommandBuffer<EntityStore> commandBuffer) {
             if (addReason != AddReason.LOAD) return;
 
-            Player player = store.getComponent(ref, Player.getComponentType());
+            PlayerRef player = store.getComponent(ref, PlayerRef.getComponentType());
             if(player == null) return;
-            AddLevelSystemEvent.dispatch(player.getReference());
-            LevelComponent level = store.getComponent(ref, LevelComponent.getComponentType());
-
-            if (level != null) {
+            var component = LevelComponent.getComponentType();
+            LevelComponent level = store.getComponent(ref, component);
+            if(level == null) {
+                commandBuffer.putComponent(ref, component, new LevelComponent());
+                player.sendMessage(
+                        Message.raw("Adicionado sistema de Nível").color(Color.ORANGE).bold(true));
+            }
+            else {
                 player.sendMessage(
                         Message.raw("Level: %d (%.2f XP)".formatted(level.getLevel(), level.getCurrentExperience()))
                                 .color(Color.ORANGE).bold(true));
@@ -121,12 +124,18 @@ public class LevelSystems {
             Damage.EntitySource entitySource = (Damage.EntitySource) damageSource;
             Ref sourceRef = entitySource.getRef();
             Player sourcePlayer = (Player) store.getComponent(sourceRef, Player.getComponentType());
+            if(sourcePlayer == null) return;
             Ref<EntityStore> playerRef = sourcePlayer.getReference();
             if(playerRef == null) return;
-            AddLevelSystemEvent.dispatch(playerRef);
-            LevelComponent npcLevel = commandBuffer.getComponent(ref, LevelComponent.getComponentType());
-            if(npcLevel != null) defaultXP = (float) npcLevel.getLevel();
-            GiveXPEvent.dispatch(playerRef, defaultXP);
+            LevelComponent level = store.getComponent(playerRef, LevelComponent.getComponentType());
+            if(level == null) {
+                commandBuffer.putComponent(playerRef, LevelComponent.getComponentType(), new LevelComponent());
+            }
+            else {
+                LevelComponent npcLevel = commandBuffer.getComponent(ref, LevelComponent.getComponentType());
+                if(npcLevel != null) defaultXP = (float) npcLevel.getLevel();
+                GiveXPEvent.dispatch(playerRef, defaultXP);
+            }
         }
     }
 }
