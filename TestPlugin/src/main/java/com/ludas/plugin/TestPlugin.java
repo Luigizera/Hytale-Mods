@@ -56,6 +56,7 @@ public class TestPlugin extends JavaPlugin {
         commands.add(new PoisonCommand());
         commands.add(new EntityStatsCommand());
         commands.add(new PlayerLevelCommand());
+        commands.add(new PerkCommand());
     }
 
     private void registerEntities() {
@@ -68,6 +69,7 @@ public class TestPlugin extends JavaPlugin {
         entityRegistry.registerSystem(new LevelSystems.PlayerSpawnSystem());
         entityRegistry.registerSystem(new LevelSystems.NPCSpawnSystem());
         entityRegistry.registerSystem(new LevelSystems.GetExpFromNpcSystem());
+        entityRegistry.registerSystem(new LevelSystems.PerkTick());
 
         var poisonComponent = entityRegistry.registerComponent(PoisonComponent.class, PoisonComponent::new);
         PoisonComponent.setComponentType(poisonComponent);

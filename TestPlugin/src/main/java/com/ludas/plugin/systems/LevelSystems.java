@@ -1,6 +1,10 @@
 package com.ludas.plugin.systems;
 
+import com.hypixel.hytale.component.system.tick.EntityTickingSystem;
+import com.hypixel.hytale.server.core.modules.entitystats.EntityStatMap;
+import com.hypixel.hytale.server.core.modules.entitystats.modifier.StaticModifier;
 import com.ludas.plugin.TestPlugin;
+import com.ludas.plugin.clazz.Perk;
 import com.ludas.plugin.components.LevelComponent;
 import com.ludas.plugin.events.GiveXPEvent;
 import com.hypixel.hytale.component.*;
@@ -20,10 +24,42 @@ import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 import java.awt.*;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 
 public class LevelSystems {
+
+    public static class PerkTick extends EntityTickingSystem<EntityStore> {
+        float limiter = 0f;
+        @NullableDecl
+        @Override
+        public Query<EntityStore> getQuery() {
+            return Query.and(new Query[]{LevelComponent.getComponentType(), Player.getComponentType()});
+        }
+
+        @Override
+        public void tick(float dt, int idx, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
+                         @NonNullDecl Store<EntityStore> store,
+                         @NonNullDecl CommandBuffer<EntityStore> commandBuffer) {
+            limiter += dt;
+            if (limiter >= 5f) {
+                limiter = 0;
+                LevelComponent level = archetypeChunk.getComponent(idx, LevelComponent.getComponentType());
+                if(level == null) return;
+                Player player = archetypeChunk.getComponent(idx, Player.getComponentType());
+                if(player == null) return;
+
+                List<Perk> perks = level.getPerksAsList();
+                for(Perk perk : perks) {
+                    if(perk.isEnabled()) {
+                        perk.tick(dt, idx, archetypeChunk, store, commandBuffer);
+                    }
+                }
+            }
+        }
+    }
 
     public static class NPCSpawnSystem extends HolderSystem<EntityStore> {
 
@@ -46,7 +82,6 @@ public class LevelSystems {
                 int rand = new Random().nextInt(1, 100);
                 holder.putComponent(LevelComponent.getComponentType(), new LevelComponent(rand));
                 level = holder.getComponent(LevelComponent.getComponentType());
-                TestPlugin.LOGGER.atInfo().log(npc.getRoleName() + " " + level.toString());
             }
 
         }

@@ -18,6 +18,7 @@ import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.ludas.plugin.TestPlugin;
 import com.ludas.plugin.clazz.Perk;
 import com.ludas.plugin.components.LevelComponent;
+import com.ludas.plugin.perks.PoisonPerk;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
 import java.util.List;
@@ -41,56 +42,13 @@ public class PlayerInfoCommand extends AbstractPlayerCommand {
         UUIDComponent component = store.getComponent(ref, UUIDComponent.getComponentType());
         TransformComponent transform = store.getComponent(ref, TransformComponent.getComponentType());
 
-        if(debugArg.get(context)) {
-            LevelComponent level = store.getComponent(ref, LevelComponent.getComponentType());
-            if(level == null) return;
-            EntityStatMap statMap = store.getComponent(ref, EntityStatsModule.get().getEntityStatMapComponentType());
-            if(statMap == null) return;
-            Perk outsidePerk = new Perk();
-            List<Perk> perks = level.getPerksAsList(); // TODO: ERRO LOGICO GIGANTESCO
-            level.putPerk(outsidePerk);
-            for(var perk : perks) {
-                TestPlugin.LOGGER.atInfo().log("ENTROU NO LOOP");
-                if(perk.isEnabled()) {
-                    TestPlugin.LOGGER.atInfo().log("ISENABLED");
-                    Map<Integer, StaticModifier> modifiers = perk.setupModifiers();
-                    if(modifiers == null) {
-                        TestPlugin.LOGGER.atInfo().log("NULL MODIFIER");
-                        return;
-                    };
-                    for(var modifier : modifiers.entrySet()) {
-                        TestPlugin.LOGGER.atInfo().log("ENTROU NO LOOP 2");
-                        TestPlugin.LOGGER.atInfo().log(modifier.toString());;
-                        int index = modifier.getKey();
-                        StaticModifier stathicc = modifier.getValue();
 
-                        statMap.putModifier(index, perk.getId(), stathicc);
-                        //Modifier existing = stats.getModifier(healthIndex, "my_plugin_bonus");
-                        //stats.removeModifier(healthIndex, "my_plugin_bonus");
-                    }
-                }
-                else {
-                    TestPlugin.LOGGER.atInfo().log("ISDISABLED");
-                    Map<Integer, StaticModifier> modifiers = perk.setupModifiers();
-                    if(modifiers == null) {
-                        TestPlugin.LOGGER.atInfo().log("NULL MODIFIER");
-                        break;
-                    }
-                    for(var modifier : modifiers.entrySet()) {
-                        TestPlugin.LOGGER.atInfo().log("ENTROU NO LOOP 2");
-                        int index = modifier.getKey();
-                        StaticModifier stathicc = modifier.getValue();
-
-                        statMap.removeModifier(index, perk.getId());
-                        //Modifier existing = stats.getModifier(healthIndex, "my_plugin_bonus");
-                        //stats.removeModifier(healthIndex, "my_plugin_bonus");
-                    }
-                }
-            }
-        }
         assert player != null : "Player not found";
         assert component != null : "Component not found";
         assert transform != null : "Transform not found";
+        if(debugArg.get(context)) {
+            player.sendMessage(Message.raw("Debug: " + debugArg.get(context)));
+        }
 
         player.sendMessage(Message.raw("Player UUID: " + component.getUuid()));
         player.sendMessage(Message.raw("Transform: " + transform.getPosition()));

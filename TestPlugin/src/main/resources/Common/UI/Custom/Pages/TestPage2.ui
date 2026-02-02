@@ -53,9 +53,19 @@ Group {
             Style: (FontSize: 22, TextColor: #ffffff, RenderBold: true);
         }
 
-        Group {
-            Anchor: (Height: 1);
-            Background: #2b3542;
+        Group #PlayerList {
+            Anchor: (Height: 120);
+            LayoutMode: TopScrolling;
+            Background: #0a1119(0.5);
+            Padding: (Full: 6);
+            ScrollbarStyle: (
+              Spacing: 6,
+              Size: 6,
+              Background: (TexturePath: "Common/Scrollbar.png", Border: 3),
+              Handle: (TexturePath: "Common/ScrollbarHandle.png", Border: 3),
+              HoveredHandle: (TexturePath: "Common/ScrollbarHandleHovered.png", Border: 3),
+              DraggedHandle: (TexturePath: "Common/ScrollbarHandleDragged.png", Border: 3)
+            );
         }
 
         Group { Anchor: (Height: 16); }

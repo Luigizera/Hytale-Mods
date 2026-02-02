@@ -41,6 +41,7 @@ public class LevelComponent implements Component<EntityStore> {
     public LevelComponent(LevelComponent other) {
         this.level = other.getLevel();
         this.experienceCurrent = other.getCurrentExperience();
+        this.perks = new HashMap<>();
         List<Perk> otherPerks = other.getPerksAsList();
         for(Perk perk : otherPerks) {
             this.perks.put(perk.getId(), perk);
@@ -69,24 +70,25 @@ public class LevelComponent implements Component<EntityStore> {
     }
 
     public List<Perk> getPerksAsList() {
-        List<Perk> list = perks.values().stream().toList();
-        return list;
+        return perks.values().stream().toList();
     }
 
-    public Perk getPerk(Perk perk) {
-        return perks.getOrDefault(perk.getId(), null);
+    public Perk getPerk(String id) {
+        return perks.getOrDefault(id, null);
     }
 
     public void putPerk(Perk perk) {
-        perks.putIfAbsent(perk.getId(), perk);
+        perks.put(perk.getId(), perk);
     }
 
-    public void enableOrDisablePerk(Perk perk) {
-        Perk perk1 = perks.getOrDefault(perk.getId(), null);
+    public boolean enableOrDisablePerk(String perk) {
+        Perk perk1 = perks.getOrDefault(perk, null);
         if(perk1 != null) {
-            perk1.setEnabled(!perk1.isEnabled());
+            perk1.setEnabled();
             perks.replace(perk1.getId(), perk1);
+            return perk1.isEnabled();
         }
+        return false;
     }
 
     public boolean addExperience(float exp) {

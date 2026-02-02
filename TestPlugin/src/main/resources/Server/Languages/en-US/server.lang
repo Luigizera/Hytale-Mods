@@ -17,3 +17,5 @@ commands.ludas.testui2.desc = Opens TestUI 2 interface.
 commands.ludas.rules.desc = Server rules.
 commands.ludas.rules.message = The only rule is that there are no rules.
 commands.ludas.playerinfo.desc = Displays information about the player.
+commands.ludas.perk.desc = Displays information about Perks of the player.
+commands.ludas.perk.enable.arg.desc = Enable or disable Perk.
