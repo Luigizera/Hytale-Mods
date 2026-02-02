@@ -19,3 +19,6 @@ commands.ludas.rules.message = The only rule is that there are no rules.
 commands.ludas.playerinfo.desc = Displays information about the player.
 commands.ludas.perk.desc = Displays information about Perks of the player.
 commands.ludas.perk.enable.arg.desc = Enable or disable Perk.
+commands.ludas.perk.info.unknown = Id: {id} || Enabled: {enabled} || Description: Unknown || {modifier}
+commands.ludas.perk.info.poison = Id: {id} || Enabled: {enabled} || Description: If health is above 70% you will get poisoned || {modifier}
+server.perks.unlocked = New perk unlocked: {id}

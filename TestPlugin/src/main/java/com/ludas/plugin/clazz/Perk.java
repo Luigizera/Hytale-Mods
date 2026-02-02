@@ -3,24 +3,11 @@ package com.ludas.plugin.clazz;
 import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.builder.BuilderCodec;
-import com.hypixel.hytale.codec.codecs.map.MapCodec;
 import com.hypixel.hytale.component.ArchetypeChunk;
 import com.hypixel.hytale.component.CommandBuffer;
-import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
-import com.hypixel.hytale.protocol.GameMode;
-import com.hypixel.hytale.server.core.entity.entities.Player;
-import com.hypixel.hytale.server.core.modules.entity.damage.Damage;
-import com.hypixel.hytale.server.core.modules.entity.damage.DamageCause;
-import com.hypixel.hytale.server.core.modules.entity.damage.DamageSystems;
-import com.hypixel.hytale.server.core.modules.entitystats.EntityStatMap;
-import com.hypixel.hytale.server.core.modules.entitystats.EntityStatValue;
-import com.hypixel.hytale.server.core.modules.entitystats.asset.DefaultEntityStatTypes;
-import com.hypixel.hytale.server.core.modules.entitystats.modifier.Modifier;
 import com.hypixel.hytale.server.core.modules.entitystats.modifier.StaticModifier;
-import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
-import com.ludas.plugin.components.PoisonComponent;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
 import java.util.HashMap;
@@ -30,15 +17,24 @@ public class Perk {
     public static final BuilderCodec<Perk> CODEC;
     private String id;
     private boolean enabled;
+    private boolean unlocked;
 
     public Perk() {
         this.id = "unknown";
-        this.enabled = false;
+        this.enabled = true;
+        this.unlocked = false;
     }
 
-    public Perk(String id, boolean enabled) {
+    public Perk(String id) {
+        this.id = id;
+        this.enabled = true;
+        this.unlocked = false;
+    }
+
+    public Perk(String id, boolean enabled, boolean unlocked) {
         this.id = id;
         this.enabled = enabled;
+        this.unlocked = unlocked;
     }
 
     public String getId() {
@@ -48,6 +44,13 @@ public class Perk {
     public boolean isEnabled() {
         return enabled;
     }
+    public boolean isUnlocked() {
+        return unlocked;
+    }
+
+    public void setUnlocked() {
+        unlocked = true;
+    }
 
 
     public Map<Integer, StaticModifier> setupModifiers() {
@@ -55,9 +58,7 @@ public class Perk {
     }
 
     public void tick(float dt, int idx, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
-                     @NonNullDecl Store<EntityStore> store, @NonNullDecl CommandBuffer<EntityStore> commandBuffer) {
-        return;
-    }
+                     @NonNullDecl Store<EntityStore> store, @NonNullDecl CommandBuffer<EntityStore> commandBuffer) {}
 
     public void setEnabled() {
         enabled = !this.isEnabled();
@@ -76,14 +77,20 @@ public class Perk {
                         .builder(Perk.class, Perk::new)
                         .append(
                                 new KeyedCodec<>("Id", Codec.STRING),
-                                (component, value) -> component.id = value,
-                                component -> component.id
+                                (data, value) -> data.id = value,
+                                data -> data.id
                         )
                         .add()
                         .append(
                                 new KeyedCodec<>("Enabled", Codec.BOOLEAN),
-                                (component, value) -> component.enabled = value,
-                                component -> component.enabled
+                                (data, value) -> data.enabled = value,
+                                data -> data.enabled
+                        )
+                        .add()
+                        .append(
+                                new KeyedCodec<>("Unlocked", Codec.BOOLEAN),
+                                (data, value) -> data.enabled = value,
+                                data -> data.enabled
                         )
                         .add()
                         .build();

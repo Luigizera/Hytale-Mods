@@ -5,6 +5,7 @@ import com.hypixel.hytale.component.CommandBuffer;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.protocol.GameMode;
+import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.modules.entitystats.EntityStatMap;
 import com.hypixel.hytale.server.core.modules.entitystats.EntityStatValue;
@@ -13,6 +14,7 @@ import com.hypixel.hytale.server.core.modules.entitystats.modifier.Modifier;
 import com.hypixel.hytale.server.core.modules.entitystats.modifier.StaticModifier;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.ludas.plugin.clazz.Perk;
+import com.ludas.plugin.components.LevelComponent;
 import com.ludas.plugin.components.PoisonComponent;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
@@ -21,8 +23,10 @@ import java.util.Map;
 
 public class PoisonPerk extends Perk {
 
+    public static final String ID = "poison";
+
     public PoisonPerk() {
-        super("poison", false);
+        super(ID);
     }
 
     public Map<Integer, StaticModifier> setupModifiers() {
@@ -52,14 +56,27 @@ public class PoisonPerk extends Perk {
     public void tick(float dt, int idx, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
                      @NonNullDecl Store<EntityStore> store, @NonNullDecl CommandBuffer<EntityStore> commandBuffer) {
         Player player = archetypeChunk.getComponent(idx, Player.getComponentType());
-        if(player == null || player.getGameMode() == GameMode.Creative) return;
+        if(player == null) return;
+        if(!this.isUnlocked()) {
+            LevelComponent level = archetypeChunk.getComponent(idx, LevelComponent.getComponentType());;
+            if(level.getLevel() < 1) return;
+            this.setUnlocked();
+            level.putPerk(this);
+            player.sendMessage(Message.translation("server.perks.ludas.unlocked").param("id", ID));
+        }
+        if(!this.isEnabled()) {
+            return;
+        }
+
+        if(player.getGameMode() == GameMode.Creative) return;
         Ref<EntityStore> playerRef = player.getReference();
         if(playerRef == null) return;
         EntityStatMap statMap = archetypeChunk.getComponent(idx, EntityStatMap.getComponentType());
         if(statMap == null) return;
-
         EntityStatValue entityHealth = statMap.get(DefaultEntityStatTypes.getHealth());
         if(entityHealth == null) return;
+
+
         float percentage =  entityHealth.get() / entityHealth.getMax();
 
         if(percentage >= 0.7) {

@@ -1,22 +1,23 @@
 package com.ludas.plugin.clazz;
 
-import com.hypixel.hytale.protocol.EntityStatResetBehavior;
+import com.hypixel.hytale.codec.builder.BuilderCodec;
 import com.hypixel.hytale.protocol.io.ProtocolException;
 
-public enum DefaultPerkTypes {
-    STRENGTH("Strength", 0),
-    AGILITY("Agility", 1),
-    VITALITY("Vitality", 2),
-    SPEECH("Speech",3);
+public enum LevelingStatsTypes {
+    UNKNOWN("Unknown"),
+    STRENGTH("Strength"),
+    AGILITY("Agility"),
+    VITALITY("Vitality"),
+    SPEECH("Speech"),
+    CRIT_RATE("CritRate"),
+    CRIT_DAMAGE("CritDamage");
 
 
-    public static final DefaultPerkTypes[] VALUES = values();
-    private final int value;
+    public static final LevelingStatsTypes[] VALUES = values();
     public final String id;
 
 
-    private DefaultPerkTypes(String id, int value) {
-        this.value = value;
+    private LevelingStatsTypes(String id) {
         this.id = id;
     }
 
@@ -36,15 +37,15 @@ public enum DefaultPerkTypes {
         return SPEECH.id;
     }
 
-    public int getValue() {
-        return this.value;
+    public String getId() {
+        return id;
     }
 
-    public static DefaultPerkTypes fromValue(int value) {
+    public static LevelingStatsTypes fromValue(int value) {
         if (value >= 0 && value < VALUES.length) {
             return VALUES[value];
         } else {
-            throw ProtocolException.invalidEnumValue("DefaultPerkTypes", value);
+            throw ProtocolException.invalidEnumValue("LevelingStatsTypes", value);
         }
     }
 }

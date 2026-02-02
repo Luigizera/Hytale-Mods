@@ -1,9 +1,6 @@
 package com.ludas.plugin.systems;
 
 import com.hypixel.hytale.component.system.tick.EntityTickingSystem;
-import com.hypixel.hytale.server.core.modules.entitystats.EntityStatMap;
-import com.hypixel.hytale.server.core.modules.entitystats.modifier.StaticModifier;
-import com.ludas.plugin.TestPlugin;
 import com.ludas.plugin.clazz.Perk;
 import com.ludas.plugin.components.LevelComponent;
 import com.ludas.plugin.events.GiveXPEvent;
@@ -25,7 +22,6 @@ import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 import java.awt.*;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 
@@ -53,9 +49,7 @@ public class LevelSystems {
 
                 List<Perk> perks = level.getPerksAsList();
                 for(Perk perk : perks) {
-                    if(perk.isEnabled()) {
-                        perk.tick(dt, idx, archetypeChunk, store, commandBuffer);
-                    }
+                    perk.tick(dt, idx, archetypeChunk, store, commandBuffer);
                 }
             }
         }

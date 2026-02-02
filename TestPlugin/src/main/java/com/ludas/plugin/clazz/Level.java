@@ -5,7 +5,7 @@ import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.builder.BuilderCodec;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
-public class Level {
+public class Level {/*
     public static final BuilderCodec<Level> CODEC;
     private float experience;
 
@@ -83,7 +83,7 @@ public class Level {
                 .add()
                 .build();
     }
-
+*/
     public static final class XPTable {
         private static final float[] LEVEL_THRESHOLDS = {
                 0,

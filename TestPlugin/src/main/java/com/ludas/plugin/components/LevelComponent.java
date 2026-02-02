@@ -18,21 +18,22 @@ import java.util.Map;
 public class LevelComponent implements Component<EntityStore> {
     public static final BuilderCodec<LevelComponent> CODEC;
     private static ComponentType<EntityStore, LevelComponent> TYPE;
-    private static final int MULTIPLIER = 100;
+    public static final int MULTIPLIER = 100;
+    public static final int START_LEVEL = 1;
     private Map<String, Perk> perks;
     private int level;
     private float experienceCurrent;
     private float experienceNextLevel;
 
     public LevelComponent(int level) {
-        this.level = level;
+        this.level = level <= 0 ? START_LEVEL : level;
         this.experienceCurrent = 0f;
         this.perks = new HashMap<>();
         this.experienceNextLevel = this.getExperienceToNextLevel();
     }
 
     public LevelComponent() {
-        this.level = 1;
+        this.level = START_LEVEL;
         this.experienceCurrent = 0.0F;
         this.perks = new HashMap<>();
         this.experienceNextLevel = this.getExperienceToNextLevel();

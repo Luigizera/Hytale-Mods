@@ -61,7 +61,6 @@ public class PerkCommand extends AbstractPlayerCommand {
             if(modifiers == null || modifiers.isEmpty()) continue;
             for(var modifier : modifiers.entrySet()) {
                 Integer index = modifier.getKey();
-                TestPlugin.LOGGER.atInfo().log(String.valueOf("StatMap Size: " + statMap.size()));
                 if(index >= statMap.size() || index < 0 || index == null) {
                     throw new UnsupportedOperationException("Wrong implementation of Perk Index: " + index);
                 }
@@ -79,11 +78,7 @@ public class PerkCommand extends AbstractPlayerCommand {
                         + (staticModifier.getCalculationType() == StaticModifier.CalculationType.ADDITIVE ? "+": "x")
                         + staticModifier.getAmount();
             }
-            player.sendMessage(Message.raw(
-                            "Id: " + perk.getId()
-                            + " || Enabled: " + perk.isEnabled()
-                            + strModifier
-            ));
+            player.sendMessage(Message.translation("server.commands.ludas.perk.info." + perk.getId()).param("id", perk.getId()).param("enabled", perk.isEnabled()).param("modifier", strModifier));
         }
     }
 }
