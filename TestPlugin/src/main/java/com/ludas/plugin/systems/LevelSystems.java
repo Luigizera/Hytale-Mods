@@ -49,7 +49,13 @@ public class LevelSystems {
 
                 List<Perk> perks = level.getPerksAsList();
                 for(Perk perk : perks) {
-                    perk.tick(dt, idx, archetypeChunk, store, commandBuffer);
+                    if(!perk.isUnlocked()) {
+                        perk.unlockCondition(dt, idx, archetypeChunk, store, commandBuffer);
+                    }
+                    else {
+                        if(!perk.isEnabled()) continue;
+                        perk.tick(dt, idx, archetypeChunk, store, commandBuffer);
+                    }
                 }
             }
         }

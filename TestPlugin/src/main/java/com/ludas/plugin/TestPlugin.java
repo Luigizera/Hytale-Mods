@@ -55,7 +55,7 @@ public class TestPlugin extends JavaPlugin {
         commands.add(new PlayerInfoCommand());
         commands.add(new PoisonCommand());
         commands.add(new EntityStatsCommand());
-        commands.add(new PlayerLevelCommand());
+        commands.add(new LevelCommand());
         commands.add(new PerkCommand());
     }
 

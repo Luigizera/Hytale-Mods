@@ -29,6 +29,7 @@ public class PoisonPerk extends Perk {
         super(ID);
     }
 
+    @Override
     public Map<Integer, StaticModifier> setupModifiers() {
         Map<Integer, StaticModifier> modifiers = new HashMap<>();
 
@@ -53,20 +54,26 @@ public class PoisonPerk extends Perk {
         return modifiers;
     }
 
+    @Override
+    public void unlockCondition(float dt, int idx, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
+                                 @NonNullDecl Store<EntityStore> store, @NonNullDecl CommandBuffer<EntityStore> commandBuffer) {
+        Player player = archetypeChunk.getComponent(idx, Player.getComponentType());
+        if(player == null) return;
+
+        LevelComponent level = archetypeChunk.getComponent(idx, LevelComponent.getComponentType());;
+        if(level == null) return;
+
+        if(level.getLevel() <= 1) return;
+        this.setUnlocked();
+        level.putPerk(this);
+        player.sendMessage(Message.translation("server.perks.ludas.unlocked").param("id", ID));
+    }
+
+    @Override
     public void tick(float dt, int idx, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
                      @NonNullDecl Store<EntityStore> store, @NonNullDecl CommandBuffer<EntityStore> commandBuffer) {
         Player player = archetypeChunk.getComponent(idx, Player.getComponentType());
         if(player == null) return;
-        if(!this.isUnlocked()) {
-            LevelComponent level = archetypeChunk.getComponent(idx, LevelComponent.getComponentType());;
-            if(level.getLevel() < 1) return;
-            this.setUnlocked();
-            level.putPerk(this);
-            player.sendMessage(Message.translation("server.perks.ludas.unlocked").param("id", ID));
-        }
-        if(!this.isEnabled()) {
-            return;
-        }
 
         if(player.getGameMode() == GameMode.Creative) return;
         Ref<EntityStore> playerRef = player.getReference();

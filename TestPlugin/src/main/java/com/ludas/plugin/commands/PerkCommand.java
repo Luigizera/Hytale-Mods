@@ -15,12 +15,15 @@ import com.hypixel.hytale.server.core.modules.entitystats.modifier.StaticModifie
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
+import com.hypixel.hytale.server.core.util.message.MessageFormat;
 import com.ludas.plugin.TestPlugin;
 import com.ludas.plugin.clazz.Perk;
 import com.ludas.plugin.components.LevelComponent;
 import com.ludas.plugin.perks.PoisonPerk;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
+import java.awt.*;
 import java.util.List;
 import java.util.Map;
 
@@ -47,13 +50,18 @@ public class PerkCommand extends AbstractPlayerCommand {
         if(enablePerk.get(context) != null) {
             Perk perk = level.getPerk(enablePerk.get(context));
             if(perk != null) {
-                level.enableOrDisablePerk(enablePerk.get(context));
-                player.sendMessage(Message.raw("Perk: " + perk.getId() + " || Enabled: " + perk.isEnabled()));
+                if(!perk.isUnlocked()) {
+                    player.sendMessage(Message.translation("server.commands.ludas.perk.unlock.condition." + perk.getId()).color(Color.PINK).bold(true));
+                }
+                else {
+                    level.enableOrDisablePerk(enablePerk.get(context));
+                }
             } else {
                 player.sendMessage(Message.raw("Perk não existe manito"));
             }
         }
 
+        ObjectArrayList<Message> values = new ObjectArrayList<>(statMap.size());
         List<Perk> perks = level.getPerksAsList();
         for(Perk perk : perks) {
             String strModifier = "";
@@ -68,7 +76,7 @@ public class PerkCommand extends AbstractPlayerCommand {
                 if(staticModifier == null) {
                     throw new UnsupportedOperationException("Wrong implementation of Perk StaticModifier: " + staticModifier);
                 }
-                if(perk.isEnabled()) {
+                if(perk.isUnlocked() && perk.isEnabled()) {
                     statMap.putModifier(index, perk.getId(), staticModifier);
                 }
                 else {
@@ -78,7 +86,10 @@ public class PerkCommand extends AbstractPlayerCommand {
                         + (staticModifier.getCalculationType() == StaticModifier.CalculationType.ADDITIVE ? "+": "x")
                         + staticModifier.getAmount();
             }
-            player.sendMessage(Message.translation("server.commands.ludas.perk.info." + perk.getId()).param("id", perk.getId()).param("enabled", perk.isEnabled()).param("modifier", strModifier));
+            values.add(Message.translation("server.commands.ludas.perk.info").param("id", perk.getId()).param("enabled", perk.isEnabled()).param("unlocked", perk.isUnlocked()));
+            values.add(Message.raw(" "));
+            values.add(Message.translation("server.commands.ludas.perk.info." + perk.getId()).param("modifier", strModifier));
         }
+        player.sendMessage(MessageFormat.list((Message)null, values));
     }
 }
