@@ -1,8 +1,5 @@
 package com.ludas.plugin;
 
-import com.hypixel.hytale.assetstore.codec.AssetCodec;
-import com.hypixel.hytale.assetstore.map.IndexedLookupTableAssetMap;
-import com.hypixel.hytale.server.core.asset.HytaleAssetStore;
 import com.ludas.plugin.clazz.MagnumOpus;
 import com.ludas.plugin.clazz.Perk;
 import com.ludas.plugin.clazz.Status;
@@ -47,11 +44,6 @@ public class TestPlugin extends JavaPlugin {
         registerEvents();
         addCommandsToList();
         registerCommands(commands);
-        HytaleAssetStore.builder(MyAsset.class, new IndexedLookupTableAssetMap<>(MyAsset[]::new))
-                .setPath("MyAssets")
-                .setCodec((AssetCodec) MyAsset.CODEC)
-                .setKeyFunction(MyAsset::getId)
-                .build()
         LOGGER.atInfo().log("TestPlugin loaded.");
     }
 
@@ -75,8 +67,8 @@ public class TestPlugin extends JavaPlugin {
         LOGGER.atInfo().log("Registering Entities...");
         ComponentRegistryProxy<EntityStore> entityRegistry = this.getEntityStoreRegistry();
 
-        getCodecRegistry(Perk.CODEC).register("poison", PoisonPerk.class, PoisonPerk.CODEC);
-        getCodecRegistry(Status.CODEC).register("Strength", StrengthStatus.class, StrengthStatus.CODEC);
+        getCodecRegistry(Perk.MAP_CODEC).register("poison", PoisonPerk.class, PoisonPerk.CODEC);
+        getCodecRegistry(Status.MAP_CODEC).register("Strength", StrengthStatus.class, StrengthStatus.CODEC);
         var magnumOpus = entityRegistry.registerComponent(MagnumOpus.class, "MagnumOpus", MagnumOpus.CODEC);
         MagnumOpus.setComponentType(magnumOpus);
 

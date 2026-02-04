@@ -20,7 +20,7 @@ public class RegisterPerksHandler implements Consumer<RegisterPerksEvent> {
         Status status = event.magnumOpus().getStat(MagnumOpusStatTypes.STRENGTH.id);
 
         if(status != null) {
-            status.putPerk();
+            //status.putPerk();
         }
     }
 }

@@ -3,6 +3,7 @@ package com.ludas.plugin.clazz;
 import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.builder.BuilderCodec;
 import com.hypixel.hytale.codec.codecs.map.MapCodec;
+import com.hypixel.hytale.codec.validation.Validators;
 import com.hypixel.hytale.component.Component;
 import com.hypixel.hytale.component.ComponentType;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
@@ -19,7 +20,7 @@ public class MagnumOpus implements Component<EntityStore> {
     private Map<String, Status> statMap;
 
     public MagnumOpus() {
-        statMap = update();
+        statMap = new HashMap<>();
     }
 
     public MagnumOpus(MagnumOpus other) {
@@ -61,7 +62,7 @@ public class MagnumOpus implements Component<EntityStore> {
     static {
         CODEC = BuilderCodec.builder(MagnumOpus.class, MagnumOpus::new)
                 .append(new KeyedCodec<>("Stats",
-                                new MapCodec(Status.CODEC, HashMap::new, false)),
+                                new MapCodec(Status.MAP_CODEC, HashMap::new, false)),
                         (data, value) -> data.statMap = value,
                         (data) -> {
                             HashMap<String, Status> outMap = new HashMap();
@@ -74,6 +75,7 @@ public class MagnumOpus implements Component<EntityStore> {
 
                             return outMap;
                         })
+                .addValidator(Validators.nonNull())
                 .add()
                 .build();
                 /*((BuilderCodec.Builder)((BuilderCodec.Builder)((BuilderCodec.Builder)((BuilderCodec.Builder)
