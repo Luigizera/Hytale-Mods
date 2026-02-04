@@ -1,61 +1,37 @@
-package com.ludas.plugin.components;
+package com.ludas.plugin.clazz;
 
 import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.builder.BuilderCodec;
-import com.hypixel.hytale.codec.codecs.map.MapCodec;
 import com.hypixel.hytale.codec.validation.Validators;
 import com.hypixel.hytale.component.Component;
-import com.hypixel.hytale.component.ComponentType;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
-import com.ludas.plugin.clazz.Perk;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-public class LevelComponent implements Component<EntityStore> {
-    public static final BuilderCodec<LevelComponent> CODEC;
-    private static ComponentType<EntityStore, LevelComponent> TYPE;
+public class Level implements Component<EntityStore> {
+    public static final BuilderCodec<Level> CODEC;
     public static final int MULTIPLIER = 100;
     public static final int START_LEVEL = 1;
-    private Map<String, Perk> perks;
     private int level;
     private float experienceCurrent;
     private float experienceNextLevel;
 
-    public LevelComponent(int level) {
+    public Level(int level) {
         this.level = level <= 0 ? START_LEVEL : level;
         this.experienceCurrent = 0f;
-        this.perks = new HashMap<>();
         this.experienceNextLevel = this.getExperienceToNextLevel();
     }
 
-    public LevelComponent() {
+    public Level() {
         this.level = START_LEVEL;
         this.experienceCurrent = 0.0F;
-        this.perks = new HashMap<>();
         this.experienceNextLevel = this.getExperienceToNextLevel();
     }
 
-    public LevelComponent(LevelComponent other) {
-        this.level = other.getLevel();
+    public Level(Level other) {
+        this.level = other.getCurrentLevel();
         this.experienceCurrent = other.getCurrentExperience();
-        this.perks = new HashMap<>();
-        List<Perk> otherPerks = other.getPerksAsList();
-        for(Perk perk : otherPerks) {
-            this.perks.put(perk.getId(), perk);
-        }
         this.experienceNextLevel = other.getExperienceToNextLevel();
-    }
-
-    public static void setComponentType(ComponentType<EntityStore, LevelComponent> type) {
-        TYPE = type;
-    }
-
-    public static ComponentType<EntityStore, LevelComponent> getComponentType() {
-        return TYPE;
     }
 
     public int getExperienceToNextLevel() {
@@ -66,30 +42,8 @@ public class LevelComponent implements Component<EntityStore> {
         return experienceCurrent;
     }
 
-    public int getLevel() {
+    public int getCurrentLevel() {
         return this.level;
-    }
-
-    public List<Perk> getPerksAsList() {
-        return perks.values().stream().toList();
-    }
-
-    public Perk getPerk(String id) {
-        return perks.getOrDefault(id, null);
-    }
-
-    public void putPerk(Perk perk) {
-        perks.put(perk.getId(), perk);
-    }
-
-    public boolean enableOrDisablePerk(String perk) {
-        Perk perk1 = perks.getOrDefault(perk, null);
-        if(perk1 != null) {
-            perk1.setEnabled();
-            perks.replace(perk1.getId(), perk1);
-            return perk1.isEnabled();
-        }
-        return false;
     }
 
     public boolean addExperience(float exp) {
@@ -116,13 +70,13 @@ public class LevelComponent implements Component<EntityStore> {
     public String toString() {
         return "Level{level=" + level +
                 ", experience=" + experienceCurrent +
-                ", toNext=" + getExperienceToNextLevel() + "}";
+                "}";
     }
 
     @NullableDecl
     @Override
     public Component<EntityStore> clone() {
-        return new LevelComponent(this);
+        return new Level(this);
     }
 
     @NullableDecl
@@ -132,7 +86,7 @@ public class LevelComponent implements Component<EntityStore> {
     }
 
     static {
-        CODEC = BuilderCodec.builder(LevelComponent.class, LevelComponent::new)
+        CODEC = BuilderCodec.builder(Level.class, Level::new)
                         .append(new KeyedCodec<>("Level", Codec.INTEGER),
                                 (data, value) -> data.level = value,
                                 data -> data.level)
@@ -142,11 +96,6 @@ public class LevelComponent implements Component<EntityStore> {
                                 (data, value) -> data.experienceCurrent = value,
                                 data -> data.experienceCurrent)
                         .addValidator(Validators.nonNull())
-                        .add()
-                        .append(new KeyedCodec<>("Perks",
-                                new MapCodec(Perk.CODEC, HashMap::new, false)),
-                                (data, value) -> data.perks = value,
-                                (data) -> data.perks != null && !data.perks.isEmpty() ? data.perks : null)
                         .add()
                         .build();
 

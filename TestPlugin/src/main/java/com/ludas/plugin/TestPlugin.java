@@ -1,12 +1,19 @@
 package com.ludas.plugin;
 
+import com.hypixel.hytale.assetstore.codec.AssetCodec;
+import com.hypixel.hytale.assetstore.map.IndexedLookupTableAssetMap;
+import com.hypixel.hytale.server.core.asset.HytaleAssetStore;
+import com.ludas.plugin.clazz.MagnumOpus;
+import com.ludas.plugin.clazz.Perk;
+import com.ludas.plugin.clazz.Status;
+import com.ludas.plugin.clazz.StrengthStatus;
 import com.ludas.plugin.commands.*;
 import com.ludas.plugin.commands.collection.LudasCommandCollection;
-import com.ludas.plugin.components.LevelComponent;
 import com.ludas.plugin.components.PoisonComponent;
 import com.ludas.plugin.events.GiveXPEvent;
 import com.ludas.plugin.handlers.GiveXPHandler;
-import com.ludas.plugin.systems.LevelSystems;
+import com.ludas.plugin.perks.PoisonPerk;
+import com.ludas.plugin.systems.MagnumOpusSystems;
 import com.ludas.plugin.systems.PoisonSystem;
 import com.hypixel.hytale.component.ComponentRegistryProxy;
 import com.hypixel.hytale.event.EventRegistry;
@@ -40,6 +47,11 @@ public class TestPlugin extends JavaPlugin {
         registerEvents();
         addCommandsToList();
         registerCommands(commands);
+        HytaleAssetStore.builder(MyAsset.class, new IndexedLookupTableAssetMap<>(MyAsset[]::new))
+                .setPath("MyAssets")
+                .setCodec((AssetCodec) MyAsset.CODEC)
+                .setKeyFunction(MyAsset::getId)
+                .build()
         LOGGER.atInfo().log("TestPlugin loaded.");
     }
 
@@ -62,14 +74,16 @@ public class TestPlugin extends JavaPlugin {
     private void registerEntities() {
         LOGGER.atInfo().log("Registering Entities...");
         ComponentRegistryProxy<EntityStore> entityRegistry = this.getEntityStoreRegistry();
-        var playerLevel = entityRegistry.registerComponent(
-                LevelComponent.class, "LevelComponent", LevelComponent.CODEC);
-        LevelComponent.setComponentType(playerLevel);
 
-        entityRegistry.registerSystem(new LevelSystems.PlayerSpawnSystem());
-        entityRegistry.registerSystem(new LevelSystems.NPCSpawnSystem());
-        entityRegistry.registerSystem(new LevelSystems.GetExpFromNpcSystem());
-        entityRegistry.registerSystem(new LevelSystems.PerkTick());
+        getCodecRegistry(Perk.CODEC).register("poison", PoisonPerk.class, PoisonPerk.CODEC);
+        getCodecRegistry(Status.CODEC).register("Strength", StrengthStatus.class, StrengthStatus.CODEC);
+        var magnumOpus = entityRegistry.registerComponent(MagnumOpus.class, "MagnumOpus", MagnumOpus.CODEC);
+        MagnumOpus.setComponentType(magnumOpus);
+
+        entityRegistry.registerSystem(new MagnumOpusSystems.PlayerSpawnSystem());
+        entityRegistry.registerSystem(new MagnumOpusSystems.NPCSpawnSystem());
+        entityRegistry.registerSystem(new MagnumOpusSystems.GetExpFromNpcSystem());
+        entityRegistry.registerSystem(new MagnumOpusSystems.PerkTick());
 
         var poisonComponent = entityRegistry.registerComponent(PoisonComponent.class, PoisonComponent::new);
         PoisonComponent.setComponentType(poisonComponent);
@@ -82,8 +96,6 @@ public class TestPlugin extends JavaPlugin {
 
         eventRegistry.register(GiveXPEvent.class, new GiveXPHandler());
     }
-
-
 
     private void registerCommands(List<AbstractCommand> commands) {
         LOGGER.atInfo().log("Registering Commands...");

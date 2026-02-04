@@ -9,20 +9,10 @@ import com.hypixel.hytale.server.core.command.system.basecommands.AbstractPlayer
 import com.hypixel.hytale.server.core.entity.UUIDComponent;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
-import com.hypixel.hytale.server.core.modules.entitystats.EntityStatMap;
-import com.hypixel.hytale.server.core.modules.entitystats.EntityStatsModule;
-import com.hypixel.hytale.server.core.modules.entitystats.modifier.StaticModifier;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
-import com.ludas.plugin.TestPlugin;
-import com.ludas.plugin.clazz.Perk;
-import com.ludas.plugin.components.LevelComponent;
-import com.ludas.plugin.perks.PoisonPerk;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
-
-import java.util.List;
-import java.util.Map;
 
 public class PlayerInfoCommand extends AbstractPlayerCommand {
     private final FlagArg debugArg;

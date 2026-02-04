@@ -1,6 +1,5 @@
 package com.ludas.plugin.commands;
 
-import com.ludas.plugin.pages.TestPage2;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
@@ -23,8 +22,8 @@ public class TestUI2Command extends AbstractPlayerCommand {
                            @NonNullDecl PlayerRef playerRef,
                            @NonNullDecl World world) {
         Player player = store.getComponent(ref, Player.getComponentType());
-        TestPage2 page = new TestPage2(playerRef, 100, 7, "7h 32m");
+        //TestPage2 page = new TestPage2(playerRef, 100, 7, "7h 32m");
         assert player != null;
-        player.getPageManager().openCustomPage(ref, store, page);
+        //player.getPageManager().openCustomPage(ref, store, page);
     }
 }

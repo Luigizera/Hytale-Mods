@@ -1,11 +1,15 @@
 package com.ludas.plugin.clazz;
 
+import com.hypixel.hytale.assetstore.codec.AssetCodecMapCodec;
+import com.hypixel.hytale.assetstore.map.JsonAssetWithMap;
 import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.builder.BuilderCodec;
+import com.hypixel.hytale.codec.lookup.CodecMapCodec;
 import com.hypixel.hytale.component.ArchetypeChunk;
 import com.hypixel.hytale.component.CommandBuffer;
 import com.hypixel.hytale.component.Store;
+import com.hypixel.hytale.server.core.io.NetworkSerializable;
 import com.hypixel.hytale.server.core.modules.entitystats.modifier.StaticModifier;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
@@ -13,16 +17,14 @@ import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Perk {
-    public static final BuilderCodec<Perk> CODEC;
+public abstract class Perk {
+    public static final CodecMapCodec<Perk> CODEC = new CodecMapCodec();
+    public static final BuilderCodec<Perk> BASE_CODEC;
     private String id;
     private boolean enabled;
     private boolean unlocked;
 
     public Perk() {
-        this.id = "unknown";
-        this.enabled = true;
-        this.unlocked = false;
     }
 
     public Perk(String id) {
@@ -31,14 +33,11 @@ public class Perk {
         this.unlocked = false;
     }
 
-    public Perk(String id, boolean enabled, boolean unlocked) {
-        this.id = id;
-        this.enabled = enabled;
-        this.unlocked = unlocked;
-    }
-
     public String getId() {
         return id;
+    }
+    protected void setId(String id) {
+        this.id = id;
     }
 
     public boolean isEnabled() {
@@ -51,20 +50,6 @@ public class Perk {
     public void setUnlocked() {
         unlocked = true;
     }
-
-
-    public Map<Integer, StaticModifier> setupModifiers() {
-        return new HashMap<>();
-    }
-
-    public void unlockCondition(float dt, int idx, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
-                     @NonNullDecl Store<EntityStore> store, @NonNullDecl CommandBuffer<EntityStore> commandBuffer) {
-    }
-
-
-    public void tick(float dt, int idx, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
-                     @NonNullDecl Store<EntityStore> store, @NonNullDecl CommandBuffer<EntityStore> commandBuffer) {}
-
     public void setEnabled() {
         enabled = !this.isEnabled();
     }
@@ -75,29 +60,39 @@ public class Perk {
                 ", enabled=" + enabled + "}";
     }
 
+    public Map<Integer, StaticModifier> setupModifiers() {
+        return new HashMap<>();
+    }
+
+    public abstract void unlockCondition(float dt, int idx, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
+                     @NonNullDecl Store<EntityStore> store, @NonNullDecl CommandBuffer<EntityStore> commandBuffer);
+
+
+    public abstract void tick(float dt, int idx, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
+                     @NonNullDecl Store<EntityStore> store, @NonNullDecl CommandBuffer<EntityStore> commandBuffer);
+
     static {
 
-        CODEC =
-                BuilderCodec
-                        .builder(Perk.class, Perk::new)
-                        .append(
-                                new KeyedCodec<>("Id", Codec.STRING),
-                                (data, value) -> data.id = value,
-                                data -> data.id
-                        )
-                        .add()
-                        .append(
-                                new KeyedCodec<>("Enabled", Codec.BOOLEAN),
-                                (data, value) -> data.enabled = value,
-                                data -> data.enabled
-                        )
-                        .add()
-                        .append(
-                                new KeyedCodec<>("Unlocked", Codec.BOOLEAN),
-                                (data, value) -> data.enabled = value,
-                                data -> data.enabled
-                        )
-                        .add()
-                        .build();
+        BASE_CODEC =
+        BuilderCodec.abstractBuilder(Perk.class)
+                .append(
+                        new KeyedCodec<>("Id", Codec.STRING),
+                        (data, value) -> data.id = value,
+                        data -> data.id
+                )
+                .add()
+                .append(
+                        new KeyedCodec<>("Enabled", Codec.BOOLEAN),
+                        (data, value) -> data.enabled = value,
+                        data -> data.enabled
+                )
+                .add()
+                .append(
+                        new KeyedCodec<>("Unlocked", Codec.BOOLEAN),
+                        (data, value) -> data.enabled = value,
+                        data -> data.enabled
+                )
+                .add()
+                .build();
     }
 }

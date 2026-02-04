@@ -5,7 +5,6 @@ import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
 import com.hypixel.hytale.server.core.command.system.arguments.system.DefaultArg;
-import com.hypixel.hytale.server.core.command.system.arguments.system.OptionalArg;
 import com.hypixel.hytale.server.core.command.system.arguments.types.ArgTypes;
 import com.hypixel.hytale.server.core.command.system.basecommands.AbstractPlayerCommand;
 import com.hypixel.hytale.server.core.entity.entities.Player;
@@ -16,10 +15,9 @@ import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.hypixel.hytale.server.core.util.message.MessageFormat;
-import com.ludas.plugin.TestPlugin;
+import com.ludas.plugin.clazz.MagnumOpus;
+import com.ludas.plugin.clazz.MagnumOpusStatTypes;
 import com.ludas.plugin.clazz.Perk;
-import com.ludas.plugin.components.LevelComponent;
-import com.ludas.plugin.perks.PoisonPerk;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
@@ -29,10 +27,12 @@ import java.util.Map;
 
 public class PerkCommand extends AbstractPlayerCommand {
     private final DefaultArg<String> enablePerk;
+    private final DefaultArg<String> statId;
 
     public PerkCommand() {
         super("perk", "server.commands.ludas.perk.desc", false);
         this.enablePerk = this.withDefaultArg("enable", "server.commands.ludas.perk.enable.arg.desc", ArgTypes.STRING, null, "null");
+        this.statId = this.withDefaultArg("stat", "server.commands.ludas.perk.enable.arg.desc", ArgTypes.STRING, MagnumOpusStatTypes.UNKNOWN.id, "Unknown");
     }
     @Override
     protected void execute(@NonNullDecl CommandContext context, @NonNullDecl Store<EntityStore> store,
@@ -40,29 +40,43 @@ public class PerkCommand extends AbstractPlayerCommand {
                            @NonNullDecl World world) {
         Player player = store.getComponent(ref, Player.getComponentType());
         if(player == null) return;
-        LevelComponent level = store.getComponent(ref, LevelComponent.getComponentType());
-        if(level == null) return;
+        MagnumOpus magnumOpus = store.getComponent(ref, MagnumOpus.getComponentType());
+        if(magnumOpus == null) return;
         EntityStatMap statMap = store.getComponent(ref, EntityStatsModule.get().getEntityStatMapComponentType());
         if(statMap == null) return;
-        PoisonPerk poison = new PoisonPerk();
-        level.putPerk(poison);
 
-        if(enablePerk.get(context) != null) {
-            Perk perk = level.getPerk(enablePerk.get(context));
-            if(perk != null) {
-                if(!perk.isUnlocked()) {
+        String statTypes = MagnumOpusStatTypes.UNKNOWN.id;
+
+        if(statId.get(context) != null) {
+            try {
+                MagnumOpusStatTypes.valueOf(statId.get(context).toUpperCase());
+            }
+            catch (Exception e) {
+                player.sendMessage(Message.raw("Provide a valid stat name."));
+                return;
+            }
+            statTypes = statId.get(context).toUpperCase();
+        }
+
+        if (enablePerk.get(context) != null) {
+            Perk perk = magnumOpus.getStat(statTypes).getPerk(enablePerk.get(context));
+            if (perk != null) {
+                if (!perk.isUnlocked()) {
                     player.sendMessage(Message.translation("server.commands.ludas.perk.unlock.condition." + perk.getId()).color(Color.PINK).bold(true));
                 }
                 else {
-                    level.enableOrDisablePerk(enablePerk.get(context));
+                    magnumOpus.getStat(statTypes).enableOrDisablePerk(enablePerk.get(context));
                 }
-            } else {
-                player.sendMessage(Message.raw("Perk não existe manito"));
+            }
+            else {
+                player.sendMessage(Message.raw("Perk inexistente"));
             }
         }
 
+
         ObjectArrayList<Message> values = new ObjectArrayList<>(statMap.size());
-        List<Perk> perks = level.getPerksAsList();
+        List<Perk> perks = magnumOpus.getStat(statTypes).getPerksAsList();
+        if(perks == null || perks.isEmpty()) return;
         for(Perk perk : perks) {
             String strModifier = "";
             Map<Integer, StaticModifier> modifiers = perk.setupModifiers();

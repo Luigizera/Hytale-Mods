@@ -28,7 +28,6 @@ import com.hypixel.hytale.server.core.universe.world.SoundUtil;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.hypixel.hytale.server.core.util.message.MessageFormat;
-import com.ludas.plugin.components.LevelComponent;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 import javax.annotation.Nonnull;
@@ -72,13 +71,13 @@ public class EntityStatsCommand extends AbstractTargetEntityCommand {
             }
 
 
-
+            /* TODO: ARRUMAR QUANDO TERMINAR TUDO
             if(levelArg.get(context)) {
-                LevelComponent levelComponent = store.getComponent(entity, LevelComponent.getComponentType());
-                if(levelComponent != null) {
-                    values.add(Message.raw("Level: " + levelComponent.getLevel()));
+                Level level = store.getComponent(entity, MagnumOpus.getComponentType());
+                if(level != null) {
+                    values.add(Message.raw("Level: " + level.getLevel()));
                 }
-            }
+            }*/
 
             if (entityHealth != null) {
                 if(killArg.get(context)) {

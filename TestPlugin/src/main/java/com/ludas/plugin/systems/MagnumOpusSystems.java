@@ -1,8 +1,10 @@
 package com.ludas.plugin.systems;
 
 import com.hypixel.hytale.component.system.tick.EntityTickingSystem;
+import com.ludas.plugin.TestPlugin;
+import com.ludas.plugin.clazz.MagnumOpusStatTypes;
+import com.ludas.plugin.clazz.MagnumOpus;
 import com.ludas.plugin.clazz.Perk;
-import com.ludas.plugin.components.LevelComponent;
 import com.ludas.plugin.events.GiveXPEvent;
 import com.hypixel.hytale.component.*;
 import com.hypixel.hytale.component.query.Query;
@@ -17,6 +19,7 @@ import com.hypixel.hytale.server.core.modules.entity.damage.DeathSystems;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.hypixel.hytale.server.npc.entities.NPCEntity;
+import com.ludas.plugin.events.RegisterPerksEvent;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
@@ -25,14 +28,14 @@ import java.util.List;
 import java.util.Random;
 
 
-public class LevelSystems {
+public class MagnumOpusSystems {
 
     public static class PerkTick extends EntityTickingSystem<EntityStore> {
-        float limiter = 0f;
+        private float limiter = 0f;
         @NullableDecl
         @Override
         public Query<EntityStore> getQuery() {
-            return Query.and(new Query[]{LevelComponent.getComponentType(), Player.getComponentType()});
+            return Query.and(new Query[]{MagnumOpus.getComponentType(), Player.getComponentType()});
         }
 
         @Override
@@ -42,12 +45,12 @@ public class LevelSystems {
             limiter += dt;
             if (limiter >= 5f) {
                 limiter = 0;
-                LevelComponent level = archetypeChunk.getComponent(idx, LevelComponent.getComponentType());
-                if(level == null) return;
+                MagnumOpus magnumOpus = archetypeChunk.getComponent(idx, MagnumOpus.getComponentType());
+                if(magnumOpus == null) return;
                 Player player = archetypeChunk.getComponent(idx, Player.getComponentType());
                 if(player == null) return;
-
-                List<Perk> perks = level.getPerksAsList();
+                List<Perk> perks = magnumOpus.getStat(MagnumOpusStatTypes.STRENGTH.id).getPerksAsList();
+                if(perks == null || perks.isEmpty()) return;
                 for(Perk perk : perks) {
                     if(!perk.isUnlocked()) {
                         perk.unlockCondition(dt, idx, archetypeChunk, store, commandBuffer);
@@ -69,7 +72,7 @@ public class LevelSystems {
         @NonNullDecl
         @Override
         public Query<EntityStore> getQuery() {
-            return Query.and(new Query[]{NPCEntity.getComponentType(), Query.not(LevelComponent.getComponentType())});
+            return Query.and(new Query[]{NPCEntity.getComponentType(), Query.not(MagnumOpus.getComponentType())});
         }
 
         @Override
@@ -77,13 +80,11 @@ public class LevelSystems {
                                 @NonNullDecl AddReason addReason, @NonNullDecl Store<EntityStore> store) {
             NPCEntity npc = holder.getComponent(NPCEntity.getComponentType());
             if (npc == null) return;
-            LevelComponent level = holder.getComponent(LevelComponent.getComponentType());
-            if(level == null) {
+            MagnumOpus magnumOpus = holder.getComponent(MagnumOpus.getComponentType());
+            if(magnumOpus == null) {
                 int rand = new Random().nextInt(1, 100);
-                holder.putComponent(LevelComponent.getComponentType(), new LevelComponent(rand));
-                level = holder.getComponent(LevelComponent.getComponentType());
+                holder.putComponent(MagnumOpus.getComponentType(), new MagnumOpus());
             }
-
         }
 
         @Override
@@ -110,29 +111,29 @@ public class LevelSystems {
 
             PlayerRef player = store.getComponent(ref, PlayerRef.getComponentType());
             if(player == null) return;
-            var component = LevelComponent.getComponentType();
-            LevelComponent level = store.getComponent(ref, component);
-            if(level == null) {
-                commandBuffer.putComponent(ref, component, new LevelComponent());
-                player.sendMessage(
-                        Message.raw("Adicionado sistema de Nível").color(Color.ORANGE).bold(true));
+            MagnumOpus magnumOpus = store.getComponent(ref, MagnumOpus.getComponentType());
+            if(magnumOpus == null) {
+                commandBuffer.putComponent(ref, MagnumOpus.getComponentType(), new MagnumOpus());
+                player.sendMessage(Message.raw("Adicionado sistema Magnum Opus").color(Color.ORANGE).bold(true));
             }
             else {
-                player.sendMessage(
-                        Message.raw("Level: %d (%.2f XP)".formatted(level.getLevel(), level.getCurrentExperience()))
-                                .color(Color.ORANGE).bold(true));
+                /*player.sendMessage(Message.raw("Level: %d (%.2f XP)"
+                                .formatted(magnumOpus.getStat(MagnumOpusStatTypes.STRENGTH.id).getLevel().getCurrentLevel(),
+                                        magnumOpus.getStat(MagnumOpusStatTypes.STRENGTH.id).getLevel().getCurrentExperience()))
+                                .color(Color.ORANGE).bold(true));*/
             }
         }
 
         @Override
         public void onEntityRemove(@NonNullDecl Ref<EntityStore> ref, @NonNullDecl RemoveReason removeReason, @NonNullDecl Store<EntityStore> store, @NonNullDecl CommandBuffer<EntityStore> commandBuffer) {
-
+            if(removeReason != RemoveReason.UNLOAD) return;
+            //MagnumOpus magnumOpus = store.getComponent(ref, component);
         }
     }
 
 
     public static class GetExpFromNpcSystem extends DeathSystems.OnDeathSystem {
-        private float defaultXP = 1f;
+        private float defaultXP = 10f;
 
         public GetExpFromNpcSystem() {
             super();
@@ -155,20 +156,19 @@ public class LevelSystems {
             DamageCause deathCause = component.getDeathCause();
             if(!(deathCause == DamageCause.PHYSICAL || deathCause == DamageCause.PROJECTILE)) return;
             Damage.Source damageSource = deathInfo.getSource();
-            if (!(damageSource instanceof Damage.EntitySource)) return;
-            Damage.EntitySource entitySource = (Damage.EntitySource) damageSource;
-            Ref sourceRef = entitySource.getRef();
-            Player sourcePlayer = (Player) store.getComponent(sourceRef, Player.getComponentType());
+            if (!(damageSource instanceof Damage.EntitySource entitySource)) return;
+            Ref<EntityStore> sourceRef = entitySource.getRef();
+            Player sourcePlayer = store.getComponent(sourceRef, Player.getComponentType());
             if(sourcePlayer == null) return;
             Ref<EntityStore> playerRef = sourcePlayer.getReference();
             if(playerRef == null) return;
-            LevelComponent level = store.getComponent(playerRef, LevelComponent.getComponentType());
-            if(level == null) {
-                commandBuffer.putComponent(playerRef, LevelComponent.getComponentType(), new LevelComponent());
+            MagnumOpus magnumOpus = store.getComponent(playerRef, MagnumOpus.getComponentType());
+            if(magnumOpus == null) {
+                commandBuffer.putComponent(playerRef, MagnumOpus.getComponentType(), new MagnumOpus());
             }
             else {
-                LevelComponent npcLevel = commandBuffer.getComponent(ref, LevelComponent.getComponentType());
-                if(npcLevel != null) defaultXP = (float) npcLevel.getLevel();
+                MagnumOpus npcLevel = commandBuffer.getComponent(ref, MagnumOpus.getComponentType());
+                //if(npcLevel != null) defaultXP = (float) npcLevel.getLevel();
                 GiveXPEvent.dispatch(playerRef, defaultXP);
             }
         }

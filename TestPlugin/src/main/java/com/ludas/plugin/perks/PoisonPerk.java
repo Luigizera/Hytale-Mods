@@ -1,5 +1,8 @@
 package com.ludas.plugin.perks;
 
+import com.hypixel.hytale.codec.Codec;
+import com.hypixel.hytale.codec.KeyedCodec;
+import com.hypixel.hytale.codec.builder.BuilderCodec;
 import com.hypixel.hytale.component.ArchetypeChunk;
 import com.hypixel.hytale.component.CommandBuffer;
 import com.hypixel.hytale.component.Ref;
@@ -13,8 +16,8 @@ import com.hypixel.hytale.server.core.modules.entitystats.asset.DefaultEntitySta
 import com.hypixel.hytale.server.core.modules.entitystats.modifier.Modifier;
 import com.hypixel.hytale.server.core.modules.entitystats.modifier.StaticModifier;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
-import com.ludas.plugin.clazz.Perk;
-import com.ludas.plugin.components.LevelComponent;
+import com.ludas.plugin.TestPlugin;
+import com.ludas.plugin.clazz.*;
 import com.ludas.plugin.components.PoisonComponent;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
@@ -22,11 +25,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PoisonPerk extends Perk {
-
+    public static final BuilderCodec<PoisonPerk> CODEC;
     public static final String ID = "poison";
 
     public PoisonPerk() {
-        super(ID);
     }
 
     @Override
@@ -60,12 +62,13 @@ public class PoisonPerk extends Perk {
         Player player = archetypeChunk.getComponent(idx, Player.getComponentType());
         if(player == null) return;
 
-        LevelComponent level = archetypeChunk.getComponent(idx, LevelComponent.getComponentType());;
-        if(level == null) return;
+        MagnumOpus magnumOpus = archetypeChunk.getComponent(idx, MagnumOpus.getComponentType());;
+        if(magnumOpus == null) return;
 
-        if(level.getLevel() <= 1) return;
+        if(magnumOpus.getStat(MagnumOpusStatTypes.STRENGTH.id).getLevel().getCurrentLevel() <= 1) return;
+        TestPlugin.LOGGER.atInfo().log(""+magnumOpus.getStat(MagnumOpusStatTypes.STRENGTH.id).getLevel().getCurrentLevel());
         this.setUnlocked();
-        level.putPerk(this);
+        magnumOpus.getStat(MagnumOpusStatTypes.STRENGTH.id).putPerk(this);
         player.sendMessage(Message.translation("server.perks.ludas.unlocked").param("id", ID));
     }
 
@@ -91,5 +94,10 @@ public class PoisonPerk extends Perk {
             if(poison != null) return;
             commandBuffer.addComponent(playerRef, PoisonComponent.getComponentType(), new PoisonComponent());
         }
+    }
+
+    static {
+        CODEC = ((BuilderCodec.Builder)((BuilderCodec.Builder)
+                BuilderCodec.builder(PoisonPerk.class, PoisonPerk::new, Perk.BASE_CODEC))).build();
     }
 }

@@ -1,6 +1,7 @@
 package com.ludas.plugin.commands;
 
-import com.ludas.plugin.components.LevelComponent;
+import com.ludas.plugin.clazz.MagnumOpus;
+import com.ludas.plugin.clazz.MagnumOpusStatTypes;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.server.core.Message;
@@ -25,13 +26,13 @@ public class LevelCommand extends AbstractPlayerCommand {
 
         Player player = store.getComponent(ref, Player.getComponentType());
         assert player != null : "Null player in PlayerLevelDataCommand";
-        LevelComponent playerLevel = store.getComponent(ref, LevelComponent.getComponentType());
-        if(playerLevel != null) {
-            player.sendMessage(Message.raw("Level: " + playerLevel.getLevel() + " || " + playerLevel.getCurrentExperience() + " || " + playerLevel.getExperienceToNextLevel()));
+        MagnumOpus magnumOpus = store.getComponent(ref, MagnumOpus.getComponentType());
+        if(magnumOpus != null) {
+            player.sendMessage(Message.raw("Level: " + magnumOpus.getStat(MagnumOpusStatTypes.STRENGTH.id).getLevel().getCurrentLevel() + " || " + magnumOpus.getStat(MagnumOpusStatTypes.STRENGTH.id).getLevel().getCurrentExperience() + " || " + magnumOpus.getStat(MagnumOpusStatTypes.STRENGTH.id).getLevel().getExperienceToNextLevel()));
         }
         else {
-            store.putComponent(ref, LevelComponent.getComponentType(), new LevelComponent());
-            player.sendMessage(Message.raw("Added level system"));
+            store.putComponent(ref, MagnumOpus.getComponentType(), new MagnumOpus());
+            player.sendMessage(Message.raw("Added MagnumOpus system"));
         }
     }
 }

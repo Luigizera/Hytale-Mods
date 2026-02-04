@@ -1,29 +1,6 @@
 package com.ludas.plugin.pages;
 
-import com.hypixel.hytale.codec.Codec;
-import com.hypixel.hytale.codec.KeyedCodec;
-import com.hypixel.hytale.codec.builder.BuilderCodec;
-import com.hypixel.hytale.component.Ref;
-import com.hypixel.hytale.component.Store;
-import com.hypixel.hytale.protocol.packets.interface_.CustomPageLifetime;
-import com.hypixel.hytale.protocol.packets.interface_.CustomUIEventBindingType;
-import com.hypixel.hytale.protocol.packets.interface_.Page;
-import com.hypixel.hytale.server.core.Message;
-import com.hypixel.hytale.server.core.entity.entities.Player;
-import com.hypixel.hytale.server.core.entity.entities.player.pages.InteractiveCustomUIPage;
-import com.hypixel.hytale.server.core.modules.accesscontrol.provider.HytaleWhitelistProvider;
-import com.hypixel.hytale.server.core.ui.builder.EventData;
-import com.hypixel.hytale.server.core.ui.builder.UICommandBuilder;
-import com.hypixel.hytale.server.core.ui.builder.UIEventBuilder;
-import com.hypixel.hytale.server.core.universe.PlayerRef;
-import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
-import com.ludas.plugin.clazz.Perk;
-import com.ludas.plugin.components.LevelComponent;
-import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
-
-import javax.annotation.Nonnull;
-import java.util.List;
-
+/*
 public class TestPage2 extends InteractiveCustomUIPage<TestPage2.CloseEventData> {
     private final int playersOnline;
     private final int questCount;
@@ -64,7 +41,7 @@ public class TestPage2 extends InteractiveCustomUIPage<TestPage2.CloseEventData>
                       @NonNullDecl UIEventBuilder evt,
                       @NonNullDecl Store<EntityStore> store) {
         cmd.append("Pages/TestPage2.ui");
-        LevelComponent level = store.getComponent(ref, LevelComponent.getComponentType());
+        Level level = store.getComponent(ref, Level.getComponentType());
         if(level == null) return;
         cmd.set("#Stat1Value.Text", String.valueOf(playersOnline));
         cmd.set("#Stat2Value.Text", String.valueOf(questCount));
@@ -82,7 +59,7 @@ public class TestPage2 extends InteractiveCustomUIPage<TestPage2.CloseEventData>
         // Close the page
         Player player = store.getComponent(ref, Player.getComponentType());
         assert player != null;
-        LevelComponent level = store.getComponent(ref, LevelComponent.getComponentType());
+        Level level = store.getComponent(ref, Level.getComponentType());
         assert level != null;
         if(data.action == "Toggle") {
             boolean enabled = level.enableOrDisablePerk(data.perkId);
@@ -91,7 +68,7 @@ public class TestPage2 extends InteractiveCustomUIPage<TestPage2.CloseEventData>
         player.getPageManager().setPage(ref, store, Page.None);
     }
 
-    private void buildPlayerList(UICommandBuilder commandBuilder, UIEventBuilder eventBuilder, LevelComponent level) {
+    private void buildPlayerList(UICommandBuilder commandBuilder, UIEventBuilder eventBuilder, Level level) {
         commandBuilder.clear("#PlayerList");
         List<Perk> perks = level.getPerksAsList();
 
@@ -117,3 +94,4 @@ public class TestPage2 extends InteractiveCustomUIPage<TestPage2.CloseEventData>
         }
     }
 }
+*/
