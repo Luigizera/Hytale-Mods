@@ -12,6 +12,7 @@ import com.hypixel.hytale.server.core.modules.entitystats.modifier.Modifier;
 import com.hypixel.hytale.server.core.modules.entitystats.modifier.StaticModifier;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.ludas.plugin.clazz.Perk;
+import com.ludas.plugin.clazz.PerkId;
 import com.ludas.plugin.components.LevelComponent;
 import com.ludas.plugin.components.PoisonComponent;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
@@ -19,18 +20,11 @@ import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PoisonPerk extends Perk {
-    public static final BuilderCodec<PoisonPerk> CODEC;
-    public static final String ID = "Poisonperk";
+public class PoisonPerk extends Perk{
+    public static final String NAME = "poison";
 
     public PoisonPerk() {
-        super(ID);
     }
-
-    public PoisonPerk(PoisonPerk other) {
-        enabled = other.enabled;
-        unlocked = other.unlocked;
-    };
 
     @Override
     public Map<Integer, StaticModifier> setupModifiers() {
@@ -69,9 +63,8 @@ public class PoisonPerk extends Perk {
         if(level.getLevel() <= 1) {
             return;
         }
-        this.setUnlocked();
-        level.putPerk(this);
-        player.sendMessage(Message.translation("server.perks.ludas.unlocked").param("id", ID));
+        level.setUnlocked(PerkId.POISON_PERK.ordinal());
+        player.sendMessage(Message.translation("server.perks.ludas.unlocked").param("id", NAME));
     }
 
     @Override
@@ -97,15 +90,4 @@ public class PoisonPerk extends Perk {
             commandBuffer.addComponent(playerRef, PoisonComponent.getComponentType(), new PoisonComponent());
         }
     }
-
-
-    static {
-        CODEC = BuilderCodec.builder(PoisonPerk.class, PoisonPerk::new, Perk.BASE_CODEC).build();
-    }
-
-    /*@NullableDecl
-    @Override
-    public Component<EntityStore> clone() {
-        return new PoisonPerk(this);
-    }*/
 }

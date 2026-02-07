@@ -22,11 +22,11 @@ public abstract class Perk implements NetworkSerializable<PerkProtocol> {
     public static final boolean DEFAULT_ENABLED = true;
     public static final boolean DEFAULT_UNLOCKED = false;
     private String id;
-    private boolean enabled;
-    private boolean unlocked;
+    protected boolean enabled;
+    protected boolean unlocked;
 
     public Perk() {
-        this(DEFAULT_ID, DEFAULT_ENABLED, DEFAULT_UNLOCKED);
+        //this(DEFAULT_ID, DEFAULT_ENABLED, DEFAULT_UNLOCKED);
     }
 
 

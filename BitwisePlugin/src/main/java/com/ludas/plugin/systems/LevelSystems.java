@@ -5,6 +5,7 @@ import com.hypixel.hytale.protocol.packets.inventory.SetActiveSlot;
 import com.hypixel.hytale.server.core.io.PacketHandler;
 import com.ludas.plugin.TestPlugin;
 import com.ludas.plugin.clazz.Perk;
+import com.ludas.plugin.clazz.PerkId;
 import com.ludas.plugin.components.LevelComponent;
 import com.ludas.plugin.events.GiveXPEvent;
 import com.hypixel.hytale.component.*;
@@ -50,15 +51,16 @@ public class LevelSystems {
                 Player player = archetypeChunk.getComponent(idx, Player.getComponentType());
                 if(player == null) return;
 
-                List<Perk> perks = level.getPerksAsList();
-                if(perks == null) return;
-                for(Perk perk : perks) {
-                    if(!perk.isUnlocked()) {
-                        perk.unlockCondition(dt, idx, archetypeChunk, store, commandBuffer);
+                TestPlugin.LOGGER.atInfo().log("Perk id values: " +PerkId.values().length);
+                for(int i = 0; i < PerkId.values().length-1; ++i) {
+                    if(!level.isPerkUnlocked(i)) {
+                        Perk perk = level.getPerkById(i);
+                        if(perk != null) perk.unlockCondition(dt, idx, archetypeChunk, store, commandBuffer);
                     }
                     else {
-                        if(!perk.isEnabled()) continue;
-                        perk.tick(dt, idx, archetypeChunk, store, commandBuffer);
+                        if(!level.isPerkEnabled(i)) continue;
+                        Perk perk = level.getPerkById(i);
+                        if(perk != null) perk.tick(dt, idx, archetypeChunk, store, commandBuffer);
                     }
                 }
             }
@@ -86,7 +88,6 @@ public class LevelSystems {
                 int rand = new Random().nextInt(1, 100);
                 holder.putComponent(LevelComponent.getComponentType(), new LevelComponent(rand));
                 level = holder.getComponent(LevelComponent.getComponentType());
-                TestPlugin.LOGGER.atInfo().log(level.toString());
             }
 
         }
@@ -121,18 +122,20 @@ public class LevelSystems {
             LevelComponent level = store.getComponent(ref, component);
             if(level == null) {
                 level = new LevelComponent();
-                level.registerPerks();
                 commandBuffer.putComponent(ref, component, level);
                 playerRef.sendMessage(Message.raw("Adicionado sistema de Nível").color(Color.ORANGE).bold(true));
             }
             else {
-                playerRef.sendMessage(
-                        Message.raw("Level: %d (%.2f XP)".formatted(level.getLevel(), level.getCurrentExperience()))
-                                .color(Color.ORANGE).bold(true));
-                List<Perk> perks = level.getPerksAsList();
-                for(Perk perk : perks) {
-                    playerRef.sendMessage(Message.raw("Level:" + perk.toString()));
-                }
+                playerRef.sendMessage(Message.raw("Level: %d (%.2f XP)".formatted(
+                                level.getLevel(), level.getCurrentExperience()))
+                        .color(Color.ORANGE).bold(true));
+
+                /*for(int i = 0; i < PerkId.values().length; ++i) {
+                        if(!level.isPerkUnlocked(i)) continue;
+                        if(!level.isPerkEnabled(i)) continue;
+                        Perk perk = level.getPerkById(i);
+                        perk.tick(dt, idx, archetypeChunk, store, commandBuffer);
+                }*/
             }
         }
 

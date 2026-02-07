@@ -49,7 +49,7 @@ public class PerkProtocol {
         PerkProtocol obj = new PerkProtocol();
         obj.enabled = buf.getBoolean(offset + 0);
         obj.unlocked = buf.getBoolean(offset + 1);
-        int varPos0 = offset + 91 + buf.getIntLE(offset + 0);
+        int varPos0 = offset + 91 + buf.getIntLE(offset + 2);
         int assetIdLen = VarInt.peek(buf, varPos0);
         if (assetIdLen < 0) {
             throw ProtocolException.negativeLength("AssetId", assetIdLen);

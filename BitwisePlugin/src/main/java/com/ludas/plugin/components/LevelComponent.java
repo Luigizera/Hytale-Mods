@@ -3,28 +3,23 @@ package com.ludas.plugin.components;
 import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.builder.BuilderCodec;
-import com.hypixel.hytale.codec.codecs.map.MapCodec;
 import com.hypixel.hytale.codec.validation.Validators;
 import com.hypixel.hytale.component.Component;
 import com.hypixel.hytale.component.ComponentType;
-import com.hypixel.hytale.server.core.modules.entitystats.EntityStatValue;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.ludas.plugin.clazz.Perk;
+import com.ludas.plugin.clazz.PerkId;
 import com.ludas.plugin.perks.PoisonPerk;
 import com.ludas.plugin.perks.StatusPerk;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class LevelComponent implements Component<EntityStore> {
     public static final BuilderCodec<LevelComponent> CODEC;
     private static ComponentType<EntityStore, LevelComponent> TYPE;
     public static final int MULTIPLIER = 100;
     public static final int START_LEVEL = 1;
-    private Map<String, Perk> perks;
+    private int[] perks; //ints: 0 = unlock, 1 = enable
     private int level;
     private float experienceCurrent;
     private float experienceNextLevel;
@@ -32,25 +27,21 @@ public class LevelComponent implements Component<EntityStore> {
     public LevelComponent(int level) {
         this.level = level <= 0 ? START_LEVEL : level;
         this.experienceCurrent = 0f;
-        this.perks = new Object2ObjectOpenHashMap<>();
+        this.perks = new int[2];
         this.experienceNextLevel = this.getExperienceToNextLevel();
     }
 
     public LevelComponent() {
         this.level = START_LEVEL;
         this.experienceCurrent = 0.0F;
-        this.perks = new Object2ObjectOpenHashMap<>();
+        this.perks = new int[2];
         this.experienceNextLevel = this.getExperienceToNextLevel();
     }
 
     public LevelComponent(LevelComponent other) {
-        this.level = other.getLevel();
-        this.experienceCurrent = other.getCurrentExperience();
-        this.perks = new HashMap<>();
-        List<Perk> otherPerks = other.getPerksAsList();
-        for(Perk perk : otherPerks) {
-            this.perks.put(perk.getId(), perk);
-        }
+        this.level = other.level;
+        this.experienceCurrent = other.experienceCurrent;
+        this.perks = other.perks;
         this.experienceNextLevel = other.getExperienceToNextLevel();
     }
 
@@ -74,29 +65,67 @@ public class LevelComponent implements Component<EntityStore> {
         return this.level;
     }
 
-    public List<Perk> getPerksAsList() {
-        return perks.values().stream().toList();
+    private boolean isValid(int FLAG_ID) {
+        return perks != null
+                && perks.length == 2
+                && FLAG_ID >= 0
+                && FLAG_ID < PerkId.CURRENT_PERK_COUNT.ordinal();
+    }
+    public void setUnlocked(int FLAG_ID) {
+        if(!isValid(FLAG_ID)) throw new RuntimeException("Perk is not valid in setUnlocked");
+        perks[0] |= (1 << FLAG_ID);
     }
 
-    public Perk getPerk(String id) {
-        return perks.getOrDefault(id, null);
+    public boolean isPerkUnlocked(int FLAG_ID) {
+        if(!isValid(FLAG_ID)) return false;
+        int unlocked = perks[0];
+        return (unlocked & (1 << FLAG_ID)) != 0;
     }
 
-    public void putPerk(Perk perk) {
-        if (this.perks == null) {
-            this.perks = new Object2ObjectOpenHashMap<>();
+    public boolean isPerkEnabled(int FLAG_ID) {
+        if(!isValid(FLAG_ID)) return false;
+        int enabled = perks[1];
+        return (enabled & (1 << FLAG_ID)) != 0;
+    }
+
+    public int getPerkIdByName(String name) {
+        return switch (name.toUpperCase()) {
+            case "POISON" -> PerkId.POISON_PERK.ordinal();
+            case "STATUS" -> PerkId.STATUS_PERK.ordinal();
+            default -> -1;
+        };
+    }
+
+    //TODO: Make perkid possible
+    public String getPerkNameById(int FLAG_ID) {
+        return switch (FLAG_ID) {
+            case 0 -> PoisonPerk.NAME;
+            case 1 -> StatusPerk.NAME;
+            default -> "unknown";
+        };
+    }
+
+    //TODO: Make perkid possible
+    public Perk getPerkById(int FLAG_ID) {
+        return switch (FLAG_ID) {
+            case 0 -> new PoisonPerk();
+            case 1 -> new StatusPerk();
+            default -> null;
+        };
+    }
+
+    public void enableOrDisablePerk(int FLAG_ID) {
+        if(FLAG_ID < 0) return;
+        if(isValid(FLAG_ID)) {
+            if(isPerkUnlocked(FLAG_ID)) {
+                if(isPerkEnabled(FLAG_ID)) {
+                    perks[1] -= (1 << FLAG_ID);
+                }
+                else {
+                    perks[1] |= (1 << FLAG_ID);
+                }
+            }
         }
-        perks.put(perk.getId(), perk);
-    }
-
-    public boolean enableOrDisablePerk(String perk) {
-        Perk perk1 = perks.getOrDefault(perk, null);
-        if(perk1 != null && perk1.isUnlocked()) {
-            perk1.setEnabled();
-            perks.replace(perk1.getId(), perk1);
-            return perk1.isEnabled();
-        }
-        return false;
     }
 
     public boolean addExperience(float exp) {
@@ -126,23 +155,10 @@ public class LevelComponent implements Component<EntityStore> {
                 ", toNext=" + getExperienceToNextLevel() + "}";
     }
 
-    public void registerPerks() {
-        if(perks == null || perks.isEmpty()) {
-            perks = new HashMap<>();
-            perks.put(PoisonPerk.ID, new PoisonPerk());
-            perks.put(StatusPerk.ID, new StatusPerk());
-        }
-        else {
-            perks.putIfAbsent(PoisonPerk.ID, new PoisonPerk());
-            perks.putIfAbsent(StatusPerk.ID, new StatusPerk());
-        }
-    }
-
     @NullableDecl
     @Override
     public Component<EntityStore> clone() {
         LevelComponent level = new LevelComponent(this);
-        level.registerPerks();
         return level;
     }
 
@@ -164,10 +180,11 @@ public class LevelComponent implements Component<EntityStore> {
                                 data -> data.experienceCurrent)
                         .addValidator(Validators.nonNull())
                         .add()
-                        .append(new KeyedCodec<>("Perks",
-                                new MapCodec(Perk.MAP_CODEC, HashMap::new, false)),
+                        .append(
+                                new KeyedCodec("Perks", Codec.INT_ARRAY),
                                 (data, value) -> data.perks = value,
-                                (data) -> data.perks != null && !data.perks.isEmpty() ? data.perks : null)
+                                (data) -> data.perks)
+                        .addValidator(Validators.nonNull())
                         .add()
                         .build();
 
