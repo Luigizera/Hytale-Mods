@@ -1,7 +1,7 @@
 package com.ludas.plugin.clazz;
 
-public enum PerkId {
-    POISON_PERK,
-    STATUS_PERK,
-    CURRENT_PERK_COUNT;
+public class PerkId {
+    public static final int POISON_PERK = 0;
+    public static final int STATUS_PERK = 1;
+    public static final int CURRENT_PERK_COUNT = 2;
 }

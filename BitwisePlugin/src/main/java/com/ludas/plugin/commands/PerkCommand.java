@@ -27,6 +27,7 @@ import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import java.awt.*;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class PerkCommand extends AbstractPlayerCommand {
     private final DefaultArg<String> enablePerk;
@@ -48,17 +49,19 @@ public class PerkCommand extends AbstractPlayerCommand {
 
         if(enablePerk.get(context) != null) {
             int perkId = level.getPerkIdByName(enablePerk.get(context));
-            String perkName = level.getPerkNameById(perkId);
-            if(!level.isPerkUnlocked(perkId)) {
-                player.sendMessage(Message.translation("server.commands.ludas.perk.unlock.condition." + perkName).color(Color.PINK).bold(true));
-            }
-            else {
-                level.enableOrDisablePerk(perkId);
+            if(perkId >= 0) {
+                String perkName = level.getPerkNameById(perkId);
+                if(!level.isPerkUnlocked(perkId)) {
+                    player.sendMessage(Message.translation("server.commands.ludas.perk.unlock.condition." + perkName).color(Color.PINK).bold(true));
+                }
+                else {
+                    level.enableOrDisablePerk(perkId);
+                }
             }
         }
 
         ObjectArrayList<Message> values = new ObjectArrayList<>(statMap.size());
-        for(int i = 0; i < PerkId.values().length; ++i) {
+        for(int i = 0; i < PerkId.CURRENT_PERK_COUNT; ++i) {
             boolean unlocked = level.isPerkUnlocked(i);
             if(unlocked) {
                 Perk perk = level.getPerkById(i);
@@ -69,7 +72,7 @@ public class PerkCommand extends AbstractPlayerCommand {
                 if(modifiers == null || modifiers.isEmpty()) continue;
                 for(var modifier : modifiers.entrySet()) {
                     Integer index = modifier.getKey();
-                    if(index >= statMap.size() || index < 0 || index == null) {
+                    if(index >= statMap.size() || index < 0) {
                         throw new UnsupportedOperationException("Wrong implementation of Perk Index: " + index);
                     }
                     StaticModifier staticModifier = modifier.getValue();
@@ -82,7 +85,7 @@ public class PerkCommand extends AbstractPlayerCommand {
                     else {
                         statMap.removeModifier(index, perkName);
                     }
-                    strModifier += " || "+ statMap.get(index).getId() + ": "
+                    strModifier += " || "+ Objects.requireNonNull(statMap.get(index)).getId() + ": "
                             + (staticModifier.getCalculationType() == StaticModifier.CalculationType.ADDITIVE ? "+": "x")
                             + staticModifier.getAmount();
                 }
@@ -90,8 +93,7 @@ public class PerkCommand extends AbstractPlayerCommand {
                 values.add(Message.raw(" "));
                 values.add(Message.translation("server.commands.ludas.perk.info." + perkName).param("modifier", strModifier));
             }
-            player.sendMessage(MessageFormat.list((Message)null, values));
         }
-
+        player.sendMessage(MessageFormat.list((Message)null, values));
     }
 }

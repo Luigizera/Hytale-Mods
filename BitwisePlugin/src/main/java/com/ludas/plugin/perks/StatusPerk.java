@@ -64,7 +64,7 @@ public class StatusPerk extends Perk {
         if(level == null) return;
 
         if(level.getLevel() <= 1) return;
-        level.setUnlocked(PerkId.STATUS_PERK.ordinal());
+        level.setUnlocked(PerkId.STATUS_PERK);
         player.sendMessage(Message.translation("server.perks.ludas.unlocked").param("id", NAME));
     }
 

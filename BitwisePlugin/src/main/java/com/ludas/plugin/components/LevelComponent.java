@@ -19,6 +19,7 @@ public class LevelComponent implements Component<EntityStore> {
     private static ComponentType<EntityStore, LevelComponent> TYPE;
     public static final int MULTIPLIER = 100;
     public static final int START_LEVEL = 1;
+    public static final int PERK_LENGTH = 2;
     private int[] perks; //ints: 0 = unlock, 1 = enable
     private int level;
     private float experienceCurrent;
@@ -27,14 +28,14 @@ public class LevelComponent implements Component<EntityStore> {
     public LevelComponent(int level) {
         this.level = level <= 0 ? START_LEVEL : level;
         this.experienceCurrent = 0f;
-        this.perks = new int[2];
+        this.perks = new int[PERK_LENGTH];
         this.experienceNextLevel = this.getExperienceToNextLevel();
     }
 
     public LevelComponent() {
         this.level = START_LEVEL;
         this.experienceCurrent = 0.0F;
-        this.perks = new int[2];
+        this.perks = new int[PERK_LENGTH];
         this.experienceNextLevel = this.getExperienceToNextLevel();
     }
 
@@ -69,7 +70,7 @@ public class LevelComponent implements Component<EntityStore> {
         return perks != null
                 && perks.length == 2
                 && FLAG_ID >= 0
-                && FLAG_ID < PerkId.CURRENT_PERK_COUNT.ordinal();
+                && FLAG_ID < PerkId.CURRENT_PERK_COUNT;
     }
     public void setUnlocked(int FLAG_ID) {
         if(!isValid(FLAG_ID)) throw new RuntimeException("Perk is not valid in setUnlocked");
@@ -90,8 +91,8 @@ public class LevelComponent implements Component<EntityStore> {
 
     public int getPerkIdByName(String name) {
         return switch (name.toUpperCase()) {
-            case "POISON" -> PerkId.POISON_PERK.ordinal();
-            case "STATUS" -> PerkId.STATUS_PERK.ordinal();
+            case "POISON" -> PerkId.POISON_PERK;
+            case "STATUS" -> PerkId.STATUS_PERK;
             default -> -1;
         };
     }
@@ -99,8 +100,8 @@ public class LevelComponent implements Component<EntityStore> {
     //TODO: Make perkid possible
     public String getPerkNameById(int FLAG_ID) {
         return switch (FLAG_ID) {
-            case 0 -> PoisonPerk.NAME;
-            case 1 -> StatusPerk.NAME;
+            case PerkId.POISON_PERK -> PoisonPerk.NAME;
+            case PerkId.STATUS_PERK -> StatusPerk.NAME;
             default -> "unknown";
         };
     }
@@ -108,8 +109,8 @@ public class LevelComponent implements Component<EntityStore> {
     //TODO: Make perkid possible
     public Perk getPerkById(int FLAG_ID) {
         return switch (FLAG_ID) {
-            case 0 -> new PoisonPerk();
-            case 1 -> new StatusPerk();
+            case PerkId.POISON_PERK -> new PoisonPerk();
+            case PerkId.STATUS_PERK -> new StatusPerk();
             default -> null;
         };
     }

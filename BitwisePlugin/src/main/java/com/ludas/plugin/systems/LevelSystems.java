@@ -51,8 +51,8 @@ public class LevelSystems {
                 Player player = archetypeChunk.getComponent(idx, Player.getComponentType());
                 if(player == null) return;
 
-                TestPlugin.LOGGER.atInfo().log("Perk id values: " +PerkId.values().length);
-                for(int i = 0; i < PerkId.values().length-1; ++i) {
+
+                for(int i = 0; i < PerkId.CURRENT_PERK_COUNT; ++i) {
                     if(!level.isPerkUnlocked(i)) {
                         Perk perk = level.getPerkById(i);
                         if(perk != null) perk.unlockCondition(dt, idx, archetypeChunk, store, commandBuffer);

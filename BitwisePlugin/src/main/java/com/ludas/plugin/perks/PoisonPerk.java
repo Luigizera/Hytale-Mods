@@ -63,7 +63,7 @@ public class PoisonPerk extends Perk{
         if(level.getLevel() <= 1) {
             return;
         }
-        level.setUnlocked(PerkId.POISON_PERK.ordinal());
+        level.setUnlocked(PerkId.POISON_PERK);
         player.sendMessage(Message.translation("server.perks.ludas.unlocked").param("id", NAME));
     }
 
