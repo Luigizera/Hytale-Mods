@@ -5,7 +5,6 @@ import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
 import com.hypixel.hytale.server.core.command.system.arguments.system.DefaultArg;
-import com.hypixel.hytale.server.core.command.system.arguments.system.OptionalArg;
 import com.hypixel.hytale.server.core.command.system.arguments.types.ArgTypes;
 import com.hypixel.hytale.server.core.command.system.basecommands.AbstractPlayerCommand;
 import com.hypixel.hytale.server.core.entity.entities.Player;
@@ -16,11 +15,9 @@ import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.hypixel.hytale.server.core.util.message.MessageFormat;
-import com.ludas.plugin.TestPlugin;
 import com.ludas.plugin.clazz.Perk;
 import com.ludas.plugin.clazz.PerkId;
 import com.ludas.plugin.components.LevelComponent;
-import com.ludas.plugin.perks.PoisonPerk;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
@@ -60,7 +57,7 @@ public class PerkCommand extends AbstractPlayerCommand {
             }
         }
 
-        ObjectArrayList<Message> values = new ObjectArrayList<>(statMap.size());
+        ObjectArrayList<Message> values = new ObjectArrayList<>(PerkId.CURRENT_PERK_COUNT);
         for(int i = 0; i < PerkId.CURRENT_PERK_COUNT; ++i) {
             boolean unlocked = level.isPerkUnlocked(i);
             if(unlocked) {
@@ -69,29 +66,35 @@ public class PerkCommand extends AbstractPlayerCommand {
                 String strModifier = "";
                 boolean enabled = level.isPerkEnabled(i);
                 Map<Integer, StaticModifier> modifiers = perk.setupModifiers();
-                if(modifiers == null || modifiers.isEmpty()) continue;
-                for(var modifier : modifiers.entrySet()) {
-                    Integer index = modifier.getKey();
-                    if(index >= statMap.size() || index < 0) {
-                        throw new UnsupportedOperationException("Wrong implementation of Perk Index: " + index);
+                if(modifiers != null && !modifiers.isEmpty()) {
+                    for(var modifier : modifiers.entrySet()) {
+                        Integer index = modifier.getKey();
+                        if(index >= statMap.size() || index < 0) {
+                            throw new UnsupportedOperationException("Wrong implementation of Perk Index: " + index);
+                        }
+                        StaticModifier staticModifier = modifier.getValue();
+                        if(staticModifier == null) {
+                            throw new UnsupportedOperationException("Wrong implementation of Perk StaticModifier: " + staticModifier);
+                        }
+                        if(enabled) {
+                            statMap.putModifier(index, perkName, staticModifier);
+                        }
+                        else {
+                            statMap.removeModifier(index, perkName);
+
+                        }
+                        strModifier += " || "+ Objects.requireNonNull(statMap.get(index)).getId() + ": "
+                                + (staticModifier.getCalculationType() == StaticModifier.CalculationType.ADDITIVE ? "+": "x")
+                                + staticModifier.getAmount();
                     }
-                    StaticModifier staticModifier = modifier.getValue();
-                    if(staticModifier == null) {
-                        throw new UnsupportedOperationException("Wrong implementation of Perk StaticModifier: " + staticModifier);
-                    }
-                    if(enabled) {
-                        statMap.putModifier(index, perkName, staticModifier);
-                    }
-                    else {
-                        statMap.removeModifier(index, perkName);
-                    }
-                    strModifier += " || "+ Objects.requireNonNull(statMap.get(index)).getId() + ": "
-                            + (staticModifier.getCalculationType() == StaticModifier.CalculationType.ADDITIVE ? "+": "x")
-                            + staticModifier.getAmount();
                 }
-                values.add(Message.translation("server.commands.ludas.perk.info").param("id", perkName).param("enabled", enabled).param("unlocked", unlocked));
-                values.add(Message.raw(" "));
-                values.add(Message.translation("server.commands.ludas.perk.info." + perkName).param("modifier", strModifier));
+
+                values.add(Message.join(
+                        Message.translation("server.commands.ludas.perk.info")
+                                .param("id", perkName).param("enabled", enabled).param("unlocked", unlocked),
+                        Message.translation("server.commands.ludas.perk.info." + perkName)
+                                .param("modifier", strModifier)).bold(true)
+                );
             }
         }
         player.sendMessage(MessageFormat.list((Message)null, values));

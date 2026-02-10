@@ -39,12 +39,12 @@ public class TestPage extends InteractiveCustomUIPage<TestPage.GreetEventData> {
 
     @Override
     public void build(@NonNullDecl Ref<EntityStore> ref,
-                      @NonNullDecl UICommandBuilder cmd,
-                      @NonNullDecl UIEventBuilder evt,
+                      @NonNullDecl UICommandBuilder commandBuilder,
+                      @NonNullDecl UIEventBuilder eventBuilder,
                       @NonNullDecl Store<EntityStore> store) {
-        cmd.append("Pages/TestPage.ui");
+        commandBuilder.append("Pages/TestPage.ui");
 
-        evt.addEventBinding(
+        eventBuilder.addEventBinding(
                 CustomUIEventBindingType.Activating,
                 "#GreetButton",
                 new EventData().append("@PlayerName", "#NameInput.Value")

@@ -1,6 +1,5 @@
 package com.ludas.plugin.perks;
 
-import com.hypixel.hytale.codec.builder.BuilderCodec;
 import com.hypixel.hytale.component.*;
 import com.hypixel.hytale.protocol.GameMode;
 import com.hypixel.hytale.server.core.Message;
@@ -52,17 +51,15 @@ public class PoisonPerk extends Perk{
     }
 
     @Override
-    public void unlockCondition(float dt, int idx, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
-                                 @NonNullDecl Store<EntityStore> store, @NonNullDecl CommandBuffer<EntityStore> commandBuffer) {
-        Player player = archetypeChunk.getComponent(idx, Player.getComponentType());
-        if(player == null) return;
-
-        LevelComponent level = archetypeChunk.getComponent(idx, LevelComponent.getComponentType());;
+    public void unlockCondition(int idx, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk) {
+        LevelComponent level = archetypeChunk.getComponent(idx, LevelComponent.getComponentType());
         if(level == null) return;
 
         if(level.getLevel() <= 1) {
             return;
         }
+        Player player = archetypeChunk.getComponent(idx, Player.getComponentType());
+        if(player == null) return;
         level.setUnlocked(PerkId.POISON_PERK);
         player.sendMessage(Message.translation("server.perks.ludas.unlocked").param("id", NAME));
     }
@@ -73,7 +70,7 @@ public class PoisonPerk extends Perk{
         Player player = archetypeChunk.getComponent(idx, Player.getComponentType());
         if(player == null) return;
 
-        if(player.getGameMode() == GameMode.Creative) return;
+        if(player.getGameMode() != GameMode.Adventure) return;
         Ref<EntityStore> playerRef = player.getReference();
         if(playerRef == null) return;
         EntityStatMap statMap = archetypeChunk.getComponent(idx, EntityStatMap.getComponentType());
@@ -81,13 +78,21 @@ public class PoisonPerk extends Perk{
         EntityStatValue entityHealth = statMap.get(DefaultEntityStatTypes.getHealth());
         if(entityHealth == null) return;
 
-
         float percentage =  entityHealth.get() / entityHealth.getMax();
-
         if(percentage >= 0.7) {
             PoisonComponent poison = archetypeChunk.getComponent(idx, PoisonComponent.getComponentType());
             if(poison != null) return;
             commandBuffer.addComponent(playerRef, PoisonComponent.getComponentType(), new PoisonComponent());
         }
+    }
+
+    @Override
+    public void removeComponents(int idx, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
+                                 @NonNullDecl CommandBuffer<EntityStore> commandBuffer) {
+        Player player = archetypeChunk.getComponent(idx, Player.getComponentType());
+        if(player == null) return;
+        Ref<EntityStore> playerRef = player.getReference();
+        if(playerRef == null) return;
+        commandBuffer.tryRemoveComponent(playerRef, PoisonComponent.getComponentType());
     }
 }

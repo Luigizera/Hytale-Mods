@@ -7,6 +7,7 @@ import com.hypixel.hytale.codec.lookup.CodecMapCodec;
 import com.hypixel.hytale.component.ArchetypeChunk;
 import com.hypixel.hytale.component.CommandBuffer;
 import com.hypixel.hytale.component.Store;
+import com.hypixel.hytale.server.core.modules.entitystats.modifier.Modifier;
 import com.hypixel.hytale.server.core.modules.entitystats.modifier.StaticModifier;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
@@ -17,7 +18,7 @@ import java.util.Map;
 public abstract class Perk {
     public static final BuilderCodec<Perk> BASE_CODEC;
     public static final CodecMapCodec<Status> MAP_CODEC = new CodecMapCodec<>();
-
+Modifier
     private String id;
     protected boolean enabled;
     protected boolean unlocked;

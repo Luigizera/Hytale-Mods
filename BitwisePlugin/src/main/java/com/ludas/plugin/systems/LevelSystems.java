@@ -1,5 +1,6 @@
 package com.ludas.plugin.systems;
 
+import com.hypixel.hytale.component.system.tick.DelayedEntitySystem;
 import com.hypixel.hytale.component.system.tick.EntityTickingSystem;
 import com.hypixel.hytale.protocol.packets.inventory.SetActiveSlot;
 import com.hypixel.hytale.server.core.io.PacketHandler;
@@ -31,8 +32,12 @@ import java.util.Random;
 
 public class LevelSystems {
 
-    public static class PerkTick extends EntityTickingSystem<EntityStore> {
-        float limiter = 0f;
+    public static class PerkTick extends DelayedEntitySystem<EntityStore> {
+
+        public PerkTick() {
+            super(5f);
+        }
+
         @NullableDecl
         @Override
         public Query<EntityStore> getQuery() {
@@ -43,24 +48,23 @@ public class LevelSystems {
         public void tick(float dt, int idx, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
                          @NonNullDecl Store<EntityStore> store,
                          @NonNullDecl CommandBuffer<EntityStore> commandBuffer) {
-            limiter += dt;
-            if (limiter >= 5f) {
-                limiter = 0;
-                LevelComponent level = archetypeChunk.getComponent(idx, LevelComponent.getComponentType());
-                if(level == null) return;
-                Player player = archetypeChunk.getComponent(idx, Player.getComponentType());
-                if(player == null) return;
+            LevelComponent level = archetypeChunk.getComponent(idx, LevelComponent.getComponentType());
+            if(level == null) return;
+            Player player = archetypeChunk.getComponent(idx, Player.getComponentType());
+            if(player == null) return;
 
-
-                for(int i = 0; i < PerkId.CURRENT_PERK_COUNT; ++i) {
-                    if(!level.isPerkUnlocked(i)) {
-                        Perk perk = level.getPerkById(i);
-                        if(perk != null) perk.unlockCondition(dt, idx, archetypeChunk, store, commandBuffer);
+            for(int i = 0; i < PerkId.CURRENT_PERK_COUNT; ++i) {
+                Perk perk = level.getPerkById(i);
+                if(perk == null) continue;
+                if(!level.isPerkUnlocked(i)) {
+                    perk.unlockCondition(idx, archetypeChunk);
+                }
+                else {
+                    if(!level.isPerkEnabled(i)) {
+                        perk.removeComponents(idx, archetypeChunk, commandBuffer);
                     }
-                    else {
-                        if(!level.isPerkEnabled(i)) continue;
-                        Perk perk = level.getPerkById(i);
-                        if(perk != null) perk.tick(dt, idx, archetypeChunk, store, commandBuffer);
+                    else{
+                        perk.tick(dt, idx, archetypeChunk, store, commandBuffer);
                     }
                 }
             }

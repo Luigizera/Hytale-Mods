@@ -39,13 +39,13 @@ public class StatusPerk extends Perk {
         StaticModifier modifier1 = new StaticModifier(
                 Modifier.ModifierTarget.MAX,
                 StaticModifier.CalculationType.ADDITIVE,
-                20.0f
+                5.0f
         );
 
         StaticModifier modifier2 = new StaticModifier(
                 Modifier.ModifierTarget.MAX,
                 StaticModifier.CalculationType.ADDITIVE,
-                10.0f
+                5.0f
         );
 
         modifiers.put(healthIndex, modifier1);
@@ -55,8 +55,7 @@ public class StatusPerk extends Perk {
     }
 
     @Override
-    public void unlockCondition(float dt, int idx, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
-                                 @NonNullDecl Store<EntityStore> store, @NonNullDecl CommandBuffer<EntityStore> commandBuffer) {
+    public void unlockCondition(int idx, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk) {
         Player player = archetypeChunk.getComponent(idx, Player.getComponentType());
         if(player == null) return;
 
@@ -71,6 +70,12 @@ public class StatusPerk extends Perk {
     @Override
     public void tick(float dt, int idx, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
                      @NonNullDecl Store<EntityStore> store, @NonNullDecl CommandBuffer<EntityStore> commandBuffer) {
+        return;
+    }
+
+    @Override
+    public void removeComponents(int idx, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
+                                 @NonNullDecl CommandBuffer<EntityStore> commandBuffer) {
         return;
     }
 

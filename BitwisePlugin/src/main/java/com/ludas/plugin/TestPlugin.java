@@ -42,7 +42,7 @@ public class TestPlugin extends JavaPlugin {
     protected void setup() {
         super.setup();
         LOGGER.atInfo().log("TestPlugin loading...");
-        PlayerPacketTracker.registerPacketCounters();
+        //PlayerPacketTracker.registerPacketCounters();
 
         registerEntities();
         registerEvents();
