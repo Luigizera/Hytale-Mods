@@ -1,4 +1,4 @@
-package com.ludas.plugin.perks;
+package com.ludas.plugin.perks.general;
 
 import com.hypixel.hytale.component.*;
 import com.hypixel.hytale.protocol.GameMode;
@@ -12,8 +12,8 @@ import com.hypixel.hytale.server.core.modules.entitystats.modifier.StaticModifie
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.ludas.plugin.clazz.Perk;
 import com.ludas.plugin.clazz.PerkId;
-import com.ludas.plugin.components.LevelComponent;
-import com.ludas.plugin.components.PoisonComponent;
+import com.ludas.plugin.components.effects.PoisonComponent;
+import com.ludas.plugin.components.entity.StrengthComponent;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
 import java.util.HashMap;
@@ -52,19 +52,18 @@ public class PoisonPerk extends Perk{
 
     @Override
     public void unlockCondition(int idx, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk) {
-        LevelComponent level = archetypeChunk.getComponent(idx, LevelComponent.getComponentType());
-        if(level == null) return;
+        StrengthComponent strength = archetypeChunk.getComponent(idx, StrengthComponent.getComponentType());
+        if(strength == null) return;
 
-        if(level.getLevel() <= 1) {
+        if(strength.getLevelComponent().getLevel() <= 2) {
             return;
         }
         Player player = archetypeChunk.getComponent(idx, Player.getComponentType());
         if(player == null) return;
-        level.setUnlocked(PerkId.POISON_PERK);
+        strength.setUnlocked(PerkId.POISON_PERK);
         player.sendMessage(Message.translation("server.perks.ludas.unlocked").param("id", NAME));
     }
 
-    @Override
     public void tick(float dt, int idx, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
                      @NonNullDecl Store<EntityStore> store, @NonNullDecl CommandBuffer<EntityStore> commandBuffer) {
         Player player = archetypeChunk.getComponent(idx, Player.getComponentType());
@@ -86,7 +85,6 @@ public class PoisonPerk extends Perk{
         }
     }
 
-    @Override
     public void removeComponents(int idx, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
                                  @NonNullDecl CommandBuffer<EntityStore> commandBuffer) {
         Player player = archetypeChunk.getComponent(idx, Player.getComponentType());

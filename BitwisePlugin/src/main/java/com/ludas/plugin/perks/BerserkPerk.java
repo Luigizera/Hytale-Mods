@@ -1,6 +1,9 @@
 package com.ludas.plugin.perks;
 
-import com.hypixel.hytale.component.*;
+import com.hypixel.hytale.component.ArchetypeChunk;
+import com.hypixel.hytale.component.CommandBuffer;
+import com.hypixel.hytale.component.Ref;
+import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.protocol.GameMode;
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.entity.entities.Player;
@@ -19,10 +22,10 @@ import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PoisonPerk extends Perk{
-    public static final String NAME = "poison";
+public class BerserkPerk extends Perk{
+    public static final String NAME = "berserk";
 
-    public PoisonPerk() {
+    public BerserkPerk() {
     }
 
     @Override
@@ -35,13 +38,13 @@ public class PoisonPerk extends Perk{
         StaticModifier modifier1 = new StaticModifier(
                 Modifier.ModifierTarget.MAX,
                 StaticModifier.CalculationType.ADDITIVE,
-                50.0f
+                -50.0f
         );
 
         StaticModifier modifier2 = new StaticModifier(
                 Modifier.ModifierTarget.MAX,
                 StaticModifier.CalculationType.ADDITIVE,
-                50.0f
+                20.0f
         );
 
         modifiers.put(healthIndex, modifier1);
@@ -80,7 +83,7 @@ public class PoisonPerk extends Perk{
 
         float percentage =  entityHealth.get() / entityHealth.getMax();
         if(percentage >= 0.7) {
-            PoisonComponent poison = store.getComponent(playerRef, PoisonComponent.getComponentType());
+            PoisonComponent poison = archetypeChunk.getComponent(idx, PoisonComponent.getComponentType());
             if(poison != null) return;
             commandBuffer.addComponent(playerRef, PoisonComponent.getComponentType(), new PoisonComponent());
         }

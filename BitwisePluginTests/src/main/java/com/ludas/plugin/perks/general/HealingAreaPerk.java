@@ -1,7 +1,6 @@
-package com.ludas.plugin.perks;
+package com.ludas.plugin.perks.general;
 
 import com.hypixel.hytale.component.*;
-import com.hypixel.hytale.math.vector.Vector2d;
 import com.hypixel.hytale.math.vector.Vector3d;
 import com.hypixel.hytale.math.vector.Vector3f;
 import com.hypixel.hytale.protocol.GameMode;
@@ -15,23 +14,15 @@ import com.hypixel.hytale.server.core.modules.entity.component.ModelComponent;
 import com.hypixel.hytale.server.core.modules.entity.component.PersistentModel;
 import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
 import com.hypixel.hytale.server.core.modules.entity.tracker.NetworkId;
-import com.hypixel.hytale.server.core.modules.entitystats.EntityStatMap;
-import com.hypixel.hytale.server.core.modules.entitystats.EntityStatValue;
-import com.hypixel.hytale.server.core.modules.entitystats.asset.DefaultEntityStatTypes;
-import com.hypixel.hytale.server.core.modules.entitystats.modifier.Modifier;
 import com.hypixel.hytale.server.core.modules.entitystats.modifier.StaticModifier;
-import com.hypixel.hytale.server.core.universe.world.events.AddWorldEvent;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
-import com.ludas.plugin.TestPlugin;
 import com.ludas.plugin.clazz.Perk;
 import com.ludas.plugin.clazz.PerkId;
 import com.ludas.plugin.clazz.Vector2dClean;
-import com.ludas.plugin.components.LevelComponent;
-import com.ludas.plugin.components.PoisonComponent;
+import com.ludas.plugin.components.entity.StrengthComponent;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -49,19 +40,18 @@ public class HealingAreaPerk extends Perk{
 
     @Override
     public void unlockCondition(int idx, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk) {
-        LevelComponent level = archetypeChunk.getComponent(idx, LevelComponent.getComponentType());
-        if(level == null) return;
+        StrengthComponent strength = archetypeChunk.getComponent(idx, StrengthComponent.getComponentType());
+        if(strength == null) return;
 
-        if(level.getLevel() <= 2) {
+        if(strength.getLevelComponent().getLevel() <= 2) {
             return;
         }
         Player player = archetypeChunk.getComponent(idx, Player.getComponentType());
         if(player == null) return;
-        level.setUnlocked(PerkId.HEALING_AREA);
+        strength.setUnlocked(PerkId.HEALING_AREA);
         player.sendMessage(Message.translation("server.perks.ludas.unlocked").param("id", NAME));
     }
 
-    @Override
     public void tick(float dt, int idx, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
                      @NonNullDecl Store<EntityStore> store, @NonNullDecl CommandBuffer<EntityStore> commandBuffer) {
         Player player = archetypeChunk.getComponent(idx, Player.getComponentType());
@@ -133,7 +123,6 @@ public class HealingAreaPerk extends Perk{
         return list;
     }
 
-    @Override
     public void removeComponents(int idx, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
                                  @NonNullDecl CommandBuffer<EntityStore> commandBuffer) {
         return;

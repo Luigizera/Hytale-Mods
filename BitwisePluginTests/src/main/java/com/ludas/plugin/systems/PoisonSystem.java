@@ -1,6 +1,6 @@
 package com.ludas.plugin.systems;
 
-import com.ludas.plugin.components.PoisonComponent;
+import com.ludas.plugin.components.effects.PoisonComponent;
 import com.hypixel.hytale.component.*;
 import com.hypixel.hytale.component.query.Query;
 import com.hypixel.hytale.component.system.tick.EntityTickingSystem;
