@@ -2,33 +2,26 @@ package com.ludas.plugin.systems;
 
 import com.hypixel.hytale.component.*;
 import com.hypixel.hytale.component.query.Query;
-import com.hypixel.hytale.component.system.HolderSystem;
 import com.hypixel.hytale.component.system.RefSystem;
 import com.hypixel.hytale.component.system.tick.DelayedEntitySystem;
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.entity.entities.Player;
-import com.hypixel.hytale.server.core.inventory.Inventory;
-import com.hypixel.hytale.server.core.inventory.ItemStack;
 import com.hypixel.hytale.server.core.modules.entity.damage.*;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.hypixel.hytale.server.npc.entities.NPCEntity;
 import com.ludas.plugin.TestPlugin;
 import com.ludas.plugin.clazz.Perk;
-import com.ludas.plugin.clazz.PerkId;
 import com.ludas.plugin.clazz.StrengthPerkId;
 import com.ludas.plugin.components.entity.LevelComponent;
 import com.ludas.plugin.components.entity.MainStatusComponent;
-import com.ludas.plugin.components.entity.StrengthComponent;
 import com.ludas.plugin.events.GiveStrengthXPEvent;
-import com.ludas.plugin.events.GiveXPEvent;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
-import java.util.Random;
 
 
 public class MainStatusSystems {
@@ -112,10 +105,10 @@ public class MainStatusSystems {
 
     public static class StrengthStatusSystems {
 
-        public static class HitNPCSystem extends DamageEventSystem {
+        public static class PlayerHitNPCSystem extends DamageEventSystem {
             private float defaultXP = 1f;
 
-            public HitNPCSystem() {
+            public PlayerHitNPCSystem() {
                 super();
             }
 
@@ -138,7 +131,6 @@ public class MainStatusSystems {
                                @NonNullDecl CommandBuffer<EntityStore> commandBuffer, @NonNullDecl Damage damage) {
                 NPCEntity npcComponent = (NPCEntity) archetypeChunk.getComponent(index, NPCEntity.getComponentType());
                 if (npcComponent == null) return;
-                TestPlugin.LOGGER.atInfo().log("Damage Cause: " + damage.getCause());
                 if (damage.getCause() != DamageCause.PHYSICAL) return;
                 Damage.Source damageSource = damage.getSource();
                 if (!(damageSource instanceof Damage.EntitySource)) return;
@@ -167,8 +159,8 @@ public class MainStatusSystems {
             }
         }
 
-        public static class HitPlayerSystem extends DamageEventSystem {
-            public HitPlayerSystem() {
+        public static class PlayerHitPlayerSystem extends DamageEventSystem {
+            public PlayerHitPlayerSystem() {
                 super();
             }
 
@@ -193,8 +185,7 @@ public class MainStatusSystems {
                 if(player == null) return;
                 if (damage.getCause() != DamageCause.PHYSICAL) return;
                 Damage.Source damageSource = damage.getSource();
-                if (!(damageSource instanceof Damage.EntitySource)) return;
-                Damage.EntitySource entitySource = (Damage.EntitySource) damageSource;
+                if (!(damageSource instanceof Damage.EntitySource entitySource)) return;
                 Ref sourceRef = entitySource.getRef();
                 Player sourceAttacker = store.getComponent(sourceRef, Player.getComponentType());
                 if (sourceAttacker == null) return;

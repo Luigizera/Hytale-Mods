@@ -89,7 +89,9 @@ public class EntityStatsCommand extends AbstractTargetEntityCommand {
 
                 if(addMaxHealth.get(context) != null) {
                     Modifier m = statMap.putModifier(healthIdx, entityHealth.getId(),
-                            new StaticModifier(Modifier.ModifierTarget.MAX, StaticModifier.CalculationType.ADDITIVE,
+                            new StaticModifier(
+                                    Modifier.ModifierTarget.MAX,
+                                    StaticModifier.CalculationType.ADDITIVE,
                                     addMaxHealth.get(context)));
                     context.sendMessage(Message.raw(""+m));
                 }

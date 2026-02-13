@@ -30,11 +30,11 @@ import java.util.Objects;
 
 public class PerkCommand extends AbstractPlayerCommand {
     private final DefaultArg<String> enablePerk;
-    private final DefaultArg<String> status;
+    private final RequiredArg<String> status;
 
     public PerkCommand() {
         super("perk", "server.commands.ludas.perk.desc", false);
-        this.status = this.withDefaultArg("status", "server.commands.ludas.perk.enable.arg.desc", ArgTypes.STRING, "Strength", "Strength");
+        this.status = this.withRequiredArg("status", "server.commands.ludas.perk.enable.arg.desc", ArgTypes.STRING);
         this.enablePerk = this.withDefaultArg("enable", "server.commands.ludas.perk.enable.arg.desc", ArgTypes.STRING, null, "null");
     }
     @Override
@@ -74,7 +74,7 @@ public class PerkCommand extends AbstractPlayerCommand {
                         if (modifiers != null && !modifiers.isEmpty()) {
                             for (var modifier : modifiers.entrySet()) {
                                 Integer index = modifier.getKey();
-                                if (index >= statMap.size() || index < 0) {
+                                if (index > statMap.size() || index < 0) {
                                     throw new UnsupportedOperationException("Wrong implementation of Perk Index: " + index);
                                 }
                                 StaticModifier staticModifier = modifier.getValue();

@@ -10,7 +10,7 @@ import com.ludas.plugin.events.GiveStrengthXPEvent;
 import com.ludas.plugin.events.GiveXPEvent;
 import com.ludas.plugin.handlers.GiveStrengthXPHandler;
 import com.ludas.plugin.handlers.GiveXPHandler;
-import com.ludas.plugin.systems.LevelSystems;
+import com.ludas.plugin.systems.NPCLevelSystems;
 import com.ludas.plugin.systems.MainStatusSystems;
 import com.ludas.plugin.systems.PoisonSystem;
 import com.hypixel.hytale.component.ComponentRegistryProxy;
@@ -78,9 +78,11 @@ public class TestPlugin extends JavaPlugin {
         MainStatusComponent.setComponentType(mainStatusComponent);
 
         entityRegistry.registerSystem(new MainStatusSystems.PlayerSpawnSystem());
-        entityRegistry.registerSystem(new LevelSystems.NPCSpawnSystem());
-        entityRegistry.registerSystem(new MainStatusSystems.StrengthStatusSystems.HitNPCSystem());
-        entityRegistry.registerSystem(new MainStatusSystems.StrengthStatusSystems.HitPlayerSystem());
+        entityRegistry.registerSystem(new NPCLevelSystems.NPCSpawnSystem());
+        entityRegistry.registerSystem(new NPCLevelSystems.NPCDamageDealtSystem());
+        entityRegistry.registerSystem(new NPCLevelSystems.NPCEffect());
+        entityRegistry.registerSystem(new MainStatusSystems.StrengthStatusSystems.PlayerHitNPCSystem());
+        entityRegistry.registerSystem(new MainStatusSystems.StrengthStatusSystems.PlayerHitPlayerSystem());
         entityRegistry.registerSystem(new MainStatusSystems.StrengthStatusSystems.PerkTick());
 
         var poisonComponent = entityRegistry.registerComponent(PoisonComponent.class, PoisonComponent::new);
