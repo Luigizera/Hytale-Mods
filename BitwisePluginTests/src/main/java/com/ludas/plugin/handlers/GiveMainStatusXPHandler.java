@@ -2,6 +2,7 @@ package com.ludas.plugin.handlers;
 
 import com.ludas.plugin.TestPlugin;
 import com.ludas.plugin.components.entity.LevelComponent;
+import com.ludas.plugin.components.entity.MainStatusComponent;
 import com.ludas.plugin.events.GiveXPEvent;
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.entity.entities.Player;
@@ -17,20 +18,20 @@ public class GiveXPHandler implements Consumer<GiveXPEvent> {
         if (!event.ref().isValid()) return;
         var store = event.ref().getStore();
 
-        LevelComponent level = store.getComponent(event.ref(), LevelComponent.getComponentType());
-        if (level == null) return;
+        MainStatusComponent mainStatus = store.getComponent(event.ref(), MainStatusComponent.getComponentType());
+        if (mainStatus == null) return;
 
-        float xp = event.amount();
-        boolean leveledUp = level.addExperience(xp);
+        float xp = event.amount() / 10;
+        boolean leveledUp = mainStatus.getLevel().addExperience(xp);
 
         Player player = store.getComponent(event.ref(), Player.getComponentType());
         PlayerRef playerRef = store.getComponent(event.ref(), PlayerRef.getComponentType());
         if(playerRef == null || player == null) return;
-        player.sendMessage(Message.raw("Exp adicionada: +" + xp).color(Color.ORANGE).bold(true));
+        player.sendMessage(Message.raw("Exp adicionada para Main: +" + xp).color(Color.ORANGE).bold(true));
         if(leveledUp) {
             EventTitleUtil.showEventTitleToPlayer(
                     playerRef,
-                    Message.raw("Level Up!"),
+                    Message.raw("Main Status Up!"),
                     Message.raw("Level atual: " + level.getLevel()),
                     true
             );
