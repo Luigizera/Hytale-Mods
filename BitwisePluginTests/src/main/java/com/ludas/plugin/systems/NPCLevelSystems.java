@@ -3,37 +3,23 @@ package com.ludas.plugin.systems;
 
 import com.hypixel.hytale.component.*;
 import com.hypixel.hytale.component.query.Query;
-import com.hypixel.hytale.component.spatial.SpatialResource;
-import com.hypixel.hytale.component.system.HolderSystem;
 import com.hypixel.hytale.component.system.RefSystem;
-import com.hypixel.hytale.component.system.tick.DelayedEntitySystem;
 import com.hypixel.hytale.protocol.ColorLight;
-import com.hypixel.hytale.server.core.asset.type.particle.config.WorldParticle;
-import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.modules.entity.component.DynamicLight;
-import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
 import com.hypixel.hytale.server.core.modules.entity.damage.*;
 import com.hypixel.hytale.server.core.modules.entitystats.EntityStatMap;
 import com.hypixel.hytale.server.core.modules.entitystats.EntityStatValue;
 import com.hypixel.hytale.server.core.modules.entitystats.asset.DefaultEntityStatTypes;
 import com.hypixel.hytale.server.core.modules.entitystats.modifier.Modifier;
 import com.hypixel.hytale.server.core.modules.entitystats.modifier.StaticModifier;
-import com.hypixel.hytale.server.core.universe.world.ParticleUtil;
-import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.hypixel.hytale.server.npc.entities.NPCEntity;
-import com.ludas.plugin.TestPlugin;
-import com.ludas.plugin.clazz.Perk;
-import com.ludas.plugin.clazz.StrengthPerkId;
 import com.ludas.plugin.components.entity.LevelComponent;
-import com.ludas.plugin.components.entity.MainStatusComponent;
-import com.ludas.plugin.handlers.StrengthExtraDamageHandler;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.xml.crypto.dsig.Transform;
 import java.util.Random;
 
 public class NPCLevelSystems {
@@ -121,7 +107,7 @@ public class NPCLevelSystems {
                 NPCEntity sourceNpcComponent = commandBuffer.getComponent(sourceRef, NPCEntity.getComponentType());
                 if (sourceNpcComponent == null) return;
                 LevelComponent level = commandBuffer.getComponent(sourceRef, LevelComponent.getComponentType());
-                if(level != null && damage.getSource() != DamageCause.OUT_OF_WORLD) {
+                if(level != null && damage.getCause() != DamageCause.OUT_OF_WORLD) {
                     float dmg = damage.getAmount() * (level.getLevel() / 10f);
                     Damage levelExtraDamage = new Damage(damage.getSource(), DamageCause.OUT_OF_WORLD, dmg);
                     DamageSystems.executeDamage(archetypeChunk.getReferenceTo(index), commandBuffer, levelExtraDamage);

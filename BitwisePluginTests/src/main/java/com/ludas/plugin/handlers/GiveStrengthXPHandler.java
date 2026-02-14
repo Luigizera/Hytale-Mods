@@ -4,6 +4,7 @@ import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.util.EventTitleUtil;
+import com.ludas.plugin.TestPlugin;
 import com.ludas.plugin.components.entity.MainStatusComponent;
 import com.ludas.plugin.events.GiveStrengthXPEvent;
 import com.ludas.plugin.events.GiveMainStatusXPEvent;
@@ -16,13 +17,14 @@ public class GiveStrengthXPHandler implements Consumer<GiveStrengthXPEvent> {
     public void accept(GiveStrengthXPEvent event) {
         if (!event.ref().isValid()) return;
         var store = event.ref().getStore();
-
         MainStatusComponent mainStatus = store.getComponent(event.ref(), MainStatusComponent.getComponentType());
         if (mainStatus == null) return;
+        TestPlugin.LOGGER.atInfo().log("GIVE STRENGTH XP + mainStatus");
 
         float xp = event.amount() / 10f;
         boolean leveledUp = mainStatus.getStrength().getLevelComponent().addExperience(xp);
         GiveMainStatusXPEvent.dispatch(event.ref(), xp);
+        TestPlugin.LOGGER.atInfo().log("ENTROU NO MAIN STATUS XP");
 
         Player player = store.getComponent(event.ref(), Player.getComponentType());
         PlayerRef playerRef = store.getComponent(event.ref(), PlayerRef.getComponentType());

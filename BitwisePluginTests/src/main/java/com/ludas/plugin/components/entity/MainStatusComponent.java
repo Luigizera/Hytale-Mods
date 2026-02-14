@@ -48,6 +48,11 @@ public class MainStatusComponent implements Component<EntityStore> {
 
     static {
         CODEC = BuilderCodec.builder(MainStatusComponent.class, MainStatusComponent::new)
+                .append(new KeyedCodec<>("Level", LevelComponent.CODEC),
+                        (data, value) -> data.level = value,
+                        data -> data.level)
+                .addValidator(Validators.nonNull())
+                .add()
                 .append(new KeyedCodec<>("Strength", StrengthComponent.CODEC),
                         (data, value) -> data.strength = value,
                         data -> data.strength)
