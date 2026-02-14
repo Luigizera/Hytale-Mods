@@ -27,6 +27,7 @@ import com.ludas.plugin.clazz.Perk;
 import com.ludas.plugin.clazz.StrengthPerkId;
 import com.ludas.plugin.components.entity.LevelComponent;
 import com.ludas.plugin.components.entity.MainStatusComponent;
+import com.ludas.plugin.handlers.StrengthExtraDamageHandler;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
@@ -120,7 +121,7 @@ public class NPCLevelSystems {
                 NPCEntity sourceNpcComponent = commandBuffer.getComponent(sourceRef, NPCEntity.getComponentType());
                 if (sourceNpcComponent == null) return;
                 LevelComponent level = commandBuffer.getComponent(sourceRef, LevelComponent.getComponentType());
-                if(level != null && damage.getCause() != DamageCause.OUT_OF_WORLD) {
+                if(level != null && damage.getSource() != DamageCause.OUT_OF_WORLD) {
                     float dmg = damage.getAmount() * (level.getLevel() / 10f);
                     Damage levelExtraDamage = new Damage(damage.getSource(), DamageCause.OUT_OF_WORLD, dmg);
                     DamageSystems.executeDamage(archetypeChunk.getReferenceTo(index), commandBuffer, levelExtraDamage);

@@ -11,13 +11,16 @@ import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 public class MainStatusComponent implements Component<EntityStore> {
     public static final BuilderCodec<MainStatusComponent> CODEC;
     private static ComponentType<EntityStore, MainStatusComponent> TYPE;
+    private LevelComponent level;
     private StrengthComponent strength;
 
     public MainStatusComponent() {
+        this.level = new LevelComponent();
         this.strength = new StrengthComponent();
     }
 
     public MainStatusComponent(MainStatusComponent other) {
+        this.level = other.level;
         this.strength = other.strength;
     }
 
@@ -27,6 +30,10 @@ public class MainStatusComponent implements Component<EntityStore> {
 
     public static ComponentType<EntityStore, MainStatusComponent> getComponentType() {
         return TYPE;
+    }
+
+    public LevelComponent getLevelComponent() {
+        return level;
     }
 
     public StrengthComponent getStrength() {

@@ -7,9 +7,11 @@ import com.ludas.plugin.components.effects.PoisonComponent;
 import com.ludas.plugin.components.entity.MainStatusComponent;
 import com.ludas.plugin.components.entity.StrengthComponent;
 import com.ludas.plugin.events.GiveStrengthXPEvent;
-import com.ludas.plugin.events.GiveXPEvent;
+import com.ludas.plugin.events.GiveMainStatusXPEvent;
+import com.ludas.plugin.events.StrengthExtraDamageEvent;
 import com.ludas.plugin.handlers.GiveStrengthXPHandler;
-import com.ludas.plugin.handlers.GiveXPHandler;
+import com.ludas.plugin.handlers.GiveMainStatusXPHandler;
+import com.ludas.plugin.handlers.StrengthExtraDamageHandler;
 import com.ludas.plugin.systems.NPCLevelSystems;
 import com.ludas.plugin.systems.MainStatusSystems;
 import com.ludas.plugin.systems.PoisonSystem;
@@ -21,6 +23,7 @@ import com.hypixel.hytale.server.core.command.system.CommandRegistry;
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
+import com.ludas.plugin.systems.StrengthStatusSystems;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
 import java.util.ArrayList;
@@ -81,9 +84,9 @@ public class TestPlugin extends JavaPlugin {
         entityRegistry.registerSystem(new NPCLevelSystems.NPCSpawnSystem());
         entityRegistry.registerSystem(new NPCLevelSystems.NPCDamageDealtSystem());
         entityRegistry.registerSystem(new NPCLevelSystems.NPCEffect());
-        entityRegistry.registerSystem(new MainStatusSystems.StrengthStatusSystems.PlayerHitNPCSystem());
-        entityRegistry.registerSystem(new MainStatusSystems.StrengthStatusSystems.PlayerHitPlayerSystem());
-        entityRegistry.registerSystem(new MainStatusSystems.StrengthStatusSystems.PerkTick());
+        entityRegistry.registerSystem(new StrengthStatusSystems.PlayerHitNPCSystem());
+        entityRegistry.registerSystem(new StrengthStatusSystems.PlayerHitPlayerSystem());
+        entityRegistry.registerSystem(new StrengthStatusSystems.PerkTick());
 
         var poisonComponent = entityRegistry.registerComponent(PoisonComponent.class, PoisonComponent::new);
         PoisonComponent.setComponentType(poisonComponent);
@@ -94,8 +97,9 @@ public class TestPlugin extends JavaPlugin {
         LOGGER.atInfo().log("Registering Events...");
         EventRegistry eventRegistry = getEventRegistry();
 
-        eventRegistry.register(GiveXPEvent.class, new GiveXPHandler());
+        eventRegistry.register(GiveMainStatusXPEvent.class, new GiveMainStatusXPHandler());
         eventRegistry.register(GiveStrengthXPEvent.class, new GiveStrengthXPHandler());
+        eventRegistry.register(StrengthExtraDamageEvent.class, new StrengthExtraDamageHandler());
     }
 
 
