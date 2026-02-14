@@ -7,7 +7,6 @@ import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.modules.entity.damage.*;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.hypixel.hytale.server.npc.entities.NPCEntity;
-import com.ludas.plugin.TestPlugin;
 import com.ludas.plugin.clazz.Perk;
 import com.ludas.plugin.clazz.StrengthPerkId;
 import com.ludas.plugin.components.entity.LevelComponent;
@@ -44,7 +43,6 @@ public class StrengthStatusSystems {
                            @NonNullDecl CommandBuffer<EntityStore> commandBuffer, @NonNullDecl Damage damage) {
             NPCEntity npcComponent = (NPCEntity) archetypeChunk.getComponent(index, NPCEntity.getComponentType());
             if (npcComponent == null) return;
-            //TestPlugin.LOGGER.atInfo().log(""+damage.getCause().getId());
             if (damage.getCause() == DamageCause.PHYSICAL || damage.getCause().getInherits() == DamageCause.PHYSICAL.getId()) {
                 Damage.Source damageSource = damage.getSource();
                 if (!(damageSource instanceof Damage.EntitySource entitySource)) return;
@@ -64,9 +62,7 @@ public class StrengthStatusSystems {
                     Ref<EntityStore> npcRef = npcComponent.getReference();
                     if (npcRef == null) return;
                     GiveStrengthXPEvent.dispatch(attackerRef, defaultXP);
-                    TestPlugin.LOGGER.atInfo().log("ENTROU NO GIVE STRENGTH XP");
                     StrengthExtraDamageEvent.dispatch(attackerRef, npcRef, damage, commandBuffer);
-                    TestPlugin.LOGGER.atInfo().log("ENTROU NO EXTRA DAMAGE");
                 }
             }
         }
@@ -96,7 +92,7 @@ public class StrengthStatusSystems {
             if (damage.getCause() == DamageCause.PHYSICAL || damage.getCause().getInherits() == DamageCause.PHYSICAL.getId()) {
                 Damage.Source damageSource = damage.getSource();
                 if (!(damageSource instanceof Damage.EntitySource entitySource)) return;
-                Ref sourceRef = entitySource.getRef();
+                Ref<EntityStore> sourceRef = entitySource.getRef();
                 Player sourcePlayer = store.getComponent(sourceRef, Player.getComponentType());
                 if (sourcePlayer == null) return;
                 Ref<EntityStore> attacker = sourcePlayer.getReference();
@@ -185,14 +181,18 @@ public class StrengthStatusSystems {
                          @NonNullDecl CommandBuffer<EntityStore> commandBuffer) {
             MainStatusComponent mainStatus = archetypeChunk.getComponent(idx, MainStatusComponent.getComponentType());
             if(mainStatus == null) return;
-            Player player = archetypeChunk.getComponent(idx, Player.getComponentType());
-            if(player == null) return;
 
             for(int i = 0; i < StrengthPerkId.CURRENT_PERK_COUNT; ++i) {
                 Perk perk = mainStatus.getStrength().getPerkById(i);
                 if(perk == null) continue;
                 if(!mainStatus.getStrength().isPerkUnlocked(i)) {
                     perk.unlockCondition(idx, archetypeChunk);
+                }
+                else if (!mainStatus.getStrength().isPerkEnabled(i)) {
+                    perk.removeComponents(idx, archetypeChunk, commandBuffer);
+                }
+                else {
+                    perk.tick(dt, idx, archetypeChunk, store, commandBuffer);
                 }
             }
         }

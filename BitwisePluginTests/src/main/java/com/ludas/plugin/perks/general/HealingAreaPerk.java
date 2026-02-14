@@ -19,7 +19,7 @@ import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.ludas.plugin.clazz.Perk;
 import com.ludas.plugin.clazz.PerkId;
 import com.ludas.plugin.clazz.Vector2dClean;
-import com.ludas.plugin.components.entity.StrengthComponent;
+import com.ludas.plugin.components.entity.MainStatusComponent;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
 import java.util.ArrayList;
@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 public class HealingAreaPerk extends Perk{
-    public static final String NAME = "healingArea";
+    public static final String NAME = "Main_HealingArea";
     private static int count = 0;
 
     public HealingAreaPerk() {
@@ -40,15 +40,15 @@ public class HealingAreaPerk extends Perk{
 
     @Override
     public void unlockCondition(int idx, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk) {
-        StrengthComponent strength = archetypeChunk.getComponent(idx, StrengthComponent.getComponentType());
-        if(strength == null) return;
+        MainStatusComponent mainStatus = archetypeChunk.getComponent(idx, MainStatusComponent.getComponentType());
+        if(mainStatus == null) return;
 
-        if(strength.getLevelComponent().getLevel() <= 2) {
+        if(mainStatus.getLevelComponent().getLevel() <= 2) {
             return;
         }
         Player player = archetypeChunk.getComponent(idx, Player.getComponentType());
         if(player == null) return;
-        strength.setUnlocked(PerkId.HEALING_AREA);
+        mainStatus.setUnlocked(PerkId.HEALING_AREA);
         player.sendMessage(Message.translation("server.perks.ludas.unlocked").param("id", NAME));
     }
 

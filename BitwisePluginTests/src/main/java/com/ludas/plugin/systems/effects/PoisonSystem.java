@@ -1,4 +1,4 @@
-package com.ludas.plugin.systems;
+package com.ludas.plugin.systems.effects;
 
 import com.ludas.plugin.components.effects.PoisonComponent;
 import com.hypixel.hytale.component.*;

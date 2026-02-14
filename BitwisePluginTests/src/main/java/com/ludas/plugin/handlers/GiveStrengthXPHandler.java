@@ -19,12 +19,10 @@ public class GiveStrengthXPHandler implements Consumer<GiveStrengthXPEvent> {
         var store = event.ref().getStore();
         MainStatusComponent mainStatus = store.getComponent(event.ref(), MainStatusComponent.getComponentType());
         if (mainStatus == null) return;
-        TestPlugin.LOGGER.atInfo().log("GIVE STRENGTH XP + mainStatus");
 
         float xp = event.amount() / 10f;
         boolean leveledUp = mainStatus.getStrength().getLevelComponent().addExperience(xp);
         GiveMainStatusXPEvent.dispatch(event.ref(), xp);
-        TestPlugin.LOGGER.atInfo().log("ENTROU NO MAIN STATUS XP");
 
         Player player = store.getComponent(event.ref(), Player.getComponentType());
         PlayerRef playerRef = store.getComponent(event.ref(), PlayerRef.getComponentType());

@@ -11,14 +11,14 @@ import com.hypixel.hytale.server.core.modules.entitystats.modifier.StaticModifie
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.ludas.plugin.clazz.Perk;
 import com.ludas.plugin.clazz.PerkId;
-import com.ludas.plugin.components.entity.StrengthComponent;
+import com.ludas.plugin.components.entity.MainStatusComponent;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class StatusPerk extends Perk {
-    public static final String NAME = "status";
+    public static final String NAME = "Main_Status";
 
     public StatusPerk() {
     }
@@ -50,15 +50,15 @@ public class StatusPerk extends Perk {
 
     @Override
     public void unlockCondition(int idx, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk) {
-        StrengthComponent strength = archetypeChunk.getComponent(idx, StrengthComponent.getComponentType());
-        if(strength == null) return;
+        MainStatusComponent mainStatus = archetypeChunk.getComponent(idx, MainStatusComponent.getComponentType());
+        if(mainStatus == null) return;
 
-        if(strength.getLevelComponent().getLevel() <= 2) {
+        if(mainStatus.getLevelComponent().getLevel() <= 2) {
             return;
         }
         Player player = archetypeChunk.getComponent(idx, Player.getComponentType());
         if(player == null) return;
-        strength.setUnlocked(PerkId.STATUS_PERK);
+        mainStatus.setUnlocked(PerkId.STATUS_PERK);
         player.sendMessage(Message.translation("server.perks.ludas.unlocked").param("id", NAME));
     }
     public void tick(float dt, int idx, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,

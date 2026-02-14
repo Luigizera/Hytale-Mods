@@ -14,7 +14,7 @@ import com.ludas.plugin.handlers.GiveMainStatusXPHandler;
 import com.ludas.plugin.handlers.StrengthExtraDamageHandler;
 import com.ludas.plugin.systems.NPCLevelSystems;
 import com.ludas.plugin.systems.MainStatusSystems;
-import com.ludas.plugin.systems.PoisonSystem;
+import com.ludas.plugin.systems.effects.PoisonSystem;
 import com.hypixel.hytale.component.ComponentRegistryProxy;
 import com.hypixel.hytale.event.EventRegistry;
 import com.hypixel.hytale.logger.HytaleLogger;
@@ -81,6 +81,7 @@ public class TestPlugin extends JavaPlugin {
         MainStatusComponent.setComponentType(mainStatusComponent);
 
         entityRegistry.registerSystem(new MainStatusSystems.PlayerSpawnSystem());
+        entityRegistry.registerSystem(new MainStatusSystems.PerkTick());
         entityRegistry.registerSystem(new NPCLevelSystems.NPCSpawnSystem());
         entityRegistry.registerSystem(new NPCLevelSystems.NPCDamageDealtSystem());
         entityRegistry.registerSystem(new NPCLevelSystems.NPCEffect());

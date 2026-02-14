@@ -20,7 +20,7 @@ public class StrengthExtraDamageHandler implements Consumer<StrengthExtraDamageE
         if (mainStatus == null) return;
 
         float dmg = event.damage().getAmount() * mainStatus.getStrength().getMultiplier();
-        Damage strExtraDamage = new Damage(event.damage().getSource(), DamageCause.OUT_OF_WORLD, dmg);
+        Damage strExtraDamage = new Damage(Damage.NULL_SOURCE, DamageCause.OUT_OF_WORLD, dmg);
         DamageSystems.executeDamage(event.target(), event.commandBuffer(), strExtraDamage);
     }
 }

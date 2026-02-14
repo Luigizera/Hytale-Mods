@@ -38,19 +38,19 @@ public class StrengthComponent implements Component<EntityStore> {
         return TYPE;
     }
 
-    private boolean isPerkValid(int FLAG_ID) {
-        return perks != null
-                && perks.length == PERK_LENGTH
-                && FLAG_ID >= 0
-                && FLAG_ID < StrengthPerkId.CURRENT_PERK_COUNT;
-    }
-
     public LevelComponent getLevelComponent() {
         return this.level;
     }
 
     public float getMultiplier() {
         return BASE_MULTIPLIER * this.level.getLevel();
+    }
+
+    private boolean isPerkValid(int FLAG_ID) {
+        return perks != null
+                && perks.length == PERK_LENGTH
+                && FLAG_ID >= 0
+                && FLAG_ID < StrengthPerkId.CURRENT_PERK_COUNT;
     }
 
     public void setUnlocked(int FLAG_ID) {

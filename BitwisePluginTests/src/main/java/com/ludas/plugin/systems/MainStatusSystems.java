@@ -12,6 +12,7 @@ import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.hypixel.hytale.server.npc.entities.NPCEntity;
 import com.ludas.plugin.TestPlugin;
 import com.ludas.plugin.clazz.Perk;
+import com.ludas.plugin.clazz.PerkId;
 import com.ludas.plugin.clazz.StrengthPerkId;
 import com.ludas.plugin.components.entity.LevelComponent;
 import com.ludas.plugin.components.entity.MainStatusComponent;
@@ -25,7 +26,7 @@ import java.awt.*;
 
 
 public class MainStatusSystems {
-/*
+
     public static class PerkTick extends DelayedEntitySystem<EntityStore> {
 
         public PerkTick() {
@@ -35,35 +36,31 @@ public class MainStatusSystems {
         @NullableDecl
         @Override
         public Query<EntityStore> getQuery() {
-            return Query.and(new Query[]{LevelComponent.getComponentType(), Player.getComponentType()});
+            return Query.and(new Query[]{MainStatusComponent.getComponentType(), Player.getComponentType()});
         }
 
         @Override
         public void tick(float dt, int idx, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
                          @NonNullDecl Store<EntityStore> store,
                          @NonNullDecl CommandBuffer<EntityStore> commandBuffer) {
-            LevelComponent level = archetypeChunk.getComponent(idx, LevelComponent.getComponentType());
-            if(level == null) return;
-            Player player = archetypeChunk.getComponent(idx, Player.getComponentType());
-            if(player == null) return;
+            MainStatusComponent mainStatus = archetypeChunk.getComponent(idx, MainStatusComponent.getComponentType());
+            if(mainStatus == null) return;
 
             for(int i = 0; i < PerkId.CURRENT_PERK_COUNT; ++i) {
-                Perk perk = level.getPerkById(i);
+                Perk perk = mainStatus.getPerkById(i);
                 if(perk == null) continue;
-                if(!level.isPerkUnlocked(i)) {
+                if(!mainStatus.isPerkUnlocked(i)) {
                     perk.unlockCondition(idx, archetypeChunk);
                 }
-                else {
-                    if(!level.isPerkEnabled(i)) {
-                        perk.removeComponents(idx, archetypeChunk, commandBuffer);
-                    }
-                    else{
-                        perk.tick(dt, idx, archetypeChunk, store, commandBuffer);
-                    }
+                else if(!mainStatus.isPerkEnabled(i)){
+                    perk.removeComponents(idx, archetypeChunk, commandBuffer);
+                }
+                else{
+                    perk.tick(dt, idx, archetypeChunk, store, commandBuffer);
                 }
             }
         }
-    }*/
+    }
 
     public static class PlayerSpawnSystem extends RefSystem<EntityStore> {
         public PlayerSpawnSystem() {
