@@ -1,12 +1,12 @@
-package com.ludas.plugin.handlers;
+package com.ludas.plugin.handlers.damage;
 
 import com.hypixel.hytale.server.core.modules.entity.damage.Damage;
 import com.hypixel.hytale.server.core.modules.entity.damage.DamageCause;
 import com.hypixel.hytale.server.core.modules.entity.damage.DamageSystems;
 import com.ludas.plugin.components.entity.MainStatusComponent;
-import com.ludas.plugin.events.StrengthExtraDamageEvent;
+import com.ludas.plugin.components.entity.StrengthComponent;
+import com.ludas.plugin.events.damage.StrengthExtraDamageEvent;
 
-import java.awt.*;
 import java.util.function.Consumer;
 
 public class StrengthExtraDamageHandler implements Consumer<StrengthExtraDamageEvent> {
@@ -18,9 +18,11 @@ public class StrengthExtraDamageHandler implements Consumer<StrengthExtraDamageE
 
         MainStatusComponent mainStatus = store.getComponent(event.attacker(), MainStatusComponent.getComponentType());
         if (mainStatus == null) return;
+        StrengthComponent strength = mainStatus.getStrength();
+        if(strength == null) return;
 
-        float dmg = event.damage().getAmount() * mainStatus.getStrength().getMultiplier();
-        Damage strExtraDamage = new Damage(Damage.NULL_SOURCE, DamageCause.OUT_OF_WORLD, dmg);
-        DamageSystems.executeDamage(event.target(), event.commandBuffer(), strExtraDamage);
+        float dmg = event.damage().getAmount() * strength.getMultiplier();
+        Damage extraDmg = new Damage(Damage.NULL_SOURCE, DamageCause.OUT_OF_WORLD, dmg);
+        DamageSystems.executeDamage(event.target(), event.commandBuffer(), extraDmg);
     }
 }

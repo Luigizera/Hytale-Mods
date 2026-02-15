@@ -1,4 +1,4 @@
-package com.ludas.plugin.events;
+package com.ludas.plugin.events.damage;
 
 import com.hypixel.hytale.component.CommandBuffer;
 import com.hypixel.hytale.component.Ref;

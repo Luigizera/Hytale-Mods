@@ -5,7 +5,9 @@ import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.util.EventTitleUtil;
 import com.ludas.plugin.TestPlugin;
+import com.ludas.plugin.components.entity.LevelComponent;
 import com.ludas.plugin.components.entity.MainStatusComponent;
+import com.ludas.plugin.components.entity.StrengthComponent;
 import com.ludas.plugin.events.GiveStrengthXPEvent;
 import com.ludas.plugin.events.GiveMainStatusXPEvent;
 
@@ -19,9 +21,13 @@ public class GiveStrengthXPHandler implements Consumer<GiveStrengthXPEvent> {
         var store = event.ref().getStore();
         MainStatusComponent mainStatus = store.getComponent(event.ref(), MainStatusComponent.getComponentType());
         if (mainStatus == null) return;
+        StrengthComponent strength = mainStatus.getStrength();
+        if(strength == null) return;
+        LevelComponent level = strength.getLevelComponent();
+        if(level == null) return;
 
         float xp = event.amount() / 10f;
-        boolean leveledUp = mainStatus.getStrength().getLevelComponent().addExperience(xp);
+        boolean leveledUp = level.addExperience(xp);
         GiveMainStatusXPEvent.dispatch(event.ref(), xp);
 
         Player player = store.getComponent(event.ref(), Player.getComponentType());
@@ -32,7 +38,7 @@ public class GiveStrengthXPHandler implements Consumer<GiveStrengthXPEvent> {
             EventTitleUtil.showEventTitleToPlayer(
                     playerRef,
                     Message.raw("Strength Up!"),
-                    Message.raw("Level atual: " + mainStatus.getStrength().getLevelComponent().getLevel()),
+                    Message.raw("Level atual: " + level.getLevel()),
                     true
             );
         }

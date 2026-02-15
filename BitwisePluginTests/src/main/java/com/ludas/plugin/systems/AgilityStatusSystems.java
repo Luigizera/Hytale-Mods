@@ -4,17 +4,12 @@ import com.hypixel.hytale.component.*;
 import com.hypixel.hytale.component.query.Query;
 import com.hypixel.hytale.component.system.tick.DelayedEntitySystem;
 import com.hypixel.hytale.server.core.entity.entities.Player;
-import com.hypixel.hytale.server.core.modules.entity.damage.*;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
-import com.ludas.plugin.clazz.Perk;
-import com.ludas.plugin.clazz.StrengthPerkId;
 import com.ludas.plugin.components.entity.MainStatusComponent;
-import com.ludas.plugin.components.entity.StrengthComponent;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
-
-public class StrengthStatusSystems {
+public class AgilityStatusSystems {
 
     public static class PerkTick extends DelayedEntitySystem<EntityStore> {
 
@@ -25,7 +20,7 @@ public class StrengthStatusSystems {
         @NullableDecl
         @Override
         public Query<EntityStore> getQuery() {
-            return Query.and(new Query[]{MainStatusComponent.getComponentType(), Player.getComponentType()});
+            return Query.and(MainStatusComponent.getComponentType(), Player.getComponentType());
         }
 
         @Override
@@ -34,22 +29,20 @@ public class StrengthStatusSystems {
                          @NonNullDecl CommandBuffer<EntityStore> commandBuffer) {
             MainStatusComponent mainStatus = archetypeChunk.getComponent(idx, MainStatusComponent.getComponentType());
             if(mainStatus == null) return;
-            StrengthComponent strength = mainStatus.getStrength();
-            if(strength == null) return;
-
+            /*
             for(int i = 0; i < StrengthPerkId.CURRENT_PERK_COUNT; ++i) {
-                Perk perk = strength.getPerkById(i);
+                Perk perk = mainStatus.getStrength().getPerkById(i);
                 if(perk == null) continue;
-                if(!strength.isPerkUnlocked(i)) {
+                if(!mainStatus.getStrength().isPerkUnlocked(i)) {
                     perk.unlockCondition(idx, archetypeChunk);
                 }
-                else if (!strength.isPerkEnabled(i)) {
+                else if (!mainStatus.getStrength().isPerkEnabled(i)) {
                     perk.removeComponents(idx, archetypeChunk, commandBuffer);
                 }
                 else {
                     perk.tick(dt, idx, archetypeChunk, store, commandBuffer);
                 }
-            }
+            }*/
         }
     }
 }

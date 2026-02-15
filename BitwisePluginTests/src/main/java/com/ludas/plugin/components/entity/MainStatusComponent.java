@@ -22,18 +22,27 @@ public class MainStatusComponent implements Component<EntityStore> {
     public static final int PERK_LENGTH = 2;
     private LevelComponent level;
     private StrengthComponent strength;
+    private VitalityComponent vitality;
+    private MagicComponent magic;
+    private AgilityComponent agility;
     private int[] perks; //ints: 0 = unlock, 1 = enable
 
 
     public MainStatusComponent() {
         this.level = new LevelComponent();
         this.strength = new StrengthComponent();
+        this.vitality = new VitalityComponent();
+        this.magic = new MagicComponent();
+        this.agility = new AgilityComponent();
         this.perks = new int[PERK_LENGTH];
     }
 
     public MainStatusComponent(MainStatusComponent other) {
         this.level = other.level;
         this.strength = other.strength;
+        this.vitality = other.vitality;
+        this.magic = other.magic;
+        this.agility = other.agility;
         this.perks = other.perks;
     }
 
@@ -51,6 +60,18 @@ public class MainStatusComponent implements Component<EntityStore> {
 
     public StrengthComponent getStrength() {
         return strength;
+    }
+
+    public VitalityComponent getVitality() {
+        return vitality;
+    }
+
+    public AgilityComponent getAgility() {
+        return agility;
+    }
+
+    public MagicComponent getMagic() {
+        return magic;
     }
 
     private boolean isPerkValid(int FLAG_ID) {
@@ -134,6 +155,21 @@ public class MainStatusComponent implements Component<EntityStore> {
                 .append(new KeyedCodec<>("Strength", StrengthComponent.CODEC),
                         (data, value) -> data.strength = value,
                         data -> data.strength)
+                .addValidator(Validators.nonNull())
+                .add()
+                .append(new KeyedCodec<>("Magic", MagicComponent.CODEC),
+                        (data, value) -> data.magic = value,
+                        data -> data.magic)
+                .addValidator(Validators.nonNull())
+                .add()
+                .append(new KeyedCodec<>("Vitality", VitalityComponent.CODEC),
+                        (data, value) -> data.vitality = value,
+                        data -> data.vitality)
+                .addValidator(Validators.nonNull())
+                .add()
+                .append(new KeyedCodec<>("Agility", AgilityComponent.CODEC),
+                        (data, value) -> data.agility = value,
+                        data -> data.agility)
                 .addValidator(Validators.nonNull())
                 .add()
                 .append(new KeyedCodec("Perks", Codec.INT_ARRAY),

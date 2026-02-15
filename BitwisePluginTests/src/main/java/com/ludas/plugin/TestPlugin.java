@@ -2,16 +2,16 @@ package com.ludas.plugin;
 
 import com.ludas.plugin.commands.*;
 import com.ludas.plugin.commands.collection.LudasCommandCollection;
-import com.ludas.plugin.components.entity.LevelComponent;
+import com.ludas.plugin.components.entity.*;
 import com.ludas.plugin.components.effects.PoisonComponent;
-import com.ludas.plugin.components.entity.MainStatusComponent;
-import com.ludas.plugin.components.entity.StrengthComponent;
-import com.ludas.plugin.events.GiveStrengthXPEvent;
-import com.ludas.plugin.events.GiveMainStatusXPEvent;
-import com.ludas.plugin.events.StrengthExtraDamageEvent;
-import com.ludas.plugin.handlers.GiveStrengthXPHandler;
-import com.ludas.plugin.handlers.GiveMainStatusXPHandler;
-import com.ludas.plugin.handlers.StrengthExtraDamageHandler;
+import com.ludas.plugin.events.*;
+import com.ludas.plugin.events.damage.AgilityCritDamageEvent;
+import com.ludas.plugin.events.damage.MagicManaDamageEvent;
+import com.ludas.plugin.events.damage.StrengthExtraDamageEvent;
+import com.ludas.plugin.handlers.*;
+import com.ludas.plugin.handlers.damage.AgilityCritDamageHandler;
+import com.ludas.plugin.handlers.damage.MagicManaDamageHandler;
+import com.ludas.plugin.handlers.damage.StrengthExtraDamageHandler;
 import com.ludas.plugin.systems.NPCLevelSystems;
 import com.ludas.plugin.systems.MainStatusSystems;
 import com.ludas.plugin.systems.effects.PoisonSystem;
@@ -77,16 +77,22 @@ public class TestPlugin extends JavaPlugin {
         LevelComponent.setComponentType(levelComponent);
         var strengthComponent = entityRegistry.registerComponent(StrengthComponent.class, "LudasStrength", StrengthComponent.CODEC);
         StrengthComponent.setComponentType(strengthComponent);
+        var magicComponent = entityRegistry.registerComponent(MagicComponent.class, "LudasMagic", MagicComponent.CODEC);
+        MagicComponent.setComponentType(magicComponent);
+        var vitalityComponent = entityRegistry.registerComponent(VitalityComponent.class, "LudasVitality", VitalityComponent.CODEC);
+        VitalityComponent.setComponentType(vitalityComponent);
+        var agilityComponent = entityRegistry.registerComponent(AgilityComponent.class, "LudasAgility", AgilityComponent.CODEC);
+        AgilityComponent.setComponentType(agilityComponent);
         var mainStatusComponent = entityRegistry.registerComponent(MainStatusComponent.class, "LudasMainStatus", MainStatusComponent.CODEC);
         MainStatusComponent.setComponentType(mainStatusComponent);
 
         entityRegistry.registerSystem(new MainStatusSystems.PlayerSpawnSystem());
         entityRegistry.registerSystem(new MainStatusSystems.PerkTick());
+        entityRegistry.registerSystem(new MainStatusSystems.PlayerHitNPCSystem());
+        entityRegistry.registerSystem(new MainStatusSystems.PlayerHitPlayerSystem());
         entityRegistry.registerSystem(new NPCLevelSystems.NPCSpawnSystem());
         entityRegistry.registerSystem(new NPCLevelSystems.NPCDamageDealtSystem());
         entityRegistry.registerSystem(new NPCLevelSystems.NPCEffect());
-        entityRegistry.registerSystem(new StrengthStatusSystems.PlayerHitNPCSystem());
-        entityRegistry.registerSystem(new StrengthStatusSystems.PlayerHitPlayerSystem());
         entityRegistry.registerSystem(new StrengthStatusSystems.PerkTick());
 
         var poisonComponent = entityRegistry.registerComponent(PoisonComponent.class, PoisonComponent::new);
@@ -100,7 +106,11 @@ public class TestPlugin extends JavaPlugin {
 
         eventRegistry.register(GiveMainStatusXPEvent.class, new GiveMainStatusXPHandler());
         eventRegistry.register(GiveStrengthXPEvent.class, new GiveStrengthXPHandler());
+        eventRegistry.register(GiveAgilityXPEvent.class, new GiveAgilityXPHandler());
+        eventRegistry.register(GiveMagicXPEvent.class, new GiveMagicXPHandler());
         eventRegistry.register(StrengthExtraDamageEvent.class, new StrengthExtraDamageHandler());
+        eventRegistry.register(AgilityCritDamageEvent.class, new AgilityCritDamageHandler());
+        eventRegistry.register(MagicManaDamageEvent.class, new MagicManaDamageHandler());
     }
 
 
