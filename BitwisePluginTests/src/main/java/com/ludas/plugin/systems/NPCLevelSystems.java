@@ -5,6 +5,8 @@ import com.hypixel.hytale.component.*;
 import com.hypixel.hytale.component.query.Query;
 import com.hypixel.hytale.component.system.RefSystem;
 import com.hypixel.hytale.protocol.ColorLight;
+import com.hypixel.hytale.server.core.asset.type.attitude.Attitude;
+import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.modules.entity.component.DynamicLight;
 import com.hypixel.hytale.server.core.modules.entity.damage.*;
 import com.hypixel.hytale.server.core.modules.entitystats.EntityStatMap;
@@ -13,13 +15,17 @@ import com.hypixel.hytale.server.core.modules.entitystats.asset.DefaultEntitySta
 import com.hypixel.hytale.server.core.modules.entitystats.modifier.Modifier;
 import com.hypixel.hytale.server.core.modules.entitystats.modifier.StaticModifier;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
+import com.hypixel.hytale.server.npc.config.AttitudeGroup;
 import com.hypixel.hytale.server.npc.entities.NPCEntity;
+import com.hypixel.hytale.server.npc.role.support.CombatSupport;
+import com.ludas.plugin.TestPlugin;
 import com.ludas.plugin.components.entity.LevelComponent;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Map;
 import java.util.Random;
 
 public class NPCLevelSystems {
@@ -51,6 +57,18 @@ public class NPCLevelSystems {
             LevelComponent level = store.getComponent(ref, LevelComponent.getComponentType());
             if(level == null) {
                 int randLevel = new Random().nextInt(1, 100);
+                /*
+                Default attitude value is hostile, cannot create level based on attitude
+                Attitude attitude = npc.getRole().getWorldSupport().getDefaultPlayerAttitude();
+                TestPlugin.LOGGER.atInfo().log("RoleName: " + npc.getRoleName());
+                TestPlugin.LOGGER.atInfo().log("Attitude: " + attitude.name());
+
+                switch (attitude) {
+                    case Attitude.HOSTILE -> randLevel = new Random().nextInt(1, 255);
+                    case Attitude.NEUTRAL -> randLevel = new Random().nextInt(1, 100);
+                    case Attitude.FRIENDLY -> randLevel = new Random().nextInt(1, 50);
+                    default -> randLevel = new Random().nextInt(1, 20);
+                }*/
                 commandBuffer.putComponent(ref, LevelComponent.getComponentType(), new LevelComponent(randLevel));
                 int healthIndex = DefaultEntityStatTypes.getHealth();
                 EntityStatValue entityHealth = statMap.get(healthIndex);
@@ -109,7 +127,7 @@ public class NPCLevelSystems {
                 LevelComponent level = commandBuffer.getComponent(sourceRef, LevelComponent.getComponentType());
                 if(level != null) {
                     float dmg = damage.getAmount() * (level.getLevel() / 10f);
-                    Damage levelExtraDamage = new Damage(Damage.NULL_SOURCE, DamageCause.OUT_OF_WORLD, dmg);
+                    Damage levelExtraDamage = new Damage(Damage.NULL_SOURCE, DamageCause.COMMAND, dmg);
                     DamageSystems.executeDamage(archetypeChunk.getReferenceTo(index), commandBuffer, levelExtraDamage);
                 }
             }

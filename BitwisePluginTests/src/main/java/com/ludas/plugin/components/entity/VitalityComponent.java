@@ -17,7 +17,7 @@ public class VitalityComponent implements Component<EntityStore> {
     private static ComponentType<EntityStore, VitalityComponent> TYPE;
     private LevelComponent level;
     public static final int PERK_LENGTH = 2;
-    public static final float BASE_MULTIPLIER = 0.002f;
+    public static final float BASE_MULTIPLIER = 0.1f;
     private int[] perks; //ints: 0 = unlock, 1 = enable
 
     public VitalityComponent() {
@@ -42,8 +42,8 @@ public class VitalityComponent implements Component<EntityStore> {
         return this.level;
     }
 
-    public float getMultiplier() {
-        return BASE_MULTIPLIER * this.level.getLevel();
+    public float getDefaultExp() {
+        return BASE_MULTIPLIER * (LevelComponent.MULTIPLIER * level.getLevel());
     }
 
     private boolean isPerkValid(int FLAG_ID) {

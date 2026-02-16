@@ -8,13 +8,13 @@ import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 
 import javax.annotation.Nonnull;
 
-public record GiveAgilityXPEvent(@Nonnull Ref<EntityStore> ref, float amount) implements IEvent<Void> {
-    public static void dispatch(Ref<EntityStore> ref, float amount) {
+public record GiveAgilityXPEvent(@Nonnull Ref<EntityStore> ref) implements IEvent<Void> {
+    public static void dispatch(Ref<EntityStore> ref) {
         IEventDispatcher<GiveAgilityXPEvent, GiveAgilityXPEvent> dispatcher =
                 HytaleServer.get().getEventBus().dispatchFor(GiveAgilityXPEvent.class);
 
         if (dispatcher.hasListener()) {
-            dispatcher.dispatch(new GiveAgilityXPEvent(ref, amount));
+            dispatcher.dispatch(new GiveAgilityXPEvent(ref));
         }
     }
 }

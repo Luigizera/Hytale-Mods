@@ -22,7 +22,7 @@ public class GiveMainStatusXPHandler implements Consumer<GiveMainStatusXPEvent> 
         LevelComponent level = mainStatus.getLevelComponent();
         if(level == null) return;
 
-        float xp = event.amount() / 10f;
+        float xp = event.amount() * mainStatus.getMultiplier();
         boolean leveledUp = level.addExperience(xp);
 
         Player player = store.getComponent(event.ref(), Player.getComponentType());

@@ -20,6 +20,7 @@ public class MainStatusComponent implements Component<EntityStore> {
     public static final BuilderCodec<MainStatusComponent> CODEC;
     private static ComponentType<EntityStore, MainStatusComponent> TYPE;
     public static final int PERK_LENGTH = 2;
+    public static final float BASE_MULTIPLIER = 0.1f;
     private LevelComponent level;
     private StrengthComponent strength;
     private VitalityComponent vitality;
@@ -52,6 +53,10 @@ public class MainStatusComponent implements Component<EntityStore> {
 
     public static ComponentType<EntityStore, MainStatusComponent> getComponentType() {
         return TYPE;
+    }
+
+    public float getMultiplier() {
+        return BASE_MULTIPLIER;
     }
 
     public LevelComponent getLevelComponent() {

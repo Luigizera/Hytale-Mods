@@ -15,6 +15,7 @@ import com.hypixel.hytale.server.core.modules.entity.damage.*;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.hypixel.hytale.server.npc.entities.NPCEntity;
+import com.hypixel.hytale.server.npc.systems.NPCSystems;
 import com.ludas.plugin.TestPlugin;
 import com.ludas.plugin.clazz.Perk;
 import com.ludas.plugin.clazz.PerkId;
@@ -24,6 +25,7 @@ import com.ludas.plugin.events.*;
 import com.ludas.plugin.events.damage.AgilityCritDamageEvent;
 import com.ludas.plugin.events.damage.MagicManaDamageEvent;
 import com.ludas.plugin.events.damage.StrengthExtraDamageEvent;
+import com.ludas.plugin.handlers.GiveMainStatusXPHandler;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
@@ -125,7 +127,6 @@ public class MainStatusSystems {
     }
 
     public static class PlayerHitNPCSystem extends DamageEventSystem {
-        private float defaultXP = 1f;
 
         public PlayerHitNPCSystem() {
             super();
@@ -142,10 +143,10 @@ public class MainStatusSystems {
         }
 
         @Override
-        public void handle(int index, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
+        public void handle(int idx, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
                            @NonNullDecl Store<EntityStore> store,
                            @NonNullDecl CommandBuffer<EntityStore> commandBuffer, @NonNullDecl Damage damage) {
-            NPCEntity npcComponent = (NPCEntity) archetypeChunk.getComponent(index, NPCEntity.getComponentType());
+            NPCEntity npcComponent = (NPCEntity) archetypeChunk.getComponent(idx, NPCEntity.getComponentType());
             if (npcComponent == null) return;
             Damage.Source damageSource = damage.getSource();
             if (!(damageSource instanceof Damage.EntitySource entitySource)) return;
@@ -158,19 +159,19 @@ public class MainStatusSystems {
             if (inventory == null) return;
             ItemStack itemStack = inventory.getActiveHotbarItem();
             TestPlugin.LOGGER.atInfo().log("ItemStack: " + itemStack);
-            LevelComponent npcLevel = archetypeChunk.getComponent(index, LevelComponent.getComponentType());
+            /*LevelComponent npcLevel = archetypeChunk.getComponent(idx, LevelComponent.getComponentType());
             if (npcLevel != null) {
                 defaultXP = (float) npcLevel.getLevel();
-            }
+            }*/
             Ref<EntityStore> npcRef = npcComponent.getReference();
             if (npcRef == null) return;
             DamageCause damageCause = damage.getCause();
             if(itemStack == null) {
                 if(isDamageCausePhysical(damageCause)) {
-                    GiveStrengthXPEvent.dispatch(attackerRef, defaultXP);
+                    GiveStrengthXPEvent.dispatch(attackerRef);
                 }
                 else {
-                    GiveMagicXPEvent.dispatch(attackerRef, defaultXP);
+                    GiveMagicXPEvent.dispatch(attackerRef);
                 }
             }
             else {
@@ -181,18 +182,18 @@ public class MainStatusSystems {
                     Map<String, String[]> tags = data.getRawTags();
 
                     if(isItemAgilityRelated(tags)) {
-                        GiveAgilityXPEvent.dispatch(attackerRef, defaultXP);
+                        GiveAgilityXPEvent.dispatch(attackerRef);
                         AgilityCritDamageEvent.dispatch(attackerRef, npcRef, damage, commandBuffer);
                     }
                     else if(isDamageCausePhysical(damageCause)) {
-                        GiveStrengthXPEvent.dispatch(attackerRef, defaultXP);
+                        GiveStrengthXPEvent.dispatch(attackerRef);
                     }
                     else {
-                        GiveMagicXPEvent.dispatch(attackerRef, defaultXP);
+                        GiveMagicXPEvent.dispatch(attackerRef);
                     }
                 }
                 else {
-                    GiveStrengthXPEvent.dispatch(attackerRef, defaultXP);
+                    GiveStrengthXPEvent.dispatch(attackerRef);
                 }
             }
 
@@ -221,10 +222,10 @@ public class MainStatusSystems {
         }
 
         @Override
-        public void handle(int index, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
+        public void handle(int idx, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
                            @NonNullDecl Store<EntityStore> store,
                            @NonNullDecl CommandBuffer<EntityStore> commandBuffer, @NonNullDecl Damage damage) {
-            Player target = archetypeChunk.getComponent(index, Player.getComponentType());
+            Player target = archetypeChunk.getComponent(idx, Player.getComponentType());
             if(target == null) return;
             Damage.Source damageSource = damage.getSource();
             if (!(damageSource instanceof Damage.EntitySource entitySource)) return;
@@ -258,7 +259,81 @@ public class MainStatusSystems {
                 MagicManaDamageEvent.dispatch(attackerRef, targetRef, commandBuffer);
             }
         }
+    }
 
+    public static class DamagePlayerSystem extends DamageEventSystem {
+        public DamagePlayerSystem() {
+            super();
+        }
+
+        @Nullable
+        public SystemGroup<EntityStore> getGroup() {
+            return DamageModule.get().getInspectDamageGroup();
+        }
+
+        @Nonnull
+        public Query<EntityStore> getQuery() {
+            return Query.and(Player.getComponentType());
+        }
+
+        @Override
+        public void handle(int idx, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
+                           @NonNullDecl Store<EntityStore> store,
+                           @NonNullDecl CommandBuffer<EntityStore> commandBuffer, @NonNullDecl Damage damage) {
+            Player target = archetypeChunk.getComponent(idx, Player.getComponentType());
+            if(target == null) return;
+            Ref<EntityStore> targetRef = target.getReference();
+            if(targetRef == null) return;
+            Damage.Source damageSource = damage.getSource();
+            DamageCause damageCause = damage.getCause();
+            if (damageSource instanceof Damage.EntitySource entitySource) {
+                Ref<EntityStore> sourceRef = entitySource.getRef();
+                Player attackerPlayer = store.getComponent(sourceRef, Player.getComponentType());
+                if (attackerPlayer == null) {
+                    GiveVitalityXPEvent.dispatch(targetRef);
+                }
+            }
+            else if (damageCause != DamageCause.COMMAND) {
+                GiveVitalityXPEvent.dispatch(targetRef);
+            }
+        }
+    }
+
+    public static class NPCDeathSystem extends DeathSystems.OnDeathSystem {
+
+        public NPCDeathSystem() {
+            super();
+        }
+
+        @Nonnull
+        public Query<EntityStore> getQuery() {
+            return Query.and(NPCEntity.getComponentType());
+        }
+
+        @Override
+        public void onComponentAdded(@NonNullDecl Ref<EntityStore> ref,
+                                     @NonNullDecl DeathComponent deathComponent,
+                                     @NonNullDecl Store<EntityStore> store,
+                                     @NonNullDecl CommandBuffer<EntityStore> commandBuffer) {
+            NPCEntity npcComponent = (NPCEntity)commandBuffer.getComponent(ref, NPCEntity.getComponentType());
+            if (npcComponent == null) return;
+            Damage deathInfo = deathComponent.getDeathInfo();
+            if(deathInfo == null) return;
+            Damage.Source damageSource = deathInfo.getSource();
+            if (!(damageSource instanceof Damage.EntitySource)) return;
+            Damage.EntitySource entitySource = (Damage.EntitySource) damageSource;
+            Ref attackerRef = entitySource.getRef();
+            Player attackerPlayer = store.getComponent(attackerRef, Player.getComponentType());
+            if(attackerPlayer == null) return;
+            Ref<EntityStore> attacker = attackerPlayer.getReference();
+            if(attacker == null) return;
+            MainStatusComponent mainStatus = store.getComponent(attacker, MainStatusComponent.getComponentType());
+            if(mainStatus != null) {
+                LevelComponent level = store.getComponent(ref, LevelComponent.getComponentType());
+                if(level == null) return;
+                GiveMainStatusXPEvent.dispatch(attackerRef, level.getLevel() * 10f);
+            }
+        }
     }
 }
 

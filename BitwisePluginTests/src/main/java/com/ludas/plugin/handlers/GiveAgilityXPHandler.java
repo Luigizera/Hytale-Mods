@@ -25,7 +25,7 @@ public class GiveAgilityXPHandler implements Consumer<GiveAgilityXPEvent> {
         LevelComponent level = agility.getLevelComponent();
         if(level == null) return;
 
-        float xp = event.amount() / 10f;
+        float xp = agility.getDefaultExp();
         boolean leveledUp = level.addExperience(xp);
         GiveMainStatusXPEvent.dispatch(event.ref(), xp);
 

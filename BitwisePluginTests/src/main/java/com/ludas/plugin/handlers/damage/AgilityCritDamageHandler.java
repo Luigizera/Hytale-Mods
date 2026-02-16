@@ -34,7 +34,7 @@ public class AgilityCritDamageHandler implements Consumer<AgilityCritDamageEvent
             if(critChance > 1) {
                 dmg += event.damage().getAmount() * (critChance - 1);
             }
-            Damage crit = new Damage(Damage.NULL_SOURCE, DamageCause.OUT_OF_WORLD, dmg);
+            Damage crit = new Damage(Damage.NULL_SOURCE, DamageCause.COMMAND, dmg);
             DamageSystems.executeDamage(event.target(), event.commandBuffer(), crit);
             Player attacker = store.getComponent(event.attacker(), Player.getComponentType());
             if (attacker == null) return;

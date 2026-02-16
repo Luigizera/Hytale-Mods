@@ -29,8 +29,8 @@ public class MagicManaDamageHandler implements Consumer<MagicManaDamageEvent> {
         if(attackerMana == null) return;
 
         if(attackerMana.getMax() > 0) {
-            float dmg = attackerMana.getMax() * magic.getMultiplier();
-            Damage extraDmg = new Damage(Damage.NULL_SOURCE, DamageCause.OUT_OF_WORLD, dmg);
+            float dmg = attackerMana.getMax() * magic.getDamageMultiplier();
+            Damage extraDmg = new Damage(Damage.NULL_SOURCE, DamageCause.COMMAND, dmg);
             DamageSystems.executeDamage(event.target(), event.commandBuffer(), extraDmg);
         }
     }

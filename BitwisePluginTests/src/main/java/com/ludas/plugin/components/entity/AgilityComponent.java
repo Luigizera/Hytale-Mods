@@ -17,8 +17,9 @@ public class AgilityComponent implements Component<EntityStore> {
     private static ComponentType<EntityStore, AgilityComponent> TYPE;
     private LevelComponent level;
     public static final int PERK_LENGTH = 2;
-    public static final float BASE_CRIT_CHANCE = 0.01f;
+    public static final float BASE_CRIT_CHANCE = 0.001f;
     public static final float BASE_CRIT_DAMAGE = 0.5f;
+    public static final float BASE_EXP_MULTIPLIER = 0.1f;
     private int[] perks; //ints: 0 = unlock, 1 = enable
 
     public AgilityComponent() {
@@ -49,6 +50,10 @@ public class AgilityComponent implements Component<EntityStore> {
 
     public float getCritDamage() {
         return BASE_CRIT_DAMAGE + (this.level.getLevel() / 100f);
+    }
+
+    public float getDefaultExp() {
+        return BASE_EXP_MULTIPLIER * (LevelComponent.MULTIPLIER * level.getLevel());
     }
 
     private boolean isPerkValid(int FLAG_ID) {

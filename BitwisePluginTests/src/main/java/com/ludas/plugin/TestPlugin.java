@@ -90,6 +90,8 @@ public class TestPlugin extends JavaPlugin {
         entityRegistry.registerSystem(new MainStatusSystems.PerkTick());
         entityRegistry.registerSystem(new MainStatusSystems.PlayerHitNPCSystem());
         entityRegistry.registerSystem(new MainStatusSystems.PlayerHitPlayerSystem());
+        entityRegistry.registerSystem(new MainStatusSystems.DamagePlayerSystem());
+        entityRegistry.registerSystem(new MainStatusSystems.NPCDeathSystem());
         entityRegistry.registerSystem(new NPCLevelSystems.NPCSpawnSystem());
         entityRegistry.registerSystem(new NPCLevelSystems.NPCDamageDealtSystem());
         entityRegistry.registerSystem(new NPCLevelSystems.NPCEffect());
@@ -106,6 +108,7 @@ public class TestPlugin extends JavaPlugin {
 
         eventRegistry.register(GiveMainStatusXPEvent.class, new GiveMainStatusXPHandler());
         eventRegistry.register(GiveStrengthXPEvent.class, new GiveStrengthXPHandler());
+        eventRegistry.register(GiveVitalityXPEvent.class, new GiveVitalityXPHandler());
         eventRegistry.register(GiveAgilityXPEvent.class, new GiveAgilityXPHandler());
         eventRegistry.register(GiveMagicXPEvent.class, new GiveMagicXPHandler());
         eventRegistry.register(StrengthExtraDamageEvent.class, new StrengthExtraDamageHandler());

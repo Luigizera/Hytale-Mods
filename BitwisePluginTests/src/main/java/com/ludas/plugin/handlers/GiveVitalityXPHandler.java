@@ -10,48 +10,49 @@ import com.hypixel.hytale.server.core.modules.entitystats.modifier.StaticModifie
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.util.EventTitleUtil;
 import com.ludas.plugin.components.entity.LevelComponent;
-import com.ludas.plugin.components.entity.MagicComponent;
 import com.ludas.plugin.components.entity.MainStatusComponent;
-import com.ludas.plugin.events.GiveMagicXPEvent;
+import com.ludas.plugin.components.entity.StrengthComponent;
+import com.ludas.plugin.components.entity.VitalityComponent;
 import com.ludas.plugin.events.GiveMainStatusXPEvent;
 import com.ludas.plugin.events.GiveStrengthXPEvent;
+import com.ludas.plugin.events.GiveVitalityXPEvent;
 
 import java.awt.*;
 import java.util.function.Consumer;
 
-public class GiveMagicXPHandler implements Consumer<GiveMagicXPEvent> {
+public class GiveVitalityXPHandler implements Consumer<GiveVitalityXPEvent> {
     @Override
-    public void accept(GiveMagicXPEvent event) {
+    public void accept(GiveVitalityXPEvent event) {
         if (!event.ref().isValid()) return;
         var store = event.ref().getStore();
         MainStatusComponent mainStatus = store.getComponent(event.ref(), MainStatusComponent.getComponentType());
         if (mainStatus == null) return;
-        MagicComponent magic = mainStatus.getMagic();
-        if(magic == null) return;
-        LevelComponent level = magic.getLevelComponent();
+        VitalityComponent vitality = mainStatus.getVitality();
+        if(vitality == null) return;
+        LevelComponent level = vitality.getLevelComponent();
         if(level == null) return;
 
-        float xp = magic.getDefaultExp();
+        float xp = vitality.getDefaultExp();
         boolean leveledUp = level.addExperience(xp);
         GiveMainStatusXPEvent.dispatch(event.ref(), xp);
 
         Player player = store.getComponent(event.ref(), Player.getComponentType());
         PlayerRef playerRef = store.getComponent(event.ref(), PlayerRef.getComponentType());
         if(playerRef == null || player == null) return;
-        player.sendMessage(Message.raw("Exp adicionada para magia: +" + xp).color(Color.ORANGE).bold(true));
+        player.sendMessage(Message.raw("Exp adicionada para vitalidade: +" + xp).color(Color.ORANGE).bold(true));
         if(leveledUp) {
             EventTitleUtil.showEventTitleToPlayer(
                     playerRef,
-                    Message.raw("Magic Up!"),
+                    Message.raw("Vitality Up!"),
                     Message.raw("Level atual: " + level.getLevel()),
                     true
             );
             EntityStatMap statMap = store.getComponent(event.ref(), EntityStatMap.getComponentType());
             if (statMap == null) return;
-            EntityStatValue mana = statMap.get(DefaultEntityStatTypes.getMana());
-            if(mana == null) return;
-            player.sendMessage(Message.raw("+1 Mana").color(Color.CYAN).bold(true));
-            statMap.putModifier(DefaultEntityStatTypes.getMana(), "LudasMagic",
+            EntityStatValue health = statMap.get(DefaultEntityStatTypes.getHealth());
+            if(health == null) return;
+            player.sendMessage(Message.raw("+1 Vitalidade").color(Color.PINK).bold(true));
+            statMap.putModifier(DefaultEntityStatTypes.getHealth(), "LudasVitality",
                     new StaticModifier(Modifier.ModifierTarget.MAX,
                             StaticModifier.CalculationType.ADDITIVE,
                             level.getLevel()));

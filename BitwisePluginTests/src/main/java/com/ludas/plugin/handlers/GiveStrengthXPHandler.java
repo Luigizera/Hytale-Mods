@@ -26,7 +26,7 @@ public class GiveStrengthXPHandler implements Consumer<GiveStrengthXPEvent> {
         LevelComponent level = strength.getLevelComponent();
         if(level == null) return;
 
-        float xp = event.amount() / 10f;
+        float xp = strength.getDefaultExp();
         boolean leveledUp = level.addExperience(xp);
         GiveMainStatusXPEvent.dispatch(event.ref(), xp);
 
