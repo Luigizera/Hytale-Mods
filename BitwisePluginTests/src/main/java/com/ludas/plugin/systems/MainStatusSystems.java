@@ -1,10 +1,13 @@
 package com.ludas.plugin.systems;
 
+import com.hypixel.hytale.assetstore.AssetExtraInfo;
 import com.hypixel.hytale.component.*;
 import com.hypixel.hytale.component.query.Query;
 import com.hypixel.hytale.component.system.RefSystem;
 import com.hypixel.hytale.component.system.tick.DelayedEntitySystem;
 import com.hypixel.hytale.server.core.Message;
+import com.hypixel.hytale.server.core.asset.type.item.config.Item;
+import com.hypixel.hytale.server.core.asset.type.item.config.ItemWeapon;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.inventory.Inventory;
 import com.hypixel.hytale.server.core.inventory.ItemStack;
@@ -21,51 +24,30 @@ import com.ludas.plugin.events.*;
 import com.ludas.plugin.events.damage.AgilityCritDamageEvent;
 import com.ludas.plugin.events.damage.MagicManaDamageEvent;
 import com.ludas.plugin.events.damage.StrengthExtraDamageEvent;
+import it.unimi.dsi.fastutil.ints.IntSet;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
+import java.util.Map;
 
 
 public class MainStatusSystems {
 
-    private static boolean isWeapon(ItemStack item) {
-        String itemId = item.getItemId();
-        if(itemId.isEmpty()) return false;
-        return itemId.startsWith("Weapon");
+    private static boolean isItemAgilityRelated(Map<String, String[]> item) {
+        return item.get("Family=Dagger") != null
+                || item.get("Family=Axe") != null
+                || item.get("Family=Sword") != null
+                || item.get("Family=Bow") != null
+                || item.get("Family=Spear") != null
+                || item.get("Family=Arrow") != null
+                || item.get("Family=Club") != null;
     }
 
-    private static boolean isItemAgilityRelated(ItemStack item) {
-        String itemId = item.getItemId();
-        if(itemId.isEmpty()) return false;
-        return itemId.startsWith("Weapon_Sword")
-                || itemId.startsWith("Weapon_Axe")
-                || itemId.startsWith("Weapon_Daggers")
-                || itemId.startsWith("Weapon_Kunai")
-                || itemId.startsWith("Weapon_Spear")
-                || itemId.startsWith("Weapon_Crossbow")
-                || itemId.startsWith("Weapon_Shortbow")
-                || itemId.startsWith("Weapon_Claws");
-    }
-
-    private static boolean isItemStrengthRelated(ItemStack item) {
-        String itemId = item.getItemId();
-        if(itemId.isEmpty()) return false;
-        return itemId.startsWith("Weapon_Battleaxe")
-                || itemId.startsWith("Weapon_Club")
-                || itemId.startsWith("Weapon_Longsword")
-                || itemId.startsWith("Weapon_Mace")
-                || itemId.startsWith("Weapon_Shield");
-    }
-
-    private static boolean isItemMagicRelated(ItemStack item) {
-        String itemId = item.getItemId();
-        if(itemId.isEmpty()) return false;
-        return itemId.startsWith("Weapon_Wand")
-                || itemId.startsWith("Weapon_Staff")
-                || itemId.startsWith("Weapon_Spellbook");
+    private static boolean isDamageCausePhysical(DamageCause damageCause) {
+        return damageCause == DamageCause.PHYSICAL || damageCause.getInherits().equals(DamageCause.PHYSICAL.getId());
     }
 
     public static class PerkTick extends DelayedEntitySystem<EntityStore> {
@@ -174,35 +156,38 @@ public class MainStatusSystems {
             if (attackerRef == null) return;
             Inventory inventory = attacker.getInventory();
             if (inventory == null) return;
-            ItemStack item = inventory.getActiveHotbarItem();
-            TestPlugin.LOGGER.atInfo().log("Item: " + item);
+            ItemStack itemStack = inventory.getActiveHotbarItem();
+            TestPlugin.LOGGER.atInfo().log("ItemStack: " + itemStack);
             LevelComponent npcLevel = archetypeChunk.getComponent(index, LevelComponent.getComponentType());
             if (npcLevel != null) {
                 defaultXP = (float) npcLevel.getLevel();
             }
             Ref<EntityStore> npcRef = npcComponent.getReference();
             if (npcRef == null) return;
-            if(item == null) {
-                if(damage.getCause() != DamageCause.PHYSICAL && damage.getCause().getInherits() != DamageCause.PHYSICAL.getId()) {
-                    GiveMagicXPEvent.dispatch(attackerRef, defaultXP);
+            DamageCause damageCause = damage.getCause();
+            if(itemStack == null) {
+                if(isDamageCausePhysical(damageCause)) {
+                    GiveStrengthXPEvent.dispatch(attackerRef, defaultXP);
                 }
                 else {
-                    GiveStrengthXPEvent.dispatch(attackerRef, defaultXP);
+                    GiveMagicXPEvent.dispatch(attackerRef, defaultXP);
                 }
             }
             else {
-                if(isWeapon(item)) {
-                    if(isItemAgilityRelated(item)) {
-                        TestPlugin.LOGGER.atInfo().log("Agility Related");
+                Item item = itemStack.getItem();
+                ItemWeapon weapon = item.getWeapon();
+                if (weapon != null) {
+                    AssetExtraInfo.Data data = item.getData();
+                    Map<String, String[]> tags = data.getRawTags();
+
+                    if(isItemAgilityRelated(tags)) {
                         GiveAgilityXPEvent.dispatch(attackerRef, defaultXP);
                         AgilityCritDamageEvent.dispatch(attackerRef, npcRef, damage, commandBuffer);
                     }
-                    else if(isItemStrengthRelated(item)) {
-                        TestPlugin.LOGGER.atInfo().log("Strength Related");
+                    else if(isDamageCausePhysical(damageCause)) {
                         GiveStrengthXPEvent.dispatch(attackerRef, defaultXP);
                     }
                     else {
-                        TestPlugin.LOGGER.atInfo().log("Unknown/Magic Related");
                         GiveMagicXPEvent.dispatch(attackerRef, defaultXP);
                     }
                 }
@@ -211,11 +196,11 @@ public class MainStatusSystems {
                 }
             }
 
-            if(damage.getCause() != DamageCause.PHYSICAL && damage.getCause().getInherits() != DamageCause.PHYSICAL.getId()) {
-                MagicManaDamageEvent.dispatch(attackerRef, npcRef, commandBuffer);
+            if(isDamageCausePhysical(damageCause)) {
+                StrengthExtraDamageEvent.dispatch(attackerRef, npcRef, damage, commandBuffer);
             }
             else {
-                StrengthExtraDamageEvent.dispatch(attackerRef, npcRef, damage, commandBuffer);
+                MagicManaDamageEvent.dispatch(attackerRef, npcRef, commandBuffer);
             }
         }
     }
@@ -250,18 +235,27 @@ public class MainStatusSystems {
             if (attackerRef == null) return;
             Inventory inventory = attacker.getInventory();
             if (inventory == null) return;
-            ItemStack item = inventory.getActiveHotbarItem();
             Ref<EntityStore> targetRef = target.getReference();
             if (targetRef == null) return;
-            if(isWeapon(item) && isItemAgilityRelated(item)) {
-                AgilityCritDamageEvent.dispatch(attackerRef, targetRef, damage, commandBuffer);
+            ItemStack itemStack = inventory.getActiveHotbarItem();
+            DamageCause damageCause = damage.getCause();
+            if(itemStack != null) {
+                Item item = itemStack.getItem();
+                ItemWeapon weapon = item.getWeapon();
+                if(weapon != null) {
+                    AssetExtraInfo.Data data = item.getData();
+                    Map<String, String[]> tags = data.getRawTags();
+                    if (isItemAgilityRelated(tags)) {
+                        AgilityCritDamageEvent.dispatch(attackerRef, targetRef, damage, commandBuffer);
+                    }
+                }
             }
 
-            if(damage.getCause() != DamageCause.PHYSICAL && damage.getCause().getInherits() != DamageCause.PHYSICAL.getId()) {
-                MagicManaDamageEvent.dispatch(attackerRef, targetRef, commandBuffer);
+            if(isDamageCausePhysical(damageCause)) {
+                StrengthExtraDamageEvent.dispatch(attackerRef, targetRef, damage, commandBuffer);
             }
             else {
-                StrengthExtraDamageEvent.dispatch(attackerRef, targetRef, damage, commandBuffer);
+                MagicManaDamageEvent.dispatch(attackerRef, targetRef, commandBuffer);
             }
         }
 
