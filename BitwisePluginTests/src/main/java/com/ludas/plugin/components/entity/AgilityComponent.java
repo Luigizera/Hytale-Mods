@@ -53,7 +53,7 @@ public class AgilityComponent implements Component<EntityStore> {
     }
 
     public float getDefaultExp() {
-        return BASE_EXP_MULTIPLIER * (LevelComponent.MULTIPLIER * level.getLevel());
+        return BASE_EXP_MULTIPLIER * LevelComponent.MULTIPLIER;
     }
 
     private boolean isPerkValid(int FLAG_ID) {

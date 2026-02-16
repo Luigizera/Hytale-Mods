@@ -44,7 +44,7 @@ public class StrengthComponent implements Component<EntityStore> {
     }
 
     public float getDefaultExp() {
-        return BASE_EXP_MULTIPLIER * (LevelComponent.MULTIPLIER * this.level.getLevel());
+        return BASE_EXP_MULTIPLIER * LevelComponent.MULTIPLIER;
     }
 
     public float getDamageMultiplier() {
