@@ -9,7 +9,7 @@ import com.hypixel.hytale.component.ComponentType;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.ludas.plugin.clazz.Perk;
 import com.ludas.plugin.clazz.StrengthPerkId;
-import com.ludas.plugin.perks.strength.StrengthExplosivePerk;
+import com.ludas.plugin.perks.strength.StrengthFrenzyPerk;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 public class MagicComponent implements Component<EntityStore> {
@@ -77,21 +77,21 @@ public class MagicComponent implements Component<EntityStore> {
 
     public int getPerkIdByName(String name) {
         return switch (name.toUpperCase()) {
-            case "EXPLOSIVE" -> StrengthPerkId.EXPLOSIVE_PERK;
+            case "EXPLOSIVE" -> StrengthPerkId.FRENZY;
             default -> -1;
         };
     }
 
     public String getPerkNameById(int FLAG_ID) {
         return switch (FLAG_ID) {
-            case StrengthPerkId.EXPLOSIVE_PERK -> StrengthExplosivePerk.NAME;
+            case StrengthPerkId.FRENZY -> StrengthFrenzyPerk.NAME;
             default -> "unknown";
         };
     }
 
     public Perk getPerkById(int FLAG_ID) {
         return switch (FLAG_ID) {
-            case StrengthPerkId.EXPLOSIVE_PERK -> new StrengthExplosivePerk();
+            case StrengthPerkId.FRENZY -> new StrengthFrenzyPerk();
             default -> null;
         };
     }

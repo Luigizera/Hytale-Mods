@@ -44,7 +44,7 @@ public class StrengthStatusSystems {
                     perk.unlockCondition(idx, archetypeChunk);
                 }
                 else if (!strength.isPerkEnabled(i)) {
-                    perk.removeComponents(idx, archetypeChunk, commandBuffer);
+                    perk.removeComponents(idx, archetypeChunk, store, commandBuffer);
                 }
                 else {
                     perk.tick(dt, idx, archetypeChunk, store, commandBuffer);

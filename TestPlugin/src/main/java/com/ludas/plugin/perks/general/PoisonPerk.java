@@ -94,7 +94,7 @@ public class PoisonPerk extends Perk{
         if(playerRef == null) return;
         PoisonComponent poison = store.getComponent(playerRef, PoisonComponent.getComponentType());
         if(poison != null) return;
-        EntityStatMap statMap = archetypeChunk.getComponent(idx, EntityStatMap.getComponentType());
+        EntityStatMap statMap = store.getComponent(playerRef, EntityStatMap.getComponentType());
         if(statMap == null) return;
         EntityStatValue entityHealth = statMap.get(DefaultEntityStatTypes.getHealth());
         if(entityHealth == null) return;
@@ -102,10 +102,6 @@ public class PoisonPerk extends Perk{
         float percentage =  entityHealth.asPercentage();
         if(percentage >= 0.7) {
             EntityEffect effect = EntityEffect.getAssetMap().getAsset("Poison_T1");
-            /*IndexedLookupTableAssetMap<String, EntityEffect> assetMap = EntityEffect.getAssetMap();
-            for(int i = 0; i < 20; ++i) {
-                TestPlugin.LOGGER.atInfo().log("Asset: "+assetMap.getAsset(i));
-            }*/
             if(effect == null) return;
             EffectControllerComponent controller =
                     store.getComponent(playerRef, EffectControllerComponent.getComponentType());
@@ -123,7 +119,7 @@ public class PoisonPerk extends Perk{
         }
     }
 
-    public void removeComponents(int idx, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
+    public void removeComponents(int idx, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk, @NonNullDecl Store<EntityStore> store,
                                  @NonNullDecl CommandBuffer<EntityStore> commandBuffer) {
         /* EXEMPLO
         PoisonComponent poison = archetypeChunk.getComponent(idx, PoisonComponent.getComponentType());

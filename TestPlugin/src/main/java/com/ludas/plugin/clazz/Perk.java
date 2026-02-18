@@ -15,5 +15,6 @@ public abstract class Perk {
     public abstract void tick(float dt, int idx, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
                               @NonNullDecl Store<EntityStore> store, @NonNullDecl CommandBuffer<EntityStore> commandBuffer);
     public abstract void removeComponents(int idx, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
+                                          @NonNullDecl Store<EntityStore> store,
                                           @NonNullDecl CommandBuffer<EntityStore> commandBuffer);
 }

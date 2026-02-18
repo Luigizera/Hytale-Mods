@@ -26,4 +26,5 @@ commands.ludas.perk.info.status = Description: Gives you more stats{modifier}
 commands.ludas.perk.unlock.condition.unknown = Condition: Unknown
 commands.ludas.perk.unlock.condition.poison = Condition: Get to level 2
 commands.ludas.perk.unlock.condition.status = Condition: Get to level 2
+effect.ludas.frenzy.name = Frenzy
 perks.ludas.unlocked = New perk unlocked: {id}

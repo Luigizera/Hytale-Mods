@@ -9,11 +9,9 @@ import com.hypixel.hytale.component.ComponentType;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.ludas.plugin.clazz.Perk;
 import com.ludas.plugin.clazz.PerkId;
-import com.ludas.plugin.clazz.StrengthPerkId;
 import com.ludas.plugin.perks.general.HealingAreaPerk;
 import com.ludas.plugin.perks.general.PoisonPerk;
 import com.ludas.plugin.perks.general.StatusPerk;
-import com.ludas.plugin.perks.strength.StrengthExplosivePerk;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 public class MainStatusComponent implements Component<EntityStore> {

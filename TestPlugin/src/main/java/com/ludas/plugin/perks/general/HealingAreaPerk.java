@@ -124,6 +124,7 @@ public class HealingAreaPerk extends Perk{
     }
 
     public void removeComponents(int idx, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
+                                 @NonNullDecl Store<EntityStore> store,
                                  @NonNullDecl CommandBuffer<EntityStore> commandBuffer) {
         return;
     }
