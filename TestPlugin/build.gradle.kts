@@ -2,7 +2,7 @@ plugins {
     id("java")
 }
 
-group = "com.ludas"
+group = "Github.Luigizera"
 version = "1.0-SNAPSHOT"
 
 repositories {

@@ -1,8 +1,12 @@
 package com.ludas.plugin.perks.general;
 
+import com.hypixel.hytale.assetstore.map.IndexedLookupTableAssetMap;
 import com.hypixel.hytale.component.*;
 import com.hypixel.hytale.protocol.GameMode;
 import com.hypixel.hytale.server.core.Message;
+import com.hypixel.hytale.server.core.asset.type.entityeffect.config.EntityEffect;
+import com.hypixel.hytale.server.core.entity.effect.ActiveEntityEffect;
+import com.hypixel.hytale.server.core.entity.effect.EffectControllerComponent;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.inventory.ItemStack;
 import com.hypixel.hytale.server.core.modules.entitystats.EntityStatMap;
@@ -11,9 +15,9 @@ import com.hypixel.hytale.server.core.modules.entitystats.asset.DefaultEntitySta
 import com.hypixel.hytale.server.core.modules.entitystats.modifier.Modifier;
 import com.hypixel.hytale.server.core.modules.entitystats.modifier.StaticModifier;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
-import com.hypixel.hytale.server.core.universe.Universe;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.hypixel.hytale.server.core.util.NotificationUtil;
+import com.ludas.plugin.TestPlugin;
 import com.ludas.plugin.clazz.Perk;
 import com.ludas.plugin.clazz.PerkId;
 import com.ludas.plugin.components.effects.PoisonComponent;
@@ -97,12 +101,31 @@ public class PoisonPerk extends Perk{
 
         float percentage =  entityHealth.asPercentage();
         if(percentage >= 0.7) {
+            EntityEffect effect = EntityEffect.getAssetMap().getAsset("Poison_T1");
+            /*IndexedLookupTableAssetMap<String, EntityEffect> assetMap = EntityEffect.getAssetMap();
+            for(int i = 0; i < 20; ++i) {
+                TestPlugin.LOGGER.atInfo().log("Asset: "+assetMap.getAsset(i));
+            }*/
+            if(effect == null) return;
+            EffectControllerComponent controller =
+                    store.getComponent(playerRef, EffectControllerComponent.getComponentType());
+            if(controller == null) return;
+            int poisonIndex = EntityEffect.getAssetMap().getIndex("Poison_T1");
+
+            ActiveEntityEffect activeEffect = controller.getActiveEffects().get(poisonIndex);
+            if (activeEffect == null) {
+                controller.addEffect(playerRef, effect, commandBuffer);
+            }
+
+            /* EXEMPLO
             commandBuffer.addComponent(playerRef, PoisonComponent.getComponentType(), new PoisonComponent());
+             */
         }
     }
 
     public void removeComponents(int idx, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
                                  @NonNullDecl CommandBuffer<EntityStore> commandBuffer) {
+        /* EXEMPLO
         PoisonComponent poison = archetypeChunk.getComponent(idx, PoisonComponent.getComponentType());
         if(poison == null) return;
         Player player = archetypeChunk.getComponent(idx, Player.getComponentType());
@@ -110,5 +133,7 @@ public class PoisonPerk extends Perk{
         Ref<EntityStore> playerRef = player.getReference();
         if(playerRef == null) return;
         commandBuffer.tryRemoveComponent(playerRef, PoisonComponent.getComponentType());
+        */
+        return;
     }
 }
