@@ -48,7 +48,7 @@ public class HealingAreaPerk extends Perk{
         }
         Player player = archetypeChunk.getComponent(idx, Player.getComponentType());
         if(player == null) return;
-        mainStatus.setUnlocked(PerkId.HEALING_AREA);
+        mainStatus.setUnlocked(PerkId.MAIN_HEALING_AREA);
         player.sendMessage(Message.translation("server.perks.ludas.unlocked").param("id", NAME));
     }
 

@@ -1,0 +1,13 @@
+{
+  "Spawners": [
+    {
+        "SpawnerId": "Ludas_Impact_Critical_BlackFlash_Red_Hit",
+        "FixedRotation": false
+    },
+    {
+      "SpawnerId": "Ludas_Impact_Critical_BlackFlash_Red",
+      "StartDelay": 0.01
+    }
+  ],
+  "IsImportant": false
+}

@@ -18,8 +18,6 @@ import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.hypixel.hytale.server.core.util.message.MessageFormat;
 import com.ludas.plugin.clazz.Perk;
 import com.ludas.plugin.clazz.PerkId;
-import com.ludas.plugin.clazz.StrengthPerkId;
-import com.ludas.plugin.components.entity.LevelComponent;
 import com.ludas.plugin.components.entity.MainStatusComponent;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
@@ -63,7 +61,7 @@ public class PerkCommand extends AbstractPlayerCommand {
                 }
 
                 ObjectArrayList<Message> values = new ObjectArrayList<>();
-                for (int i = 0; i < PerkId.CURRENT_PERK_COUNT; ++i) {
+                for (int i = 0; i < PerkId.MAIN_CURRENT_PERK_COUNT; ++i) {
                     boolean unlocked = mainStatus.isPerkUnlocked(i);
                     if (unlocked) {
                         Perk perk = mainStatus.getPerkById(i);
@@ -118,7 +116,7 @@ public class PerkCommand extends AbstractPlayerCommand {
                 }
 
                 ObjectArrayList<Message> values = new ObjectArrayList<>();
-                for (int i = 0; i < StrengthPerkId.CURRENT_PERK_COUNT; ++i) {
+                for (int i = 0; i < PerkId.STRENGTH_CURRENT_PERK_COUNT; ++i) {
                     boolean unlocked = mainStatus.getStrength().isPerkUnlocked(i);
                     if (unlocked) {
                         Perk perk = mainStatus.getStrength().getPerkById(i);

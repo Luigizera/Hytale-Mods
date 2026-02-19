@@ -8,7 +8,7 @@ import com.hypixel.hytale.component.Component;
 import com.hypixel.hytale.component.ComponentType;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.ludas.plugin.clazz.Perk;
-import com.ludas.plugin.clazz.StrengthPerkId;
+import com.ludas.plugin.clazz.PerkId;
 import com.ludas.plugin.perks.strength.StrengthFrenzyPerk;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
@@ -60,7 +60,7 @@ public class AgilityComponent implements Component<EntityStore> {
         return perks != null
                 && perks.length == PERK_LENGTH
                 && FLAG_ID >= 0
-                && FLAG_ID < StrengthPerkId.CURRENT_PERK_COUNT;
+                && FLAG_ID < PerkId.STRENGTH_CURRENT_PERK_COUNT;
     }
 
     public void setUnlocked(int FLAG_ID) {
@@ -82,21 +82,21 @@ public class AgilityComponent implements Component<EntityStore> {
 
     public int getPerkIdByName(String name) {
         return switch (name.toUpperCase()) {
-            case "EXPLOSIVE" -> StrengthPerkId.FRENZY;
+            case "FRENZY" -> PerkId.STRENGTH_FRENZY;
             default -> -1;
         };
     }
 
     public String getPerkNameById(int FLAG_ID) {
         return switch (FLAG_ID) {
-            case StrengthPerkId.FRENZY -> StrengthFrenzyPerk.NAME;
+            case PerkId.STRENGTH_FRENZY -> StrengthFrenzyPerk.NAME;
             default -> "unknown";
         };
     }
 
     public Perk getPerkById(int FLAG_ID) {
         return switch (FLAG_ID) {
-            case StrengthPerkId.FRENZY -> new StrengthFrenzyPerk();
+            case PerkId.STRENGTH_FRENZY -> new StrengthFrenzyPerk();
             default -> null;
         };
     }

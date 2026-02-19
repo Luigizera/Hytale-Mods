@@ -15,7 +15,7 @@ import com.hypixel.hytale.server.core.modules.entitystats.modifier.Modifier;
 import com.hypixel.hytale.server.core.modules.entitystats.modifier.StaticModifier;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.ludas.plugin.clazz.Perk;
-import com.ludas.plugin.clazz.StrengthPerkId;
+import com.ludas.plugin.clazz.PerkId;
 import com.ludas.plugin.components.entity.MainStatusComponent;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
@@ -63,7 +63,7 @@ public class StrengthFrenzyPerk extends Perk {
         }
         Player player = archetypeChunk.getComponent(idx, Player.getComponentType());
         if(player == null) return;
-        mainStatus.getStrength().setUnlocked(StrengthPerkId.FRENZY);
+        mainStatus.getStrength().setUnlocked(PerkId.STRENGTH_FRENZY);
         player.sendMessage(Message.translation("server.perks.ludas.unlocked").param("id", NAME));
     }
 

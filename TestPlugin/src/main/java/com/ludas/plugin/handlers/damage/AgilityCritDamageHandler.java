@@ -12,6 +12,7 @@ import com.hypixel.hytale.server.core.modules.entity.damage.DamageCause;
 import com.hypixel.hytale.server.core.modules.entity.damage.DamageSystems;
 import com.hypixel.hytale.server.core.universe.world.ParticleUtil;
 import com.hypixel.hytale.server.core.universe.world.SoundUtil;
+import com.ludas.plugin.clazz.Config;
 import com.ludas.plugin.components.entity.AgilityComponent;
 import com.ludas.plugin.components.entity.MainStatusComponent;
 import com.ludas.plugin.events.damage.AgilityCritDamageEvent;
@@ -36,7 +37,7 @@ public class AgilityCritDamageHandler implements Consumer<AgilityCritDamageEvent
         float critChance = agility.getCritChance();
         float critDamage = agility.getCritDamage();
 
-        if(rand <= critChance) {
+        if(rand <= 1/*critChance*/) {
             float dmg = event.damage().getAmount() * critDamage;
             if(critChance > 1) {
                 dmg += event.damage().getAmount() * (critChance - 1);
@@ -45,25 +46,38 @@ public class AgilityCritDamageHandler implements Consumer<AgilityCritDamageEvent
             DamageSystems.executeDamage(event.target(), event.commandBuffer(), crit);
             Player attacker = store.getComponent(event.attacker(), Player.getComponentType());
             if (attacker == null) return;
-            attacker.sendMessage(Message.raw("CRIT").bold(true).color(Color.PINK));
             TransformComponent targetTransform = store.getComponent(event.target(), TransformComponent.getComponentType());
             if(targetTransform == null) return;
             TransformComponent attackerTransform = store.getComponent(event.attacker(), TransformComponent.getComponentType());
             if(attackerTransform == null) return;
             Vector3d targetPos = targetTransform.getPosition();
             Vector3d attackerPos = attackerTransform.getPosition();
-            int index = SoundEvent.getAssetMap().getIndex("SFX_GunPvP_Grenade_Frag_Death");
+            int index = SoundEvent.getAssetMap().getIndex(Config.SFX_AGILITY_CRIT);
             SoundUtil.playSoundEvent3dToPlayer(event.attacker(), index, SoundCategory.UI,
                     attackerPos.x, attackerPos.y, attackerPos.z, 0.8F, 12.0F, store);
-            for(int i = 0; i < 5; ++i) {
-                ParticleUtil.spawnParticleEffect(
-                        "Impact_Critical",
-                        new Vector3d(
-                                targetPos.getX() + (random.nextFloat(0.1f, 1f) * (random.nextBoolean() ? -1 : 1)),
-                                targetPos.getY() + 0.5f + (random.nextFloat(0.1f, 1f) * (random.nextBoolean() ? -1 : 1)),
-                                targetPos.getZ() + (random.nextFloat(0.1f, 1f) * (random.nextBoolean() ? -1 : 1))
-                        ),
-                        event.commandBuffer());
+            if(Config.isDamageCausePhysical(event.damage().getCause())) {
+                for (int i = 0; i < 5; ++i) {
+                    ParticleUtil.spawnParticleEffect(
+                            Config.PARTICLE_BLACKFLASH_RED,
+                            new Vector3d(
+                                    targetPos.getX() + (random.nextFloat(0.1f, 1f) * (random.nextBoolean() ? -1 : 1)),
+                                    targetPos.getY() + 0.5f + (random.nextFloat(0.1f, 1f) * (random.nextBoolean() ? -1 : 1)),
+                                    targetPos.getZ() + (random.nextFloat(0.1f, 1f) * (random.nextBoolean() ? -1 : 1))
+                            ),
+                            event.commandBuffer());
+                }
+            }
+            else {
+                for (int i = 0; i < 5; ++i) {
+                    ParticleUtil.spawnParticleEffect(
+                            Config.PARTICLE_BLACKFLASH_BLUE,
+                            new Vector3d(
+                                    targetPos.getX() + (random.nextFloat(0.1f, 1f) * (random.nextBoolean() ? -1 : 1)),
+                                    targetPos.getY() + 0.5f + (random.nextFloat(0.1f, 1f) * (random.nextBoolean() ? -1 : 1)),
+                                    targetPos.getZ() + (random.nextFloat(0.1f, 1f) * (random.nextBoolean() ? -1 : 1))
+                            ),
+                            event.commandBuffer());
+                }
             }
         }
     }

@@ -1,6 +1,5 @@
 package com.ludas.plugin.perks.general;
 
-import com.hypixel.hytale.assetstore.map.IndexedLookupTableAssetMap;
 import com.hypixel.hytale.component.*;
 import com.hypixel.hytale.protocol.GameMode;
 import com.hypixel.hytale.server.core.Message;
@@ -17,7 +16,6 @@ import com.hypixel.hytale.server.core.modules.entitystats.modifier.StaticModifie
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.hypixel.hytale.server.core.util.NotificationUtil;
-import com.ludas.plugin.TestPlugin;
 import com.ludas.plugin.clazz.Perk;
 import com.ludas.plugin.clazz.PerkId;
 import com.ludas.plugin.components.effects.PoisonComponent;
@@ -66,7 +64,7 @@ public class PoisonPerk extends Perk{
         if(mainStatus.getLevelComponent().getLevel() <= 2) {
             return;
         }
-        mainStatus.setUnlocked(PerkId.POISON_PERK);
+        mainStatus.setUnlocked(PerkId.MAIN_POISON_PERK);
         Player player = archetypeChunk.getComponent(idx, Player.getComponentType());
         if(player == null) return;
         PlayerRef playerRef = archetypeChunk.getComponent(idx, PlayerRef.getComponentType());

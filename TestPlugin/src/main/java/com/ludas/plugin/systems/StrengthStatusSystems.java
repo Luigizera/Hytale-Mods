@@ -7,7 +7,7 @@ import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.modules.entity.damage.*;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.ludas.plugin.clazz.Perk;
-import com.ludas.plugin.clazz.StrengthPerkId;
+import com.ludas.plugin.clazz.PerkId;
 import com.ludas.plugin.components.entity.MainStatusComponent;
 import com.ludas.plugin.components.entity.StrengthComponent;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
@@ -37,7 +37,7 @@ public class StrengthStatusSystems {
             StrengthComponent strength = mainStatus.getStrength();
             if(strength == null) return;
 
-            for(int i = 0; i < StrengthPerkId.CURRENT_PERK_COUNT; ++i) {
+            for(int i = 0; i < PerkId.STRENGTH_CURRENT_PERK_COUNT; ++i) {
                 Perk perk = strength.getPerkById(i);
                 if(perk == null) continue;
                 if(!strength.isPerkUnlocked(i)) {

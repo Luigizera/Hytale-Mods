@@ -81,7 +81,7 @@ public class MainStatusComponent implements Component<EntityStore> {
         return perks != null
                 && perks.length == PERK_LENGTH
                 && FLAG_ID >= 0
-                && FLAG_ID < PerkId.CURRENT_PERK_COUNT;
+                && FLAG_ID < PerkId.MAIN_CURRENT_PERK_COUNT;
     }
 
     public void setUnlocked(int FLAG_ID) {
@@ -103,27 +103,27 @@ public class MainStatusComponent implements Component<EntityStore> {
 
     public int getPerkIdByName(String name) {
         return switch (name.toUpperCase()) {
-            case "POISON" -> PerkId.POISON_PERK;
-            case "STATUS" -> PerkId.STATUS_PERK;
-            case "HEALINGAREA" -> PerkId.HEALING_AREA;
+            case "POISON" -> PerkId.MAIN_POISON_PERK;
+            case "STATUS" -> PerkId.MAIN_STATUS_PERK;
+            case "HEALINGAREA" -> PerkId.MAIN_HEALING_AREA;
             default -> -1;
         };
     }
 
     public String getPerkNameById(int FLAG_ID) {
         return switch (FLAG_ID) {
-            case PerkId.POISON_PERK -> PoisonPerk.NAME;
-            case PerkId.STATUS_PERK -> StatusPerk.NAME;
-            case PerkId.HEALING_AREA -> HealingAreaPerk.NAME;
+            case PerkId.MAIN_POISON_PERK -> PoisonPerk.NAME;
+            case PerkId.MAIN_STATUS_PERK -> StatusPerk.NAME;
+            case PerkId.MAIN_HEALING_AREA -> HealingAreaPerk.NAME;
             default -> "unknown";
         };
     }
 
     public Perk getPerkById(int FLAG_ID) {
         return switch (FLAG_ID) {
-            case PerkId.POISON_PERK -> new PoisonPerk();
-            case PerkId.STATUS_PERK -> new StatusPerk();
-            case PerkId.HEALING_AREA -> new HealingAreaPerk();
+            case PerkId.MAIN_POISON_PERK -> new PoisonPerk();
+            case PerkId.MAIN_STATUS_PERK -> new StatusPerk();
+            case PerkId.MAIN_HEALING_AREA -> new HealingAreaPerk();
             default -> null;
         };
     }

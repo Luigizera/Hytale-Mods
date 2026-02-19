@@ -17,6 +17,7 @@ import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.hypixel.hytale.server.npc.entities.NPCEntity;
 import com.hypixel.hytale.server.npc.systems.NPCSystems;
 import com.ludas.plugin.TestPlugin;
+import com.ludas.plugin.clazz.Config;
 import com.ludas.plugin.clazz.Perk;
 import com.ludas.plugin.clazz.PerkId;
 import com.ludas.plugin.components.entity.LevelComponent;
@@ -38,20 +39,6 @@ import java.util.Map;
 
 public class MainStatusSystems {
 
-    private static boolean isItemAgilityRelated(Map<String, String[]> item) {
-        return item.get("Family=Dagger") != null
-                || item.get("Family=Axe") != null
-                || item.get("Family=Sword") != null
-                || item.get("Family=Bow") != null
-                || item.get("Family=Spear") != null
-                || item.get("Family=Arrow") != null
-                || item.get("Family=Club") != null;
-    }
-
-    private static boolean isDamageCausePhysical(DamageCause damageCause) {
-        return damageCause == DamageCause.PHYSICAL || damageCause.getInherits().equals(DamageCause.PHYSICAL.getId());
-    }
-
     public static class PerkTick extends DelayedEntitySystem<EntityStore> {
 
         public PerkTick() {
@@ -71,7 +58,7 @@ public class MainStatusSystems {
             MainStatusComponent mainStatus = archetypeChunk.getComponent(idx, MainStatusComponent.getComponentType());
             if(mainStatus == null) return;
 
-            for(int i = 0; i < PerkId.CURRENT_PERK_COUNT; ++i) {
+            for(int i = 0; i < PerkId.MAIN_CURRENT_PERK_COUNT; ++i) {
                 Perk perk = mainStatus.getPerkById(i);
                 if(perk == null) continue;
                 if(!mainStatus.isPerkUnlocked(i)) {
@@ -162,7 +149,7 @@ public class MainStatusSystems {
             if (npcRef == null) return;
             DamageCause damageCause = damage.getCause();
             if(itemStack == null) {
-                if(isDamageCausePhysical(damageCause)) {
+                if(Config.isDamageCausePhysical(damageCause)) {
                     GiveStrengthXPEvent.dispatch(attackerRef);
                 }
                 else {
@@ -176,11 +163,11 @@ public class MainStatusSystems {
                     AssetExtraInfo.Data data = item.getData();
                     Map<String, String[]> tags = data.getRawTags();
 
-                    if(isItemAgilityRelated(tags)) {
+                    if(Config.isItemAgilityRelated(tags)) {
                         GiveAgilityXPEvent.dispatch(attackerRef);
                         AgilityCritDamageEvent.dispatch(attackerRef, npcRef, damage, commandBuffer);
                     }
-                    else if(isDamageCausePhysical(damageCause)) {
+                    else if(Config.isDamageCausePhysical(damageCause)) {
                         GiveStrengthXPEvent.dispatch(attackerRef);
                     }
                     else {
@@ -192,7 +179,7 @@ public class MainStatusSystems {
                 }
             }
 
-            if(isDamageCausePhysical(damageCause)) {
+            if(Config.isDamageCausePhysical(damageCause)) {
                 StrengthExtraDamageEvent.dispatch(attackerRef, npcRef, damage, commandBuffer);
             }
             else {
@@ -241,13 +228,13 @@ public class MainStatusSystems {
                 if(weapon != null) {
                     AssetExtraInfo.Data data = item.getData();
                     Map<String, String[]> tags = data.getRawTags();
-                    if (isItemAgilityRelated(tags)) {
+                    if (Config.isItemAgilityRelated(tags)) {
                         AgilityCritDamageEvent.dispatch(attackerRef, targetRef, damage, commandBuffer);
                     }
                 }
             }
 
-            if(isDamageCausePhysical(damageCause)) {
+            if(Config.isDamageCausePhysical(damageCause)) {
                 StrengthExtraDamageEvent.dispatch(attackerRef, targetRef, damage, commandBuffer);
             }
             else {

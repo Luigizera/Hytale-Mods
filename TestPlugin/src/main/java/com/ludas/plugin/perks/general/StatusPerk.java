@@ -58,7 +58,7 @@ public class StatusPerk extends Perk {
         }
         Player player = archetypeChunk.getComponent(idx, Player.getComponentType());
         if(player == null) return;
-        mainStatus.setUnlocked(PerkId.STATUS_PERK);
+        mainStatus.setUnlocked(PerkId.MAIN_STATUS_PERK);
         player.sendMessage(Message.translation("server.perks.ludas.unlocked").param("id", NAME));
     }
     public void tick(float dt, int idx, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
