@@ -37,7 +37,7 @@ public class AgilityCritDamageHandler implements Consumer<AgilityCritDamageEvent
         float critChance = agility.getCritChance();
         float critDamage = agility.getCritDamage();
 
-        if(rand <= 1/*critChance*/) {
+        if(rand <= critChance) {
             float dmg = event.damage().getAmount() * critDamage;
             if(critChance > 1) {
                 dmg += event.damage().getAmount() * (critChance - 1);
