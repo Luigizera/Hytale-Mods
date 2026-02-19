@@ -158,11 +158,6 @@ public class MainStatusSystems {
             Inventory inventory = attacker.getInventory();
             if (inventory == null) return;
             ItemStack itemStack = inventory.getActiveHotbarItem();
-            TestPlugin.LOGGER.atInfo().log("ItemStack: " + itemStack);
-            /*LevelComponent npcLevel = archetypeChunk.getComponent(idx, LevelComponent.getComponentType());
-            if (npcLevel != null) {
-                defaultXP = (float) npcLevel.getLevel();
-            }*/
             Ref<EntityStore> npcRef = npcComponent.getReference();
             if (npcRef == null) return;
             DamageCause damageCause = damage.getCause();
