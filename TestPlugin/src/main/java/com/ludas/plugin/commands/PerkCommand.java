@@ -18,7 +18,7 @@ import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.hypixel.hytale.server.core.util.message.MessageFormat;
 import com.ludas.plugin.clazz.Perk;
 import com.ludas.plugin.clazz.PerkId;
-import com.ludas.plugin.components.entity.MainStatusComponent;
+import com.ludas.plugin.components.entity.*;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
@@ -35,6 +35,42 @@ public class PerkCommand extends AbstractPlayerCommand {
         this.status = this.withRequiredArg("status", "server.commands.ludas.perk.enable.arg.desc", ArgTypes.STRING);
         this.enablePerk = this.withDefaultArg("enable", "server.commands.ludas.perk.enable.arg.desc", ArgTypes.STRING, null, "null");
     }
+
+    private static void setupModifiersLoop(Perk perk, EntityStatMap statMap,
+                                           boolean enabled, boolean unlocked,
+                                           String perkName, String strModifier,
+                                           ObjectArrayList<Message> values) {
+        Map<Integer, StaticModifier> modifiers = perk.setupModifiers();
+        if (modifiers != null && !modifiers.isEmpty()) {
+            for (var modifier : modifiers.entrySet()) {
+                Integer index = modifier.getKey();
+                if (index > statMap.size() || index < 0) {
+                    throw new UnsupportedOperationException("Wrong implementation of Perk Index: " + index);
+                }
+                StaticModifier staticModifier = modifier.getValue();
+                if (staticModifier == null) {
+                    throw new UnsupportedOperationException("Wrong implementation of Perk StaticModifier: " + staticModifier);
+                }
+                if (enabled) {
+                    statMap.putModifier(index, perkName, staticModifier);
+                }
+                else {
+                    statMap.removeModifier(index, perkName);
+                }
+                strModifier += " || " + Objects.requireNonNull(statMap.get(index)).getId() + ": "
+                        + (staticModifier.getCalculationType() == StaticModifier.CalculationType.ADDITIVE ? "+" : "x")
+                        + staticModifier.getAmount();
+            }
+        }
+
+        values.add(Message.join(
+                Message.translation("server.commands.ludas.perk.info")
+                        .param("id", perkName).param("enabled", enabled).param("unlocked", unlocked),
+                Message.translation("server.commands.ludas.perk.info." + perkName)
+                        .param("modifier", strModifier)).bold(true)
+        );
+    }
+
     @Override
     protected void execute(@NonNullDecl CommandContext context, @NonNullDecl Store<EntityStore> store,
                            @NonNullDecl Ref<EntityStore> ref, @NonNullDecl PlayerRef playerRef,
@@ -68,90 +104,124 @@ public class PerkCommand extends AbstractPlayerCommand {
                         String perkName = mainStatus.getPerkNameById(i);
                         String strModifier = "";
                         boolean enabled = mainStatus.isPerkEnabled(i);
-                        Map<Integer, StaticModifier> modifiers = perk.setupModifiers();
-                        if (modifiers != null && !modifiers.isEmpty()) {
-                            for (var modifier : modifiers.entrySet()) {
-                                Integer index = modifier.getKey();
-                                if (index > statMap.size() || index < 0) {
-                                    throw new UnsupportedOperationException("Wrong implementation of Perk Index: " + index);
-                                }
-                                StaticModifier staticModifier = modifier.getValue();
-                                if (staticModifier == null) {
-                                    throw new UnsupportedOperationException("Wrong implementation of Perk StaticModifier: " + staticModifier);
-                                }
-                                if (enabled) {
-                                    statMap.putModifier(index, perkName, staticModifier);
-                                } else {
-                                    statMap.removeModifier(index, perkName);
-
-                                }
-                                strModifier += " || " + Objects.requireNonNull(statMap.get(index)).getId() + ": "
-                                        + (staticModifier.getCalculationType() == StaticModifier.CalculationType.ADDITIVE ? "+" : "x")
-                                        + staticModifier.getAmount();
-                            }
-                        }
-
-                        values.add(Message.join(
-                                Message.translation("server.commands.ludas.perk.info")
-                                        .param("id", perkName).param("enabled", enabled).param("unlocked", unlocked),
-                                Message.translation("server.commands.ludas.perk.info." + perkName)
-                                        .param("modifier", strModifier)).bold(true)
-                        );
+                        setupModifiersLoop(perk, statMap, enabled, unlocked, perkName, strModifier, values);
                     }
                 }
                 player.sendMessage(MessageFormat.list((Message) null, values));
                 break;
             }
             case "STRENGTH": {
+                StrengthComponent strength = mainStatus.getStrength();
+                if(strength == null) return;
+
                 if (enablePerk.get(context) != null) {
-                    int perkId = mainStatus.getStrength().getPerkIdByName(enablePerk.get(context));
+                    int perkId = strength.getPerkIdByName(enablePerk.get(context));
                     if (perkId >= 0) {
-                        String perkName = mainStatus.getStrength().getPerkNameById(perkId);
-                        if (!mainStatus.getStrength().isPerkUnlocked(perkId)) {
+                        String perkName = strength.getPerkNameById(perkId);
+                        if (!strength.isPerkUnlocked(perkId)) {
                             player.sendMessage(Message.translation("server.commands.ludas.perk.unlock.condition." + perkName).color(Color.PINK).bold(true));
                         } else {
-                            mainStatus.getStrength().enableOrDisablePerk(perkId);
+                            strength.enableOrDisablePerk(perkId);
                         }
                     }
                 }
 
                 ObjectArrayList<Message> values = new ObjectArrayList<>();
                 for (int i = 0; i < PerkId.STRENGTH_CURRENT_PERK_COUNT; ++i) {
-                    boolean unlocked = mainStatus.getStrength().isPerkUnlocked(i);
+                    boolean unlocked = strength.isPerkUnlocked(i);
                     if (unlocked) {
-                        Perk perk = mainStatus.getStrength().getPerkById(i);
-                        String perkName = mainStatus.getStrength().getPerkNameById(i);
+                        Perk perk = strength.getPerkById(i);
+                        String perkName = strength.getPerkNameById(i);
                         String strModifier = "";
-                        boolean enabled = mainStatus.getStrength().isPerkEnabled(i);
-                        Map<Integer, StaticModifier> modifiers = perk.setupModifiers();
-                        if (modifiers != null && !modifiers.isEmpty()) {
-                            for (var modifier : modifiers.entrySet()) {
-                                Integer index = modifier.getKey();
-                                if (index > statMap.size() || index < 0) {
-                                    throw new UnsupportedOperationException("Wrong implementation of Perk Index: " + index);
-                                }
-                                StaticModifier staticModifier = modifier.getValue();
-                                if (staticModifier == null) {
-                                    throw new UnsupportedOperationException("Wrong implementation of Perk StaticModifier: " + staticModifier);
-                                }
-                                if (enabled) {
-                                    statMap.putModifier(index, perkName, staticModifier);
-                                } else {
-                                    statMap.removeModifier(index, perkName);
-
-                                }
-                                strModifier += " || " + Objects.requireNonNull(statMap.get(index)).getId() + ": "
-                                        + (staticModifier.getCalculationType() == StaticModifier.CalculationType.ADDITIVE ? "+" : "x")
-                                        + staticModifier.getAmount();
-                            }
+                        boolean enabled = strength.isPerkEnabled(i);
+                        setupModifiersLoop(perk, statMap, enabled, unlocked, perkName, strModifier, values);
+                    }
+                }
+                player.sendMessage(MessageFormat.list((Message) null, values));
+                break;
+            }
+            case "AGILITY": {
+                AgilityComponent agility = mainStatus.getAgility();
+                if(agility == null) return;
+                if (enablePerk.get(context) != null) {
+                    int perkId = agility.getPerkIdByName(enablePerk.get(context));
+                    if (perkId >= 0) {
+                        String perkName = agility.getPerkNameById(perkId);
+                        if (!agility.isPerkUnlocked(perkId)) {
+                            player.sendMessage(Message.translation("server.commands.ludas.perk.unlock.condition." + perkName).color(Color.PINK).bold(true));
+                        } else {
+                            agility.enableOrDisablePerk(perkId);
                         }
+                    }
+                }
 
-                        values.add(Message.join(
-                                Message.translation("server.commands.ludas.perk.info")
-                                        .param("id", perkName).param("enabled", enabled).param("unlocked", unlocked),
-                                Message.translation("server.commands.ludas.perk.info." + perkName)
-                                        .param("modifier", strModifier)).bold(true)
-                        );
+                ObjectArrayList<Message> values = new ObjectArrayList<>();
+                for (int i = 0; i < PerkId.STRENGTH_CURRENT_PERK_COUNT; ++i) {
+                    boolean unlocked = agility.isPerkUnlocked(i);
+                    if (unlocked) {
+                        Perk perk = agility.getPerkById(i);
+                        String perkName = agility.getPerkNameById(i);
+                        String strModifier = "";
+                        boolean enabled = agility.isPerkEnabled(i);
+                        setupModifiersLoop(perk, statMap, enabled, unlocked, perkName, strModifier, values);
+                    }
+                }
+                player.sendMessage(MessageFormat.list((Message) null, values));
+                break;
+            }
+            case "MAGIC": {
+                MagicComponent magic = mainStatus.getMagic();
+                if(magic == null) return;
+                if (enablePerk.get(context) != null) {
+                    int perkId = magic.getPerkIdByName(enablePerk.get(context));
+                    if (perkId >= 0) {
+                        String perkName = magic.getPerkNameById(perkId);
+                        if (!magic.isPerkUnlocked(perkId)) {
+                            player.sendMessage(Message.translation("server.commands.ludas.perk.unlock.condition." + perkName).color(Color.PINK).bold(true));
+                        } else {
+                            magic.enableOrDisablePerk(perkId);
+                        }
+                    }
+                }
+
+                ObjectArrayList<Message> values = new ObjectArrayList<>();
+                for (int i = 0; i < PerkId.STRENGTH_CURRENT_PERK_COUNT; ++i) {
+                    boolean unlocked = magic.isPerkUnlocked(i);
+                    if (unlocked) {
+                        Perk perk = magic.getPerkById(i);
+                        String perkName = magic.getPerkNameById(i);
+                        String strModifier = "";
+                        boolean enabled = magic.isPerkEnabled(i);
+                        setupModifiersLoop(perk, statMap, enabled, unlocked, perkName, strModifier, values);
+                    }
+                }
+                player.sendMessage(MessageFormat.list((Message) null, values));
+                break;
+            }
+            case "VITALITY": {
+                VitalityComponent vitality = mainStatus.getVitality();
+                if(vitality == null) return;
+                if (enablePerk.get(context) != null) {
+                    int perkId = vitality.getPerkIdByName(enablePerk.get(context));
+                    if (perkId >= 0) {
+                        String perkName = vitality.getPerkNameById(perkId);
+                        if (!vitality.isPerkUnlocked(perkId)) {
+                            player.sendMessage(Message.translation("server.commands.ludas.perk.unlock.condition." + perkName).color(Color.PINK).bold(true));
+                        } else {
+                            vitality.enableOrDisablePerk(perkId);
+                        }
+                    }
+                }
+
+                ObjectArrayList<Message> values = new ObjectArrayList<>();
+                for (int i = 0; i < PerkId.STRENGTH_CURRENT_PERK_COUNT; ++i) {
+                    boolean unlocked = vitality.isPerkUnlocked(i);
+                    if (unlocked) {
+                        Perk perk = vitality.getPerkById(i);
+                        String perkName = vitality.getPerkNameById(i);
+                        String strModifier = "";
+                        boolean enabled = vitality.isPerkEnabled(i);
+                        setupModifiersLoop(perk, statMap, enabled, unlocked, perkName, strModifier, values);
                     }
                 }
                 player.sendMessage(MessageFormat.list((Message) null, values));
@@ -165,3 +235,5 @@ public class PerkCommand extends AbstractPlayerCommand {
 
     }
 }
+
+

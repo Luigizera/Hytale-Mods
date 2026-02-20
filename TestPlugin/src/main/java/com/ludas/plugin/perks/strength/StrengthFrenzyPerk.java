@@ -13,7 +13,9 @@ import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.modules.entitystats.asset.DefaultEntityStatTypes;
 import com.hypixel.hytale.server.core.modules.entitystats.modifier.Modifier;
 import com.hypixel.hytale.server.core.modules.entitystats.modifier.StaticModifier;
+import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
+import com.ludas.plugin.clazz.Config;
 import com.ludas.plugin.clazz.Perk;
 import com.ludas.plugin.clazz.PerkId;
 import com.ludas.plugin.components.entity.MainStatusComponent;
@@ -61,10 +63,13 @@ public class StrengthFrenzyPerk extends Perk {
         if(mainStatus.getStrength().getLevelComponent().getLevel() <= 2) {
             return;
         }
-        Player player = archetypeChunk.getComponent(idx, Player.getComponentType());
-        if(player == null) return;
         mainStatus.getStrength().setUnlocked(PerkId.STRENGTH_FRENZY);
-        player.sendMessage(Message.translation("server.perks.ludas.unlocked").param("id", NAME));
+        PlayerRef playerRef = archetypeChunk.getComponent(idx, PlayerRef.getComponentType());
+        if(playerRef == null) return;
+        var packet = playerRef.getPacketHandler();
+
+        Config.perkUnlockedNotification(packet, Config.ICON_PERK_STRENGTH, "Frenzy Perk");
+        //player.sendMessage(Message.translation("server.perks.ludas.unlocked").param("id", NAME));
     }
 
     @Override

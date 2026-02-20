@@ -1,5 +1,5 @@
 {
-  "Name": "server.effect.ludas.frenzy.name",
+  "Name": "effect.ludas.frenzy.name",
   "Infinite": true,
   "Debuff": false,
   "StatusEffectIcon": "UI/StatusEffects/Frenzy.png",

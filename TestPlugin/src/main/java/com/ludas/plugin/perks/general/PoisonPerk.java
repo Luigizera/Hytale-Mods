@@ -16,6 +16,7 @@ import com.hypixel.hytale.server.core.modules.entitystats.modifier.StaticModifie
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.hypixel.hytale.server.core.util.NotificationUtil;
+import com.ludas.plugin.clazz.Config;
 import com.ludas.plugin.clazz.Perk;
 import com.ludas.plugin.clazz.PerkId;
 import com.ludas.plugin.components.effects.PoisonComponent;
@@ -65,22 +66,13 @@ public class PoisonPerk extends Perk{
             return;
         }
         mainStatus.setUnlocked(PerkId.MAIN_POISON_PERK);
-        Player player = archetypeChunk.getComponent(idx, Player.getComponentType());
-        if(player == null) return;
         PlayerRef playerRef = archetypeChunk.getComponent(idx, PlayerRef.getComponentType());
         if(playerRef == null) return;
-        var packetHandler = playerRef.getPacketHandler();
+        var packet = playerRef.getPacketHandler();
 
-        var primaryMessage = Message.raw("Poison Perk").color("#00FF00");
-        var secondaryMessage = Message.raw("Is now unlocked!").color("#228B22");
-        var icon = new ItemStack("Weapon_Sword_Mithril", 1).toPacket();
+        Config.perkUnlockedNotification(packet, Config.ICON_PERK_POISON, "Poison Perk");
 
-        NotificationUtil.sendNotification(
-                packetHandler,
-                primaryMessage,
-                secondaryMessage,
-                icon);
-        player.sendMessage(Message.translation("server.perks.ludas.unlocked").param("id", NAME));
+        //player.sendMessage(Message.translation("server.perks.ludas.unlocked").param("id", NAME));
     }
 
     public void tick(float dt, int idx, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,

@@ -135,6 +135,7 @@ public class MainStatusSystems {
                            @NonNullDecl CommandBuffer<EntityStore> commandBuffer, @NonNullDecl Damage damage) {
             NPCEntity npcComponent = (NPCEntity) archetypeChunk.getComponent(idx, NPCEntity.getComponentType());
             if (npcComponent == null) return;
+            if(damage.getAmount() <= 0) return;
             Damage.Source damageSource = damage.getSource();
             if (!(damageSource instanceof Damage.EntitySource entitySource)) return;
             Ref<EntityStore> sourceRef = entitySource.getRef();
