@@ -1,6 +1,6 @@
 package com.ludas.plugin.commands;
 
-import com.ludas.plugin.components.effects.PoisonComponent;
+import com.ludas.plugin.components.effects.DoTEffect;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.server.core.Message;
@@ -32,8 +32,8 @@ public class PoisonCommand extends AbstractTargetPlayerCommand {
             commandContext.sendMessage(Message.translation("server.commands.ludas.poison.debug.arg.message"));
         }
         Player player = store.getComponent(ref, Player.getComponentType());
-        PoisonComponent poison = new PoisonComponent(3f, 0.5f, 8);
-        store.addComponent(ref, PoisonComponent.getComponentType(), poison);
+        DoTEffect damageOverTime = new DoTEffect(3f, 0.5f, 8);
+        store.addComponent(ref, DoTEffect.getComponentType(), damageOverTime);
         player.sendMessage(Message.translation("server.commands.ludas.poison.message").color(Color.GREEN).bold(true));
     }
 }

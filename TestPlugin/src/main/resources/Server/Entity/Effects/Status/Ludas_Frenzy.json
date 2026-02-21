@@ -2,7 +2,7 @@
   "Name": "effect.ludas.frenzy.name",
   "Infinite": true,
   "Debuff": false,
-  "StatusEffectIcon": "UI/StatusEffects/Frenzy.png",
+  "StatusEffectIcon": "UI/StatusEffects/Ludas_Frenzy.png",
   "OverlapBehavior": "Ignore",
   "RemovalBehavior": "Complete",
   "Invulnerable": false,

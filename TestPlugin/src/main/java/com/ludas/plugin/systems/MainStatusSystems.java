@@ -48,7 +48,7 @@ public class MainStatusSystems {
         @NullableDecl
         @Override
         public Query<EntityStore> getQuery() {
-            return Query.and(new Query[]{MainStatusComponent.getComponentType(), Player.getComponentType()});
+            return Query.and(MainStatusComponent.getComponentType(), Player.getComponentType());
         }
 
         @Override
@@ -133,7 +133,7 @@ public class MainStatusSystems {
         public void handle(int idx, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
                            @NonNullDecl Store<EntityStore> store,
                            @NonNullDecl CommandBuffer<EntityStore> commandBuffer, @NonNullDecl Damage damage) {
-            NPCEntity npcComponent = (NPCEntity) archetypeChunk.getComponent(idx, NPCEntity.getComponentType());
+            NPCEntity npcComponent = archetypeChunk.getComponent(idx, NPCEntity.getComponentType());
             if (npcComponent == null) return;
             if(damage.getAmount() <= 0) return;
             Damage.Source damageSource = damage.getSource();

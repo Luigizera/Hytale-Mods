@@ -5,33 +5,33 @@ import com.hypixel.hytale.component.ComponentType;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
-public class PoisonComponent implements Component<EntityStore> {
+public class DoTEffect implements Component<EntityStore> {
 
     private float damagePerTick;
     private float tickInterval;
     private int remainingTicks;
     private float elapsedTime;
-    private static ComponentType<EntityStore, PoisonComponent> TYPE;
+    private static ComponentType<EntityStore, DoTEffect> TYPE;
 
-    public static void setComponentType(ComponentType<EntityStore, PoisonComponent> type) {
+    public static void setComponentType(ComponentType<EntityStore, DoTEffect> type) {
         TYPE = type;
     }
-    public static ComponentType<EntityStore, PoisonComponent> getComponentType() {
+    public static ComponentType<EntityStore, DoTEffect> getComponentType() {
         return TYPE;
     }
 
-    public PoisonComponent() {
+    public DoTEffect() {
         this(5f, 1.0f, 10);
     }
 
-    public PoisonComponent(float damagePerTick, float tickInterval, int totalTicks) {
+    public DoTEffect(float damagePerTick, float tickInterval, int totalTicks) {
         this.damagePerTick = damagePerTick;
         this.tickInterval = tickInterval;
         this.remainingTicks = totalTicks;
         this.elapsedTime = 0f;
     }
 
-    public PoisonComponent(PoisonComponent other) {
+    public DoTEffect(DoTEffect other) {
         this.damagePerTick = other.damagePerTick;
         this.tickInterval = other.tickInterval;
         this.remainingTicks = other.remainingTicks;
@@ -41,7 +41,7 @@ public class PoisonComponent implements Component<EntityStore> {
     @NullableDecl
     @Override
     public Component<EntityStore> clone() {
-        return new PoisonComponent(this);
+        return new DoTEffect(this);
     }
 
     @NullableDecl

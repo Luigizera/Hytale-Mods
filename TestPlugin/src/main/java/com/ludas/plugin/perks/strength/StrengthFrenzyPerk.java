@@ -18,6 +18,7 @@ import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.ludas.plugin.clazz.Config;
 import com.ludas.plugin.clazz.Perk;
 import com.ludas.plugin.clazz.PerkId;
+import com.ludas.plugin.components.effects.FrenzyEffect;
 import com.ludas.plugin.components.entity.MainStatusComponent;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
@@ -73,42 +74,50 @@ public class StrengthFrenzyPerk extends Perk {
     }
 
     @Override
-    public void tick(float dt, int idx, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk, @NonNullDecl Store<EntityStore> store, @NonNullDecl CommandBuffer<EntityStore> commandBuffer) {
+    public void tick(float dt, int idx, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
+                     @NonNullDecl Store<EntityStore> store, @NonNullDecl CommandBuffer<EntityStore> commandBuffer) {
         Player player = archetypeChunk.getComponent(idx, Player.getComponentType());
         if(player == null) return;
         if(player.getGameMode() != GameMode.Adventure) return;
         Ref<EntityStore> playerRef = player.getReference();
         if(playerRef == null) return;
+        FrenzyEffect frenzyEffect = store.getComponent(playerRef, FrenzyEffect.getComponentType());
 
-        EntityEffect frenzy = EntityEffect.getAssetMap().getAsset("Frenzy");
-        if(frenzy == null) return;
-        EffectControllerComponent controller =
-                store.getComponent(playerRef, EffectControllerComponent.getComponentType());
-        if(controller == null) return;
-        int frenzyIndex = EntityEffect.getAssetMap().getIndex("Frenzy");
+        if(frenzyEffect == null) {
+            commandBuffer.putComponent(playerRef, FrenzyEffect.getComponentType(), new FrenzyEffect());
+            EntityEffect frenzy = EntityEffect.getAssetMap().getAsset(FrenzyEffect.getAssetName());
+            if(frenzy == null) return;
+            EffectControllerComponent controller =
+                    store.getComponent(playerRef, EffectControllerComponent.getComponentType());
+            if(controller == null) return;
+            int frenzyIndex = EntityEffect.getAssetMap().getIndex(FrenzyEffect.getAssetName());
 
-        ActiveEntityEffect activeFrenzy = controller.getActiveEffects().get(frenzyIndex);
-        if (activeFrenzy == null) {
-            controller.addEffect(playerRef, frenzy, commandBuffer);
+            ActiveEntityEffect activeFrenzy = controller.getActiveEffects().get(frenzyIndex);
+            if (activeFrenzy == null) {
+                controller.addEffect(playerRef, frenzy, commandBuffer);
+            }
         }
     }
 
     @Override
-    public void removeComponents(int idx, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk, @NonNullDecl Store<EntityStore> store, @NonNullDecl CommandBuffer<EntityStore> commandBuffer) {
+    public void removeComponents(int idx, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
+                                 @NonNullDecl Store<EntityStore> store,
+                                 @NonNullDecl CommandBuffer<EntityStore> commandBuffer) {
         Player player = archetypeChunk.getComponent(idx, Player.getComponentType());
         if(player == null) return;
         Ref<EntityStore> playerRef = player.getReference();
         if(playerRef == null) return;
+        FrenzyEffect frenzyEffect = store.getComponent(playerRef, FrenzyEffect.getComponentType());
+        if(frenzyEffect != null) {
+            commandBuffer.removeComponent(playerRef, FrenzyEffect.getComponentType());
+            EffectControllerComponent controller = store.getComponent(playerRef, EffectControllerComponent.getComponentType());
+            if(controller == null) return;
+            int frenzyIndex = EntityEffect.getAssetMap().getIndex(FrenzyEffect.getAssetName());
 
-        EntityEffect frenzy = EntityEffect.getAssetMap().getAsset("Frenzy");
-        if(frenzy == null) return;
-        EffectControllerComponent controller = store.getComponent(playerRef, EffectControllerComponent.getComponentType());
-        if(controller == null) return;
-        int frenzyIndex = EntityEffect.getAssetMap().getIndex("Frenzy");
-
-        ActiveEntityEffect activeFrenzy = controller.getActiveEffects().get(frenzyIndex);
-        if (activeFrenzy != null) {
-            controller.removeEffect(playerRef, frenzyIndex, commandBuffer);
+            ActiveEntityEffect activeFrenzy = controller.getActiveEffects().get(frenzyIndex);
+            if (activeFrenzy != null) {
+                controller.removeEffect(playerRef, frenzyIndex, commandBuffer);
+            }
         }
     }
 }

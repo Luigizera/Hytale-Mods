@@ -2,12 +2,10 @@ package com.ludas.plugin.perks.general;
 
 import com.hypixel.hytale.component.*;
 import com.hypixel.hytale.protocol.GameMode;
-import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.asset.type.entityeffect.config.EntityEffect;
 import com.hypixel.hytale.server.core.entity.effect.ActiveEntityEffect;
 import com.hypixel.hytale.server.core.entity.effect.EffectControllerComponent;
 import com.hypixel.hytale.server.core.entity.entities.Player;
-import com.hypixel.hytale.server.core.inventory.ItemStack;
 import com.hypixel.hytale.server.core.modules.entitystats.EntityStatMap;
 import com.hypixel.hytale.server.core.modules.entitystats.EntityStatValue;
 import com.hypixel.hytale.server.core.modules.entitystats.asset.DefaultEntityStatTypes;
@@ -15,11 +13,9 @@ import com.hypixel.hytale.server.core.modules.entitystats.modifier.Modifier;
 import com.hypixel.hytale.server.core.modules.entitystats.modifier.StaticModifier;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
-import com.hypixel.hytale.server.core.util.NotificationUtil;
 import com.ludas.plugin.clazz.Config;
 import com.ludas.plugin.clazz.Perk;
 import com.ludas.plugin.clazz.PerkId;
-import com.ludas.plugin.components.effects.PoisonComponent;
 import com.ludas.plugin.components.entity.MainStatusComponent;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
@@ -82,8 +78,6 @@ public class PoisonPerk extends Perk{
         if(player.getGameMode() != GameMode.Adventure) return;
         Ref<EntityStore> playerRef = player.getReference();
         if(playerRef == null) return;
-        PoisonComponent poison = store.getComponent(playerRef, PoisonComponent.getComponentType());
-        if(poison != null) return;
         EntityStatMap statMap = store.getComponent(playerRef, EntityStatMap.getComponentType());
         if(statMap == null) return;
         EntityStatValue entityHealth = statMap.get(DefaultEntityStatTypes.getHealth());
@@ -104,7 +98,7 @@ public class PoisonPerk extends Perk{
             }
 
             /* EXEMPLO
-            commandBuffer.addComponent(playerRef, PoisonComponent.getComponentType(), new PoisonComponent());
+            commandBuffer.addComponent(playerRef, DoTEffect.getComponentType(), new DoTEffect());
              */
         }
     }
@@ -112,13 +106,13 @@ public class PoisonPerk extends Perk{
     public void removeComponents(int idx, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk, @NonNullDecl Store<EntityStore> store,
                                  @NonNullDecl CommandBuffer<EntityStore> commandBuffer) {
         /* EXEMPLO
-        PoisonComponent poison = archetypeChunk.getComponent(idx, PoisonComponent.getComponentType());
-        if(poison == null) return;
         Player player = archetypeChunk.getComponent(idx, Player.getComponentType());
         if(player == null) return;
         Ref<EntityStore> playerRef = player.getReference();
         if(playerRef == null) return;
-        commandBuffer.tryRemoveComponent(playerRef, PoisonComponent.getComponentType());
+        DoTEffect DoT = store.getComponent(playerRef, DotEffect.getComponentType());
+        if(DoT == null) return;
+        commandBuffer.tryRemoveComponent(playerRef, DoTEffect.getComponentType());
         */
         return;
     }

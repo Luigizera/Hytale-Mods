@@ -1,6 +1,6 @@
 package com.ludas.plugin.systems.effects;
 
-import com.ludas.plugin.components.effects.PoisonComponent;
+import com.ludas.plugin.components.effects.DoTEffect;
 import com.hypixel.hytale.component.*;
 import com.hypixel.hytale.component.query.Query;
 import com.hypixel.hytale.component.system.tick.EntityTickingSystem;
@@ -12,18 +12,15 @@ import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
-public class PoisonSystem extends EntityTickingSystem<EntityStore> {
+public class DoTEffectSystem extends EntityTickingSystem<EntityStore> {
 
-    private final ComponentType<EntityStore, PoisonComponent> poisonComponentType;
-
-    public PoisonSystem(ComponentType<EntityStore, PoisonComponent> poisonComponentType) {
-        this.poisonComponentType = poisonComponentType;
+    public DoTEffectSystem() {
     }
 
     @NonNullDecl
     @Override
     public Query<EntityStore> getQuery() {
-        return Query.and(this.poisonComponentType);
+        return Query.and(DoTEffect.getComponentType());
     }
 
     @NullableDecl
@@ -35,22 +32,22 @@ public class PoisonSystem extends EntityTickingSystem<EntityStore> {
     @Override
     public void tick(float dt, int idx, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk,
                      @NonNullDecl Store<EntityStore> store, @NonNullDecl CommandBuffer<EntityStore> commandBuffer) {
-        PoisonComponent poison = archetypeChunk.getComponent(idx, poisonComponentType);
+        DoTEffect damageOverTime = archetypeChunk.getComponent(idx, DoTEffect.getComponentType());
         Ref<EntityStore> ref = archetypeChunk.getReferenceTo(idx);
 
-        poison.addElapsedTime(dt);
+        damageOverTime.addElapsedTime(dt);
 
-        if (poison.getElapsedTime() >= poison.getTickInterval()) {
-            poison.resetElapsedTime();
+        if (damageOverTime.getElapsedTime() >= damageOverTime.getTickInterval()) {
+            damageOverTime.resetElapsedTime();
 
-            Damage damage = new Damage(Damage.NULL_SOURCE, DamageCause.OUT_OF_WORLD, poison.getDamagePerTick());
+            Damage damage = new Damage(Damage.NULL_SOURCE, DamageCause.OUT_OF_WORLD, damageOverTime.getDamagePerTick());
             DamageSystems.executeDamage(ref, commandBuffer, damage);
 
-            poison.decrementRemainingTicks();
+            damageOverTime.decrementRemainingTicks();
         }
 
-        if (poison.isExpired()) {
-            commandBuffer.removeComponent(ref, poisonComponentType);
+        if (damageOverTime.isExpired()) {
+            commandBuffer.removeComponent(ref, DoTEffect.getComponentType());
         }
     }
 }

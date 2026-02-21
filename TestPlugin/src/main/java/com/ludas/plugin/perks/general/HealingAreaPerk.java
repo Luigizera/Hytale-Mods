@@ -30,7 +30,6 @@ import java.util.Map;
 
 public class HealingAreaPerk extends Perk{
     public static final String NAME = "Main_HealingArea";
-    private static int count = 0;
 
     public HealingAreaPerk() {
     }
@@ -67,34 +66,31 @@ public class HealingAreaPerk extends Perk{
         if (playerRef == null) return;
         TransformComponent transform = store.getComponent(playerRef, TransformComponent.getComponentType());
         if (transform == null) return;
-        if(count < 1) {
-            Vector3d playerPos = transform.getPosition();
+        Vector3d playerPos = transform.getPosition();
 
+        double x = playerPos.getX();
+        double y = playerPos.getY();
+        double z = playerPos.getZ();
+        double r = 3;
 
-            double x = playerPos.getX();
-            double y = playerPos.getY();
-            double z = playerPos.getZ();
-            double r = 3;
+        List<Vector2dClean> list = circle(x, z, r);
+        for (Vector2dClean vector2d : list) {
+            if(playerPos.distanceTo(vector2d.x, y, vector2d.y) < 0) {
+                Vector3d vector3d = new Vector3d(vector2d.x, y, vector2d.y); // position
+                Holder<EntityStore> holder = EntityStore.REGISTRY.newHolder();
+                ModelAsset modelAsset = ModelAsset.getAssetMap().getAsset("Minecart");
+                Model model = Model.createScaledModel(modelAsset, 1.0f);
+                holder.addComponent(PersistentModel.getComponentType(), new PersistentModel(model.toReference()));
+                holder.addComponent(ModelComponent.getComponentType(), new ModelComponent(model));
+                holder.addComponent(BoundingBox.getComponentType(), new BoundingBox(model.getBoundingBox()));
+                holder.addComponent(NetworkId.getComponentType(), new NetworkId(store.getExternalData().takeNextNetworkId()));
+                holder.ensureComponent(UUIDComponent.getComponentType());
+                holder.addComponent(TransformComponent.getComponentType(), new TransformComponent(vector3d, new Vector3f(0, 0, 0)));
 
-            List<Vector2dClean> list = circle(x, z, r);
-            for (Vector2dClean vector2d : list) {
-                if(playerPos.distanceTo(vector2d.x, y, vector2d.y) < 0) {
-                    Vector3d vector3d = new Vector3d(vector2d.x, y, vector2d.y); // position
-                    Holder<EntityStore> holder = EntityStore.REGISTRY.newHolder();
-                    ModelAsset modelAsset = ModelAsset.getAssetMap().getAsset("Minecart");
-                    Model model = Model.createScaledModel(modelAsset, 1.0f);
-                    holder.addComponent(PersistentModel.getComponentType(), new PersistentModel(model.toReference()));
-                    holder.addComponent(ModelComponent.getComponentType(), new ModelComponent(model));
-                    holder.addComponent(BoundingBox.getComponentType(), new BoundingBox(model.getBoundingBox()));
-                    holder.addComponent(NetworkId.getComponentType(), new NetworkId(store.getExternalData().takeNextNetworkId()));
-                    holder.ensureComponent(UUIDComponent.getComponentType());
-                    holder.addComponent(TransformComponent.getComponentType(), new TransformComponent(vector3d, new Vector3f(0, 0, 0)));
-
-                    commandBuffer.addEntity(holder, AddReason.SPAWN);
-                }
+                commandBuffer.addEntity(holder, AddReason.SPAWN);
             }
-            count++;
         }
+
     }
 
     private List<Vector2dClean> circle(double x, double y, double r) {

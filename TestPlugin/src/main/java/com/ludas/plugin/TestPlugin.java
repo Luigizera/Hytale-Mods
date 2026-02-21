@@ -2,8 +2,9 @@ package com.ludas.plugin;
 
 import com.ludas.plugin.commands.*;
 import com.ludas.plugin.commands.collection.LudasCommandCollection;
+import com.ludas.plugin.components.effects.FrenzyEffect;
 import com.ludas.plugin.components.entity.*;
-import com.ludas.plugin.components.effects.PoisonComponent;
+import com.ludas.plugin.components.effects.DoTEffect;
 import com.ludas.plugin.events.*;
 import com.ludas.plugin.events.damage.AgilityCritDamageEvent;
 import com.ludas.plugin.events.damage.MagicManaDamageEvent;
@@ -14,7 +15,7 @@ import com.ludas.plugin.handlers.damage.MagicManaDamageHandler;
 import com.ludas.plugin.handlers.damage.StrengthExtraDamageHandler;
 import com.ludas.plugin.systems.NPCLevelSystems;
 import com.ludas.plugin.systems.MainStatusSystems;
-import com.ludas.plugin.systems.effects.PoisonSystem;
+import com.ludas.plugin.systems.effects.DoTEffectSystem;
 import com.hypixel.hytale.component.ComponentRegistryProxy;
 import com.hypixel.hytale.event.EventRegistry;
 import com.hypixel.hytale.logger.HytaleLogger;
@@ -24,6 +25,7 @@ import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.ludas.plugin.systems.StrengthStatusSystems;
+import com.ludas.plugin.systems.effects.FrenzyEffectSystems;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
 import java.util.ArrayList;
@@ -43,14 +45,14 @@ public class TestPlugin extends JavaPlugin {
     @Override
     protected void setup() {
         super.setup();
-        LOGGER.atInfo().log("TestPlugin loading...");
+        LOGGER.atInfo().log("LudasPlugin loading...");
         //PlayerPacketTracker.registerPacketCounters();
 
         registerEntities();
         registerEvents();
         addCommandsToList();
         registerCommands(commands);
-        LOGGER.atInfo().log("TestPlugin loaded.");
+        LOGGER.atInfo().log("LudasPlugin loaded.");
     }
 
     public static TestPlugin get() {
@@ -72,7 +74,8 @@ public class TestPlugin extends JavaPlugin {
     private void registerEntities() {
         LOGGER.atInfo().log("Registering Entities...");
         ComponentRegistryProxy<EntityStore> entityRegistry = this.getEntityStoreRegistry();
-
+        //COMPONENTS
+        //ENTITY PERSISTANT
         var levelComponent = entityRegistry.registerComponent(LevelComponent.class, "LudasLevel", LevelComponent.CODEC);
         LevelComponent.setComponentType(levelComponent);
         var strengthComponent = entityRegistry.registerComponent(StrengthComponent.class, "LudasStrength", StrengthComponent.CODEC);
@@ -85,7 +88,14 @@ public class TestPlugin extends JavaPlugin {
         AgilityComponent.setComponentType(agilityComponent);
         var mainStatusComponent = entityRegistry.registerComponent(MainStatusComponent.class, "LudasMainStatus", MainStatusComponent.CODEC);
         MainStatusComponent.setComponentType(mainStatusComponent);
+        //EFFECTS
+        var effectDoT = entityRegistry.registerComponent(DoTEffect.class, DoTEffect::new);
+        DoTEffect.setComponentType(effectDoT);
+        var effectFrenzy = entityRegistry.registerComponent(FrenzyEffect.class, FrenzyEffect::new);
+        FrenzyEffect.setComponentType(effectFrenzy);
 
+        //SYSTEMS
+        //LEVELING
         entityRegistry.registerSystem(new MainStatusSystems.PlayerSpawnSystem());
         entityRegistry.registerSystem(new MainStatusSystems.PerkTick());
         entityRegistry.registerSystem(new MainStatusSystems.PlayerHitNPCSystem());
@@ -97,9 +107,10 @@ public class TestPlugin extends JavaPlugin {
         entityRegistry.registerSystem(new NPCLevelSystems.NPCEffect());
         entityRegistry.registerSystem(new StrengthStatusSystems.PerkTick());
 
-        var poisonComponent = entityRegistry.registerComponent(PoisonComponent.class, PoisonComponent::new);
-        PoisonComponent.setComponentType(poisonComponent);
-        entityRegistry.registerSystem(new PoisonSystem(PoisonComponent.getComponentType()));
+        //EFFECTS
+        entityRegistry.registerSystem(new DoTEffectSystem());
+        entityRegistry.registerSystem(new FrenzyEffectSystems.PlayerHitPlayerSystem());
+        entityRegistry.registerSystem(new FrenzyEffectSystems.PlayerHitNPCSystem());
     }
 
     private void registerEvents() {
