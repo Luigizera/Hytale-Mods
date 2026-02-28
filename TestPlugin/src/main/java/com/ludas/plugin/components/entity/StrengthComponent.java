@@ -9,16 +9,17 @@ import com.hypixel.hytale.component.ComponentType;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.ludas.plugin.clazz.Perk;
 import com.ludas.plugin.clazz.PerkId;
+import com.ludas.plugin.perks.strength.StrengthCritPunchPerk;
 import com.ludas.plugin.perks.strength.StrengthFrenzyPerk;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 public class StrengthComponent implements Component<EntityStore> {
     public static final BuilderCodec<StrengthComponent> CODEC;
     private static ComponentType<EntityStore, StrengthComponent> TYPE;
-    private LevelComponent level;
     public static final int PERK_LENGTH = 2;
     public static final float BASE_EXP_MULTIPLIER = 0.1f;
     public static final float BASE_DMG_MULTIPLIER = 0.002f;
+    private LevelComponent level;
     private int[] perks; //ints: 0 = unlock, 1 = enable
 
     public StrengthComponent() {
@@ -76,8 +77,9 @@ public class StrengthComponent implements Component<EntityStore> {
     }
 
     public int getPerkIdByName(String name) {
-        return switch (name.toUpperCase()) {
-            case "FRENZY" -> PerkId.STRENGTH_FRENZY;
+        return switch (name.toLowerCase()) {
+            case StrengthFrenzyPerk.NAME -> PerkId.STRENGTH_FRENZY;
+            case StrengthCritPunchPerk.NAME -> PerkId.STRENGTH_CRITICAL_PUNCH;
             default -> -1;
         };
     }
@@ -85,6 +87,7 @@ public class StrengthComponent implements Component<EntityStore> {
     public String getPerkNameById(int FLAG_ID) {
         return switch (FLAG_ID) {
             case PerkId.STRENGTH_FRENZY -> StrengthFrenzyPerk.NAME;
+            case PerkId.STRENGTH_CRITICAL_PUNCH -> StrengthCritPunchPerk.NAME;
             default -> "unknown";
         };
     }
@@ -92,6 +95,7 @@ public class StrengthComponent implements Component<EntityStore> {
     public Perk getPerkById(int FLAG_ID) {
         return switch (FLAG_ID) {
             case PerkId.STRENGTH_FRENZY -> new StrengthFrenzyPerk();
+            case PerkId.STRENGTH_CRITICAL_PUNCH -> new StrengthCritPunchPerk();
             default -> null;
         };
     }

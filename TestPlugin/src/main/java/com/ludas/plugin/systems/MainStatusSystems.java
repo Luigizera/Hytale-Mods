@@ -298,14 +298,13 @@ public class MainStatusSystems {
                                      @NonNullDecl DeathComponent deathComponent,
                                      @NonNullDecl Store<EntityStore> store,
                                      @NonNullDecl CommandBuffer<EntityStore> commandBuffer) {
-            NPCEntity npcComponent = (NPCEntity)commandBuffer.getComponent(ref, NPCEntity.getComponentType());
+            NPCEntity npcComponent = commandBuffer.getComponent(ref, NPCEntity.getComponentType());
             if (npcComponent == null) return;
             Damage deathInfo = deathComponent.getDeathInfo();
             if(deathInfo == null) return;
             Damage.Source damageSource = deathInfo.getSource();
-            if (!(damageSource instanceof Damage.EntitySource)) return;
-            Damage.EntitySource entitySource = (Damage.EntitySource) damageSource;
-            Ref attackerRef = entitySource.getRef();
+            if (!(damageSource instanceof Damage.EntitySource entitySource)) return;
+            Ref<EntityStore> attackerRef = entitySource.getRef();
             Player attackerPlayer = store.getComponent(attackerRef, Player.getComponentType());
             if(attackerPlayer == null) return;
             Ref<EntityStore> attacker = attackerPlayer.getReference();

@@ -18,6 +18,7 @@ import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.ludas.plugin.clazz.Config;
 import com.ludas.plugin.clazz.Perk;
 import com.ludas.plugin.clazz.PerkId;
+import com.ludas.plugin.clazz.PerkType;
 import com.ludas.plugin.components.effects.FrenzyEffect;
 import com.ludas.plugin.components.entity.MainStatusComponent;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
@@ -26,7 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class StrengthFrenzyPerk extends Perk {
-    public static final String NAME = "Strength_Frenzy";
+    public static final String NAME = "frenzy";
 
     public StrengthFrenzyPerk() {
     }
@@ -69,7 +70,7 @@ public class StrengthFrenzyPerk extends Perk {
         if(playerRef == null) return;
         var packet = playerRef.getPacketHandler();
 
-        Config.perkUnlockedNotification(packet, Config.ICON_PERK_STRENGTH, "Frenzy Perk");
+        Config.perkUnlockedNotification(packet, Config.ICON_PERK_STRENGTH, NAME, PerkType.STRENGTH);
         //player.sendMessage(Message.translation("server.perks.ludas.unlocked").param("id", NAME));
     }
 

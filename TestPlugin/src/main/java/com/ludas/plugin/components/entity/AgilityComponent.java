@@ -15,11 +15,11 @@ import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 public class AgilityComponent implements Component<EntityStore> {
     public static final BuilderCodec<AgilityComponent> CODEC;
     private static ComponentType<EntityStore, AgilityComponent> TYPE;
-    private LevelComponent level;
     public static final int PERK_LENGTH = 2;
     public static final float BASE_CRIT_CHANCE = 0.001f;
     public static final float BASE_CRIT_DAMAGE = 0.5f;
     public static final float BASE_EXP_MULTIPLIER = 0.1f;
+    private LevelComponent level;
     private int[] perks; //ints: 0 = unlock, 1 = enable
 
     public AgilityComponent() {

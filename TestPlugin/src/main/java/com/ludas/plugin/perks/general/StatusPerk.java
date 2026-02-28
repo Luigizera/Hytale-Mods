@@ -13,6 +13,7 @@ import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.ludas.plugin.clazz.Config;
 import com.ludas.plugin.clazz.Perk;
 import com.ludas.plugin.clazz.PerkId;
+import com.ludas.plugin.clazz.PerkType;
 import com.ludas.plugin.components.entity.MainStatusComponent;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
@@ -20,7 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class StatusPerk extends Perk {
-    public static final String NAME = "Main_Status";
+    public static final String NAME = "status";
 
     public StatusPerk() {
     }
@@ -62,7 +63,7 @@ public class StatusPerk extends Perk {
         PlayerRef playerRef = archetypeChunk.getComponent(idx, PlayerRef.getComponentType());
         if(playerRef == null) return;
         var packet = playerRef.getPacketHandler();
-        Config.perkUnlockedNotification(packet, Config.ICON_PERK_MAIN, "Status Perk");
+        Config.perkUnlockedNotification(packet, Config.ICON_PERK_MAIN, NAME, PerkType.MAIN);
 
         //player.sendMessage(Message.translation("server.perks.ludas.unlocked").param("id", NAME));
     }

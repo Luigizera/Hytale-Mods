@@ -30,13 +30,34 @@ public class Config {
         return damageCause == DamageCause.PHYSICAL || damageCause.getInherits().equals(DamageCause.PHYSICAL.getId());
     }
 
-    public static void perkUnlockedNotification(PacketHandler packet, String icon, String name) {
-        var primaryMessage = Message.raw(name).color("#DBDBDC");
-        var secondaryMessage = Message.raw("Is now unlocked!").color("#A8B0B7");
+    public static void perkUnlockedNotification(PacketHandler packet, String icon, String perkName, String perkType) {
+        Message primaryMessage;
+        Message secondaryMessage = Message.translation("perks.ludas.notification.unlocked").color("#A8B0B7");
+
+        switch (perkType) {
+            case PerkType.MAIN: {
+                primaryMessage = Message.translation("perks.ludas.notification.unlocked.main." + perkName);
+            }
+            case PerkType.STRENGTH: {
+                primaryMessage = Message.translation("perks.ludas.notification.unlocked.strength." + perkName);
+            }
+            case PerkType.AGILITY: {
+                primaryMessage = Message.translation("perks.ludas.notification.unlocked.agility." + perkName);
+            }
+            case PerkType.VITALITY: {
+                primaryMessage = Message.translation("perks.ludas.notification.unlocked.vitality." + perkName);
+            }
+            case PerkType.MAGIC: {
+                primaryMessage = Message.translation("perks.ludas.notification.unlocked.magic." + perkName);
+            }
+            default: {
+                primaryMessage = Message.translation("perks.ludas.notification.unlocked.unknown");
+            }
+        }
 
         NotificationUtil.sendNotification(
                 packet,
-                primaryMessage,
+                primaryMessage.color("#DBDBDC"),
                 secondaryMessage,
                 icon);
     }

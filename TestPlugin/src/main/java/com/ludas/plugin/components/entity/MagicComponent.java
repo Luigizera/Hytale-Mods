@@ -15,10 +15,10 @@ import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 public class MagicComponent implements Component<EntityStore> {
     public static final BuilderCodec<MagicComponent> CODEC;
     private static ComponentType<EntityStore, MagicComponent> TYPE;
-    private LevelComponent level;
     public static final int PERK_LENGTH = 2;
     public static final float BASE_EXP_MULTIPLIER = 0.1f;
     public static final float BASE_DMG_MULTIPLIER = 0.002f;
+    private LevelComponent level;
     private int[] perks; //ints: 0 = unlock, 1 = enable
 
     public MagicComponent() {

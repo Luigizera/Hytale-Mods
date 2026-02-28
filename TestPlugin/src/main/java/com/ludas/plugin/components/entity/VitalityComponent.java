@@ -15,9 +15,9 @@ import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 public class VitalityComponent implements Component<EntityStore> {
     public static final BuilderCodec<VitalityComponent> CODEC;
     private static ComponentType<EntityStore, VitalityComponent> TYPE;
-    private LevelComponent level;
     public static final int PERK_LENGTH = 2;
     public static final float BASE_MULTIPLIER = 0.1f;
+    private LevelComponent level;
     private int[] perks; //ints: 0 = unlock, 1 = enable
 
     public VitalityComponent() {

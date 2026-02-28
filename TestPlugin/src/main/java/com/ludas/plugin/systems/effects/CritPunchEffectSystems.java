@@ -3,19 +3,24 @@ package com.ludas.plugin.systems.effects;
 import com.hypixel.hytale.component.*;
 import com.hypixel.hytale.component.query.Query;
 import com.hypixel.hytale.server.core.entity.entities.Player;
+import com.hypixel.hytale.server.core.inventory.Inventory;
+import com.hypixel.hytale.server.core.inventory.ItemStack;
 import com.hypixel.hytale.server.core.modules.entity.damage.*;
 import com.hypixel.hytale.server.core.modules.entitystats.EntityStatMap;
 import com.hypixel.hytale.server.core.modules.entitystats.EntityStatValue;
 import com.hypixel.hytale.server.core.modules.entitystats.asset.DefaultEntityStatTypes;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.hypixel.hytale.server.npc.entities.NPCEntity;
+import com.ludas.plugin.clazz.Config;
+import com.ludas.plugin.components.effects.CritPunchEffect;
 import com.ludas.plugin.components.effects.FrenzyEffect;
+import com.ludas.plugin.events.damage.AgilityCritDamageEvent;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class FrenzyEffectSystems {
+public class CritPunchEffectSystems {
 
     public static class PlayerHitNPCSystem extends DamageEventSystem {
 
@@ -47,18 +52,14 @@ public class FrenzyEffectSystems {
             Ref<EntityStore> attackerRef = entitySource.getRef();
             Player attacker = store.getComponent(attackerRef, Player.getComponentType());
             if (attacker == null) return;
-            FrenzyEffect frenzyEffect = store.getComponent(attackerRef, FrenzyEffect.getComponentType());
-            if(frenzyEffect == null) return;
-            EntityStatMap attackerStatMap = store.getComponent(attackerRef, EntityStatMap.getComponentType());
-            if (attackerStatMap == null) return;
-            EntityStatValue healthStat = attackerStatMap.get(DefaultEntityStatTypes.getHealth());
-            if (healthStat == null) return;
-            if (frenzyEffect.getMultiplier() > healthStat.asPercentage()) return;
-
-            float healthAsDamage = healthStat.getMax() * frenzyEffect.getMultiplier();
-            Damage extraDmg = new Damage(Damage.NULL_SOURCE, DamageCause.OUT_OF_WORLD, healthAsDamage);
-            DamageSystems.executeDamage(targetRef, commandBuffer, extraDmg);
-            DamageSystems.executeDamage(attackerRef, commandBuffer, extraDmg);
+            CritPunchEffect critPunchEffect = store.getComponent(attackerRef, CritPunchEffect.getComponentType());
+            if(critPunchEffect == null) return;
+            Inventory inventory = attacker.getInventory();
+            if (inventory == null) return;
+            ItemStack itemStack = inventory.getActiveHotbarItem();
+            if(itemStack == null && Config.isDamageCausePhysical(damage.getCause())) {
+                AgilityCritDamageEvent.dispatch(attackerRef, targetRef, damage, commandBuffer);
+            }
         }
 
     }
@@ -92,18 +93,14 @@ public class FrenzyEffectSystems {
             Ref<EntityStore> attackerRef = entitySource.getRef();
             Player attacker = store.getComponent(attackerRef, Player.getComponentType());
             if (attacker == null) return;
-            FrenzyEffect frenzyEffect = store.getComponent(attackerRef, FrenzyEffect.getComponentType());
-            if(frenzyEffect == null) return;
-            EntityStatMap attackerStatMap = store.getComponent(attackerRef, EntityStatMap.getComponentType());
-            if(attackerStatMap == null) return;
-            EntityStatValue healthStat = attackerStatMap.get(DefaultEntityStatTypes.getHealth());
-            if(healthStat == null) return;
-            if(frenzyEffect.getMultiplier() > healthStat.asPercentage()) return;
-
-            float healthAsDamage =  healthStat.getMax() * frenzyEffect.getMultiplier();
-            Damage extraDmg = new Damage(Damage.NULL_SOURCE, DamageCause.OUT_OF_WORLD, healthAsDamage);
-            DamageSystems.executeDamage(targetRef, commandBuffer, extraDmg);
-            DamageSystems.executeDamage(attackerRef, commandBuffer, extraDmg);
+            CritPunchEffect critPunchEffect = store.getComponent(attackerRef, CritPunchEffect.getComponentType());
+            if(critPunchEffect == null) return;
+            Inventory inventory = attacker.getInventory();
+            if (inventory == null) return;
+            ItemStack itemStack = inventory.getActiveHotbarItem();
+            if(itemStack == null && Config.isDamageCausePhysical(damage.getCause())) {
+                AgilityCritDamageEvent.dispatch(attackerRef, targetRef, damage, commandBuffer);
+            }
         }
     }
 }

@@ -17,10 +17,7 @@ import com.hypixel.hytale.server.core.modules.entity.tracker.NetworkId;
 import com.hypixel.hytale.server.core.modules.entitystats.modifier.StaticModifier;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
-import com.ludas.plugin.clazz.Config;
-import com.ludas.plugin.clazz.Perk;
-import com.ludas.plugin.clazz.PerkId;
-import com.ludas.plugin.clazz.Vector2dClean;
+import com.ludas.plugin.clazz.*;
 import com.ludas.plugin.components.entity.MainStatusComponent;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
@@ -29,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 public class HealingAreaPerk extends Perk{
-    public static final String NAME = "Main_HealingArea";
+    public static final String NAME = "healingarea";
 
     public HealingAreaPerk() {
     }
@@ -52,7 +49,7 @@ public class HealingAreaPerk extends Perk{
         if(playerRef == null) return;
         var packet = playerRef.getPacketHandler();
 
-        Config.perkUnlockedNotification(packet, Config.ICON_PERK_MAIN, "Healing Area");
+        Config.perkUnlockedNotification(packet, Config.ICON_PERK_MAIN, NAME, PerkType.MAIN);
         //player.sendMessage(Message.translation("server.perks.ludas.unlocked").param("id", NAME));
     }
 

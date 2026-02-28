@@ -2,6 +2,7 @@ package com.ludas.plugin;
 
 import com.ludas.plugin.commands.*;
 import com.ludas.plugin.commands.collection.LudasCommandCollection;
+import com.ludas.plugin.components.effects.CritPunchEffect;
 import com.ludas.plugin.components.effects.FrenzyEffect;
 import com.ludas.plugin.components.entity.*;
 import com.ludas.plugin.components.effects.DoTEffect;
@@ -15,6 +16,7 @@ import com.ludas.plugin.handlers.damage.MagicManaDamageHandler;
 import com.ludas.plugin.handlers.damage.StrengthExtraDamageHandler;
 import com.ludas.plugin.systems.NPCLevelSystems;
 import com.ludas.plugin.systems.MainStatusSystems;
+import com.ludas.plugin.systems.effects.CritPunchEffectSystems;
 import com.ludas.plugin.systems.effects.DoTEffectSystem;
 import com.hypixel.hytale.component.ComponentRegistryProxy;
 import com.hypixel.hytale.event.EventRegistry;
@@ -93,6 +95,8 @@ public class TestPlugin extends JavaPlugin {
         DoTEffect.setComponentType(effectDoT);
         var effectFrenzy = entityRegistry.registerComponent(FrenzyEffect.class, FrenzyEffect::new);
         FrenzyEffect.setComponentType(effectFrenzy);
+        var effectCritPunch = entityRegistry.registerComponent(CritPunchEffect.class, CritPunchEffect::new);
+        CritPunchEffect.setComponentType(effectCritPunch);
 
         //SYSTEMS
         //LEVELING
@@ -111,6 +115,8 @@ public class TestPlugin extends JavaPlugin {
         entityRegistry.registerSystem(new DoTEffectSystem());
         entityRegistry.registerSystem(new FrenzyEffectSystems.PlayerHitPlayerSystem());
         entityRegistry.registerSystem(new FrenzyEffectSystems.PlayerHitNPCSystem());
+        entityRegistry.registerSystem(new CritPunchEffectSystems.PlayerHitNPCSystem());
+        entityRegistry.registerSystem(new CritPunchEffectSystems.PlayerHitPlayerSystem());
     }
 
     private void registerEvents() {

@@ -102,10 +102,10 @@ public class MainStatusComponent implements Component<EntityStore> {
     }
 
     public int getPerkIdByName(String name) {
-        return switch (name.toUpperCase()) {
-            case "POISON" -> PerkId.MAIN_POISON_PERK;
-            case "STATUS" -> PerkId.MAIN_STATUS_PERK;
-            case "HEALINGAREA" -> PerkId.MAIN_HEALING_AREA;
+        return switch (name.toLowerCase()) {
+            case PoisonPerk.NAME -> PerkId.MAIN_POISON_PERK;
+            case StatusPerk.NAME -> PerkId.MAIN_STATUS_PERK;
+            case HealingAreaPerk.NAME -> PerkId.MAIN_HEALING_AREA;
             default -> -1;
         };
     }

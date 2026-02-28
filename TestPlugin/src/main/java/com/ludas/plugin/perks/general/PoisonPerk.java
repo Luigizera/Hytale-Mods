@@ -16,6 +16,7 @@ import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.ludas.plugin.clazz.Config;
 import com.ludas.plugin.clazz.Perk;
 import com.ludas.plugin.clazz.PerkId;
+import com.ludas.plugin.clazz.PerkType;
 import com.ludas.plugin.components.entity.MainStatusComponent;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
@@ -23,7 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PoisonPerk extends Perk{
-    public static final String NAME = "Main_Poison";
+    public static final String NAME = "poison";
 
     public PoisonPerk() {
     }
@@ -66,7 +67,7 @@ public class PoisonPerk extends Perk{
         if(playerRef == null) return;
         var packet = playerRef.getPacketHandler();
 
-        Config.perkUnlockedNotification(packet, Config.ICON_PERK_POISON, "Poison Perk");
+        Config.perkUnlockedNotification(packet, Config.ICON_PERK_POISON, NAME, PerkType.MAIN);
 
         //player.sendMessage(Message.translation("server.perks.ludas.unlocked").param("id", NAME));
     }
