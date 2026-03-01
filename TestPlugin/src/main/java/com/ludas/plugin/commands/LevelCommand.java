@@ -20,7 +20,7 @@ public class LevelCommand extends AbstractPlayerCommand {
     }
 
     @Override
-    protected void execute(@NonNullDecl CommandContext commandContext,
+    protected void execute(@NonNullDecl CommandContext context,
                            @NonNullDecl Store<EntityStore> store, @NonNullDecl Ref<EntityStore> ref,
                            @NonNullDecl PlayerRef playerRef, @NonNullDecl World world) {
 

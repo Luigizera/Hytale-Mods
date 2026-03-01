@@ -50,7 +50,7 @@ public class VitalityComponent implements Component<EntityStore> {
         return perks != null
                 && perks.length == PERK_LENGTH
                 && FLAG_ID >= 0
-                && FLAG_ID < PerkId.STRENGTH_CURRENT_PERK_COUNT;
+                && FLAG_ID < PerkId.VITALITY_CURRENT_PERK_COUNT;
     }
 
     public void setUnlocked(int FLAG_ID) {

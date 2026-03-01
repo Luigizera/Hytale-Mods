@@ -43,25 +43,26 @@ public class PerkCommand extends AbstractPlayerCommand {
                                            String perkName, String strModifier,
                                            ObjectArrayList<Message> values, String translationKey) {
         Map<Integer, StaticModifier> modifiers = perk.setupModifiers();
-        if (modifiers != null && !modifiers.isEmpty()) {
-            for (var modifier : modifiers.entrySet()) {
-                Integer index = modifier.getKey();
-                if (index > statMap.size() || index < 0) {
-                    throw new UnsupportedOperationException("Wrong implementation of Perk Index: " + index);
+        if (modifiers != null) {
+            if(!modifiers.isEmpty()) {
+                for (var modifier : modifiers.entrySet()) {
+                    Integer index = modifier.getKey();
+                    if (index > statMap.size() || index < 0) {
+                        throw new UnsupportedOperationException("Wrong implementation of Perk Index: " + index);
+                    }
+                    StaticModifier staticModifier = modifier.getValue();
+                    if (staticModifier == null) {
+                        throw new UnsupportedOperationException("Wrong implementation of Perk StaticModifier: " + staticModifier);
+                    }
+                    if (enabled) {
+                        statMap.putModifier(index, perkName, staticModifier);
+                    } else {
+                        statMap.removeModifier(index, perkName);
+                    }
+                    strModifier += " || " + Objects.requireNonNull(statMap.get(index)).getId() + ": "
+                            + (staticModifier.getCalculationType() == StaticModifier.CalculationType.ADDITIVE ? "+" : "x")
+                            + staticModifier.getAmount();
                 }
-                StaticModifier staticModifier = modifier.getValue();
-                if (staticModifier == null) {
-                    throw new UnsupportedOperationException("Wrong implementation of Perk StaticModifier: " + staticModifier);
-                }
-                if (enabled) {
-                    statMap.putModifier(index, perkName, staticModifier);
-                }
-                else {
-                    statMap.removeModifier(index, perkName);
-                }
-                strModifier += " || " + Objects.requireNonNull(statMap.get(index)).getId() + ": "
-                        + (staticModifier.getCalculationType() == StaticModifier.CalculationType.ADDITIVE ? "+" : "x")
-                        + staticModifier.getAmount();
             }
         }
 
@@ -158,7 +159,7 @@ public class PerkCommand extends AbstractPlayerCommand {
                 }
 
                 ObjectArrayList<Message> values = new ObjectArrayList<>();
-                for (int i = 0; i < PerkId.STRENGTH_CURRENT_PERK_COUNT; ++i) {
+                for (int i = 0; i < PerkId.AGILITY_CURRENT_PERK_COUNT; ++i) {
                     boolean unlocked = agility.isPerkUnlocked(i);
                     if (unlocked) {
                         Perk perk = agility.getPerkById(i);
@@ -187,7 +188,7 @@ public class PerkCommand extends AbstractPlayerCommand {
                 }
 
                 ObjectArrayList<Message> values = new ObjectArrayList<>();
-                for (int i = 0; i < PerkId.STRENGTH_CURRENT_PERK_COUNT; ++i) {
+                for (int i = 0; i < PerkId.MAGIC_CURRENT_PERK_COUNT; ++i) {
                     boolean unlocked = magic.isPerkUnlocked(i);
                     if (unlocked) {
                         Perk perk = magic.getPerkById(i);
@@ -216,7 +217,7 @@ public class PerkCommand extends AbstractPlayerCommand {
                 }
 
                 ObjectArrayList<Message> values = new ObjectArrayList<>();
-                for (int i = 0; i < PerkId.STRENGTH_CURRENT_PERK_COUNT; ++i) {
+                for (int i = 0; i < PerkId.VITALITY_CURRENT_PERK_COUNT; ++i) {
                     boolean unlocked = vitality.isPerkUnlocked(i);
                     if (unlocked) {
                         Perk perk = vitality.getPerkById(i);

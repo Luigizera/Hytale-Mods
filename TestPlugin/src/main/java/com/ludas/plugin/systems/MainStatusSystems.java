@@ -304,16 +304,14 @@ public class MainStatusSystems {
             if(deathInfo == null) return;
             Damage.Source damageSource = deathInfo.getSource();
             if (!(damageSource instanceof Damage.EntitySource entitySource)) return;
-            Ref<EntityStore> attackerRef = entitySource.getRef();
-            Player attackerPlayer = store.getComponent(attackerRef, Player.getComponentType());
+            Ref<EntityStore> attacker = entitySource.getRef();
+            Player attackerPlayer = store.getComponent(attacker, Player.getComponentType());
             if(attackerPlayer == null) return;
-            Ref<EntityStore> attacker = attackerPlayer.getReference();
-            if(attacker == null) return;
             MainStatusComponent mainStatus = store.getComponent(attacker, MainStatusComponent.getComponentType());
             if(mainStatus != null) {
                 LevelComponent level = store.getComponent(ref, LevelComponent.getComponentType());
                 if(level == null) return;
-                GiveMainStatusXPEvent.dispatch(attackerRef, level.getLevel() * 10f);
+                GiveMainStatusXPEvent.dispatch(attacker, level.getLevel() * 10f);
             }
         }
     }

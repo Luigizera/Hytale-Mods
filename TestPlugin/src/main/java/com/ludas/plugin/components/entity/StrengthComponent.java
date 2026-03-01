@@ -19,17 +19,27 @@ public class StrengthComponent implements Component<EntityStore> {
     public static final int PERK_LENGTH = 2;
     public static final float BASE_EXP_MULTIPLIER = 0.1f;
     public static final float BASE_DMG_MULTIPLIER = 0.002f;
+    private static final int RESET_THRESHOLD = 100;
     private LevelComponent level;
+    //private int resets;
     private int[] perks; //ints: 0 = unlock, 1 = enable
 
     public StrengthComponent() {
         this.level = new LevelComponent();
         this.perks = new int[PERK_LENGTH];
+        //this.resets = 0;
+    }
+
+    public StrengthComponent(int resets) {
+        this.level = new LevelComponent();
+        this.perks = new int[PERK_LENGTH];
+        //this.resets = resets;
     }
 
     public StrengthComponent(StrengthComponent other) {
         this.level = other.level;
         this.perks = other.perks;
+        //this.resets = other.resets;
     }
 
     public static void setComponentType(ComponentType<EntityStore, StrengthComponent> type) {
@@ -43,13 +53,25 @@ public class StrengthComponent implements Component<EntityStore> {
     public LevelComponent getLevelComponent() {
         return this.level;
     }
+    /*
+    public int getResets() {
+        return resets;
+    }
+
+    public boolean canReset() {
+        return this.level.getLevel() >= RESET_THRESHOLD * (resets + 1);
+    }
+
+    public int nextReset() {
+        return RESET_THRESHOLD * (resets + 1);
+    }*/
 
     public float getDefaultExp() {
-        return BASE_EXP_MULTIPLIER * LevelComponent.MULTIPLIER;
+        return (BASE_EXP_MULTIPLIER * LevelComponent.MULTIPLIER) /** (resets + 1)*/;
     }
 
     public float getDamageMultiplier() {
-        return BASE_DMG_MULTIPLIER * this.level.getLevel();
+        return (BASE_DMG_MULTIPLIER * this.level.getLevel()) /** (resets + 1)*/;
     }
 
     private boolean isPerkValid(int FLAG_ID) {

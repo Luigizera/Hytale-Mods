@@ -11,9 +11,12 @@ public class Config {
     public static final String PARTICLE_BLACKFLASH_RED = "Ludas_Impact_Critical_BlackFlash_Red"; /*"Impact_Critical"*/
     public static final String PARTICLE_BLACKFLASH_BLUE = "Ludas_Impact_Critical_BlackFlash_Blue";
     public static final String SFX_AGILITY_CRIT = "SFX_GunPvP_Grenade_Frag_Death";
-    public static final String ICON_PERK_POISON = "NotificationIcons/Ludas_Icon_Perk_Poison.png";
-    public static final String ICON_PERK_STRENGTH = "NotificationIcons/Ludas_Icon_Perk_Strength.png";
     public static final String ICON_PERK_MAIN = "NotificationIcons/Ludas_Icon_Perk_Main.png";
+    public static final String ICON_PERK_STRENGTH = "NotificationIcons/Ludas_Icon_Perk_Strength.png";
+    public static final String ICON_PERK_MAGIC = "NotificationIcons/Ludas_Icon_Perk_Magic.png";
+    public static final String ICON_PERK_AGILITY = "NotificationIcons/Ludas_Icon_Perk_Agility.png";
+    public static final String ICON_PERK_VITALITY = "NotificationIcons/Ludas_Icon_Perk_Vitality.png";
+    public static final String ICON_PERK_POISON = "NotificationIcons/Ludas_Icon_Perk_Poison.png";
 
     public static boolean isItemAgilityRelated(Map<String, String[]> item) {
         return item.get("Family=Dagger") != null

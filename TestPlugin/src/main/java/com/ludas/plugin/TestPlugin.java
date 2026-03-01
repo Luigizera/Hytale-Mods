@@ -4,6 +4,7 @@ import com.ludas.plugin.commands.*;
 import com.ludas.plugin.commands.collection.LudasCommandCollection;
 import com.ludas.plugin.components.effects.CritPunchEffect;
 import com.ludas.plugin.components.effects.FrenzyEffect;
+import com.ludas.plugin.components.effects.ManaKillEffect;
 import com.ludas.plugin.components.entity.*;
 import com.ludas.plugin.components.effects.DoTEffect;
 import com.ludas.plugin.events.*;
@@ -28,6 +29,7 @@ import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import com.ludas.plugin.systems.StrengthStatusSystems;
 import com.ludas.plugin.systems.effects.FrenzyEffectSystems;
+import com.ludas.plugin.systems.effects.ManaKillEffectSystems;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
 import java.util.ArrayList;
@@ -97,6 +99,8 @@ public class TestPlugin extends JavaPlugin {
         FrenzyEffect.setComponentType(effectFrenzy);
         var effectCritPunch = entityRegistry.registerComponent(CritPunchEffect.class, CritPunchEffect::new);
         CritPunchEffect.setComponentType(effectCritPunch);
+        var effectManaKill = entityRegistry.registerComponent(ManaKillEffect.class, ManaKillEffect::new);
+        ManaKillEffect.setComponentType(effectManaKill);
 
         //SYSTEMS
         //LEVELING
@@ -117,6 +121,7 @@ public class TestPlugin extends JavaPlugin {
         entityRegistry.registerSystem(new FrenzyEffectSystems.PlayerHitNPCSystem());
         entityRegistry.registerSystem(new CritPunchEffectSystems.PlayerHitNPCSystem());
         entityRegistry.registerSystem(new CritPunchEffectSystems.PlayerHitPlayerSystem());
+        entityRegistry.registerSystem(new ManaKillEffectSystems.NPCorPlayerDeathSystem());
     }
 
     private void registerEvents() {
