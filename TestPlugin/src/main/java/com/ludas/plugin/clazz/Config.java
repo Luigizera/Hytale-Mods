@@ -35,26 +35,32 @@ public class Config {
 
     public static void perkUnlockedNotification(PacketHandler packet, String icon, String perkName, String perkType) {
         Message primaryMessage;
-        Message secondaryMessage = Message.translation("perks.ludas.notification.unlocked").color("#A8B0B7");
+        Message secondaryMessage = Message.translation("server.perks.ludas.notification.unlocked").color("#A8B0B7");
 
         switch (perkType) {
             case PerkType.MAIN: {
-                primaryMessage = Message.translation("perks.ludas.notification.unlocked.main." + perkName);
+                primaryMessage = Message.translation("server.perks.ludas.notification.unlocked.main." + perkName);
+                break;
             }
             case PerkType.STRENGTH: {
-                primaryMessage = Message.translation("perks.ludas.notification.unlocked.strength." + perkName);
+                primaryMessage = Message.translation("server.perks.ludas.notification.unlocked.strength." + perkName);
+                break;
             }
             case PerkType.AGILITY: {
-                primaryMessage = Message.translation("perks.ludas.notification.unlocked.agility." + perkName);
+                primaryMessage = Message.translation("server.perks.ludas.notification.unlocked.agility." + perkName);
+                break;
             }
             case PerkType.VITALITY: {
-                primaryMessage = Message.translation("perks.ludas.notification.unlocked.vitality." + perkName);
+                primaryMessage = Message.translation("server.perks.ludas.notification.unlocked.vitality." + perkName);
+                break;
             }
             case PerkType.MAGIC: {
-                primaryMessage = Message.translation("perks.ludas.notification.unlocked.magic." + perkName);
+                primaryMessage = Message.translation("server.perks.ludas.notification.unlocked.magic." + perkName);
+                break;
             }
             default: {
-                primaryMessage = Message.translation("perks.ludas.notification.unlocked.unknown");
+                primaryMessage = Message.translation("server.perks.ludas.notification.unlocked.unknown");
+                break;
             }
         }
 

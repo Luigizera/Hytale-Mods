@@ -46,7 +46,6 @@ public class StrengthCritPunchPerk extends Perk {
     public void tick(float dt, int idx, @NonNullDecl ArchetypeChunk<EntityStore> archetypeChunk, @NonNullDecl Store<EntityStore> store, @NonNullDecl CommandBuffer<EntityStore> commandBuffer) {
         Player player = archetypeChunk.getComponent(idx, Player.getComponentType());
         if(player == null) return;
-        if(player.getGameMode() != GameMode.Adventure) return;
         Ref<EntityStore> playerRef = player.getReference();
         if(playerRef == null) return;
         CritPunchEffect critPunchEffect = store.getComponent(playerRef, CritPunchEffect.getComponentType());

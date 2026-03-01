@@ -55,9 +55,9 @@ public class PerkCommand extends AbstractPlayerCommand {
                         throw new UnsupportedOperationException("Wrong implementation of Perk StaticModifier: " + staticModifier);
                     }
                     if (enabled) {
-                        statMap.putModifier(index, perkName, staticModifier);
+                        statMap.putModifier(index, "Ludas_"+perkName, staticModifier);
                     } else {
-                        statMap.removeModifier(index, perkName);
+                        statMap.removeModifier(index, "Ludas_"+perkName);
                     }
                     strModifier += " || " + Objects.requireNonNull(statMap.get(index)).getId() + ": "
                             + (staticModifier.getCalculationType() == StaticModifier.CalculationType.ADDITIVE ? "+" : "x")

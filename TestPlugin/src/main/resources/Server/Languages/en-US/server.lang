@@ -46,6 +46,7 @@ commands.ludas.perk.unlock.condition.strength.criticalpunch = Strength: Reach le
 commands.ludas.perk.unlock.condition.magic.manakill = Magic: Reach level 20
 perks.ludas.unlocked = New perk unlocked: {id}
 perks.ludas.notification.unlocked = Is now unlocked!
+perks.ludas.notification.unlocked.unknown = Unknown Status Perk
 perks.ludas.notification.unlocked.main.unknown = Unknown Main Perk
 perks.ludas.notification.unlocked.strength.unknown = Unknown Strength Perk
 perks.ludas.notification.unlocked.magic.unknown = Unknown Magic Perk
