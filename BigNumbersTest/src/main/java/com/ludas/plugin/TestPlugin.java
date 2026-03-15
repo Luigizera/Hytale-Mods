@@ -1,0 +1,148 @@
+package com.ludas.plugin;
+
+import com.ludas.plugin.commands.*;
+import com.ludas.plugin.commands.collection.LudasCommandCollection;
+import com.ludas.plugin.components.effects.CritPunchEffect;
+import com.ludas.plugin.components.effects.FrenzyEffect;
+import com.ludas.plugin.components.effects.ManaKillEffect;
+import com.ludas.plugin.components.entity.*;
+import com.ludas.plugin.components.effects.DoTEffect;
+import com.ludas.plugin.events.*;
+import com.ludas.plugin.events.damage.AgilityCritDamageEvent;
+import com.ludas.plugin.events.damage.MagicManaDamageEvent;
+import com.ludas.plugin.events.damage.StrengthExtraDamageEvent;
+import com.ludas.plugin.handlers.*;
+import com.ludas.plugin.handlers.damage.AgilityCritDamageHandler;
+import com.ludas.plugin.handlers.damage.MagicManaDamageHandler;
+import com.ludas.plugin.handlers.damage.StrengthExtraDamageHandler;
+import com.ludas.plugin.systems.NPCLevelSystems;
+import com.ludas.plugin.systems.MainStatusSystems;
+import com.ludas.plugin.systems.effects.CritPunchEffectSystems;
+import com.ludas.plugin.systems.effects.DoTEffectSystem;
+import com.hypixel.hytale.component.ComponentRegistryProxy;
+import com.hypixel.hytale.event.EventRegistry;
+import com.hypixel.hytale.logger.HytaleLogger;
+import com.hypixel.hytale.server.core.command.system.AbstractCommand;
+import com.hypixel.hytale.server.core.command.system.CommandRegistry;
+import com.hypixel.hytale.server.core.plugin.JavaPlugin;
+import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
+import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
+import com.ludas.plugin.systems.StrengthStatusSystems;
+import com.ludas.plugin.systems.effects.FrenzyEffectSystems;
+import com.ludas.plugin.systems.effects.ManaKillEffectSystems;
+import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class TestPlugin extends JavaPlugin {
+    private static TestPlugin instance;
+    public static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
+    private static List<AbstractCommand> commands;
+
+    public TestPlugin(@NonNullDecl JavaPluginInit init) {
+        super(init);
+        instance = this;
+        commands = new ArrayList<>();
+    }
+
+    @Override
+    protected void setup() {
+        super.setup();
+        LOGGER.atInfo().log("LudasPlugin loading...");
+        //PlayerPacketTracker.registerPacketCounters();
+
+        registerEntities();
+        registerEvents();
+        addCommandsToList();
+        registerCommands(commands);
+        LOGGER.atInfo().log("LudasPlugin loaded.");
+    }
+
+    public static TestPlugin get() {
+        return instance;
+    }
+
+    private void addCommandsToList() {
+        commands.add(new TestCommand());
+        commands.add(new TestUICommand());
+        commands.add(new TestUI2Command());
+        commands.add(new ServerRulesCommand());
+        commands.add(new PlayerInfoCommand());
+        commands.add(new PoisonCommand());
+        commands.add(new EntityStatsCommand());
+        commands.add(new LevelCommand());
+        commands.add(new PerkCommand());
+    }
+
+    private void registerEntities() {
+        LOGGER.atInfo().log("Registering Entities...");
+        ComponentRegistryProxy<EntityStore> entityRegistry = this.getEntityStoreRegistry();
+        //COMPONENTS
+        //ENTITY PERSISTANT
+        var levelComponent = entityRegistry.registerComponent(LevelComponent.class, "LudasLevel", LevelComponent.CODEC);
+        LevelComponent.setComponentType(levelComponent);
+        var strengthComponent = entityRegistry.registerComponent(StrengthComponent.class, "LudasStrength", StrengthComponent.CODEC);
+        StrengthComponent.setComponentType(strengthComponent);
+        var magicComponent = entityRegistry.registerComponent(MagicComponent.class, "LudasMagic", MagicComponent.CODEC);
+        MagicComponent.setComponentType(magicComponent);
+        var vitalityComponent = entityRegistry.registerComponent(VitalityComponent.class, "LudasVitality", VitalityComponent.CODEC);
+        VitalityComponent.setComponentType(vitalityComponent);
+        var agilityComponent = entityRegistry.registerComponent(AgilityComponent.class, "LudasAgility", AgilityComponent.CODEC);
+        AgilityComponent.setComponentType(agilityComponent);
+        var mainStatusComponent = entityRegistry.registerComponent(MainStatusComponent.class, "LudasMainStatus", MainStatusComponent.CODEC);
+        MainStatusComponent.setComponentType(mainStatusComponent);
+        //EFFECTS
+        var effectDoT = entityRegistry.registerComponent(DoTEffect.class, DoTEffect::new);
+        DoTEffect.setComponentType(effectDoT);
+        var effectFrenzy = entityRegistry.registerComponent(FrenzyEffect.class, FrenzyEffect::new);
+        FrenzyEffect.setComponentType(effectFrenzy);
+        var effectCritPunch = entityRegistry.registerComponent(CritPunchEffect.class, CritPunchEffect::new);
+        CritPunchEffect.setComponentType(effectCritPunch);
+        var effectManaKill = entityRegistry.registerComponent(ManaKillEffect.class, ManaKillEffect::new);
+        ManaKillEffect.setComponentType(effectManaKill);
+
+        //SYSTEMS
+        //LEVELING
+        entityRegistry.registerSystem(new MainStatusSystems.PlayerSpawnSystem());
+        entityRegistry.registerSystem(new MainStatusSystems.PerkTick());
+        entityRegistry.registerSystem(new MainStatusSystems.PlayerHitNPCSystem());
+        entityRegistry.registerSystem(new MainStatusSystems.PlayerHitPlayerSystem());
+        entityRegistry.registerSystem(new MainStatusSystems.DamagePlayerSystem());
+        entityRegistry.registerSystem(new MainStatusSystems.NPCDeathSystem());
+        entityRegistry.registerSystem(new NPCLevelSystems.NPCSpawnSystem());
+        entityRegistry.registerSystem(new NPCLevelSystems.NPCDamageDealtSystem());
+        entityRegistry.registerSystem(new NPCLevelSystems.NPCEffect());
+        entityRegistry.registerSystem(new StrengthStatusSystems.PerkTick());
+
+        //EFFECTS
+        entityRegistry.registerSystem(new DoTEffectSystem());
+        entityRegistry.registerSystem(new FrenzyEffectSystems.PlayerHitPlayerSystem());
+        entityRegistry.registerSystem(new FrenzyEffectSystems.PlayerHitNPCSystem());
+        entityRegistry.registerSystem(new CritPunchEffectSystems.PlayerHitNPCSystem());
+        entityRegistry.registerSystem(new CritPunchEffectSystems.PlayerHitPlayerSystem());
+        entityRegistry.registerSystem(new ManaKillEffectSystems.NPCorPlayerDeathSystem());
+    }
+
+    private void registerEvents() {
+        LOGGER.atInfo().log("Registering Events...");
+        EventRegistry eventRegistry = getEventRegistry();
+
+        eventRegistry.register(GiveMainStatusXPEvent.class, new GiveMainStatusXPHandler());
+        eventRegistry.register(GiveStrengthXPEvent.class, new GiveStrengthXPHandler());
+        eventRegistry.register(GiveVitalityXPEvent.class, new GiveVitalityXPHandler());
+        eventRegistry.register(GiveAgilityXPEvent.class, new GiveAgilityXPHandler());
+        eventRegistry.register(GiveMagicXPEvent.class, new GiveMagicXPHandler());
+        eventRegistry.register(StrengthExtraDamageEvent.class, new StrengthExtraDamageHandler());
+        eventRegistry.register(AgilityCritDamageEvent.class, new AgilityCritDamageHandler());
+        eventRegistry.register(MagicManaDamageEvent.class, new MagicManaDamageHandler());
+    }
+
+
+
+    private void registerCommands(List<AbstractCommand> commands) {
+        LOGGER.atInfo().log("Registering Commands...");
+        CommandRegistry registry = this.getCommandRegistry();
+        registry.registerCommand(new LudasCommandCollection(commands)); //collection
+    }
+}

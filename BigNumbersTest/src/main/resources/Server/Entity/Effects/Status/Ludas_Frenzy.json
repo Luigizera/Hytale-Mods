@@ -1,0 +1,14 @@
+{
+  "Name": "effect.ludas.frenzy.name",
+  "Infinite": true,
+  "Debuff": false,
+  "StatusEffectIcon": "UI/StatusEffects/Ludas_Frenzy.png",
+  "OverlapBehavior": "Ignore",
+  "RemovalBehavior": "Complete",
+  "Invulnerable": false,
+  "ValueType": "Absolute",
+  "ApplicationEffects": {
+    "EntityBottomTint": "#000000",
+    "EntityTopTint": "#FF0000"
+  }
+}

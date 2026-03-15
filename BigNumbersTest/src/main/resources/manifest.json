@@ -1,0 +1,18 @@
+{
+  "Group": "Github.Luigizera",
+  "Name": "TestPlugin",
+  "Version": "1.0.0",
+  "Description": "My TestPlugin for Hytale",
+  "Authors": [
+    {
+      "Name": "Luigizera",
+      "Url": "https://github.com/Luigizera/Hytale-Mods"
+    }
+  ],
+  "DisabledByDefault": false,
+  "IncludesAssetPack": true,
+  "Dependencies": {},
+  "OptionalDependencies": {},
+  "ServerVersion": "*",
+  "Main": "com.ludas.plugin.TestPlugin"
+}
