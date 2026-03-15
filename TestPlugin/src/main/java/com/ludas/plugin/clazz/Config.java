@@ -30,6 +30,7 @@ public class Config {
     }
 
     public static boolean isDamageCausePhysical(DamageCause damageCause) {
+        if(damageCause == null) return false;
         return damageCause == DamageCause.PHYSICAL || damageCause.getInherits().equals(DamageCause.PHYSICAL.getId());
     }
 
