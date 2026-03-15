@@ -3,7 +3,6 @@ package com.ludas.plugin.components.entity;
 import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.builder.BuilderCodec;
-import com.hypixel.hytale.codec.validation.Validators;
 import com.hypixel.hytale.component.Component;
 import com.hypixel.hytale.component.ComponentType;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
@@ -61,17 +60,15 @@ public class LevelComponent implements Component<EntityStore> {
 
     public boolean addExperience(BigDecimal exp) {
         boolean hasLeveledUp = false;
-        experienceCurrent = getCurrentExperience().add(exp).toString();
-        while(canLevelUp()) {
-            experienceCurrent = getCurrentExperience().subtract(this.getExperienceToNextLevel()).toString();
+        BigDecimal expNow = getCurrentExperience().add(exp);
+        experienceCurrent = expNow.toString();
+        while(expNow.compareTo(this.getExperienceToNextLevel()) >= 0) {
+            expNow = expNow.subtract(this.getExperienceToNextLevel());
+            experienceCurrent = expNow.toString();
             this.addLevel();
             hasLeveledUp = true;
         }
         return hasLeveledUp;
-    }
-
-    public boolean canLevelUp() {
-        return getCurrentExperience().compareTo(this.getExperienceToNextLevel()) >= 0;
     }
 
     protected void addLevel() {
