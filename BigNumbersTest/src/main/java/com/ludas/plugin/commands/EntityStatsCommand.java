@@ -76,7 +76,7 @@ public class EntityStatsCommand extends AbstractTargetEntityCommand {
             if(levelArg.get(context)) {
                 LevelComponent levelComponent = store.getComponent(entity, LevelComponent.getComponentType());
                 if(levelComponent != null) {
-                    values.add(Message.raw("Level: " + levelComponent.getLevel()));
+                    values.add(Message.raw("Level: " + levelComponent.getLevelString()));
                 }
             }
 

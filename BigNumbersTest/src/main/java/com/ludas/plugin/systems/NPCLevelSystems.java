@@ -57,7 +57,7 @@ public class NPCLevelSystems {
             if(statMap == null) return;
             LevelComponent level = store.getComponent(ref, LevelComponent.getComponentType());
             if(level == null) {
-                int randLevel = new Random().nextInt(1, Integer.MAX_VALUE);
+                int randLevel = new Random().nextInt(1, 100);
                 /*
                 Default attitude value is hostile, cannot create level based on attitude
                 Attitude attitude = npc.getRole().getWorldSupport().getDefaultPlayerAttitude();
@@ -129,7 +129,7 @@ public class NPCLevelSystems {
                 if(level != null) {
                     int l;
                     try {
-                        l = Integer.parseInt(level.getLevel().toString());
+                        l = Integer.parseInt(level.getLevelString());
                     }
                     catch (NumberFormatException e) {
                         l = Integer.MAX_VALUE;
@@ -166,7 +166,7 @@ public class NPCLevelSystems {
             if(level == null) return;
             int npcLevel;
             try {
-                npcLevel = Integer.parseInt(level.getLevel().toString());
+                npcLevel = Integer.parseInt(level.getLevelString());
             }
             catch (NumberFormatException e) {
                 npcLevel = Integer.MAX_VALUE;

@@ -38,7 +38,7 @@ public class GiveAgilityXPHandler implements Consumer<GiveAgilityXPEvent> {
             EventTitleUtil.showEventTitleToPlayer(
                     playerRef,
                     Message.raw("Agility Up!"),
-                    Message.raw("Level atual: " + level.getLevel()),
+                    Message.raw("Level atual: " + level.getLevelString()),
                     true
             );
         }

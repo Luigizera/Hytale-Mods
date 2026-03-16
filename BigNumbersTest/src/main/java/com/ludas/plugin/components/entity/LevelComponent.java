@@ -10,6 +10,7 @@ import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.MathContext;
 
 
 public class LevelComponent implements Component<EntityStore> {
@@ -45,17 +46,25 @@ public class LevelComponent implements Component<EntityStore> {
     }
 
     public BigDecimal getExperienceToNextLevel() {
-        BigDecimal nextLevel = new BigDecimal(this.level);
-        nextLevel = nextLevel.add(nextLevel.subtract(new BigDecimal("1"))).multiply(new BigDecimal(MULTIPLIER));
+        BigDecimal nextLevel = new BigDecimal(this.level.toCharArray(), 0, this.level.length(), MathContext.UNLIMITED);
+        nextLevel = nextLevel.add(nextLevel.subtract(BigDecimal.ONE)).multiply(new BigDecimal(MULTIPLIER));
         return nextLevel;
     }
 
     public BigDecimal getCurrentExperience() {
-        return new BigDecimal(this.experienceCurrent);
+        return new BigDecimal(this.experienceCurrent.toCharArray(), 0, this.experienceCurrent.length(), MathContext.UNLIMITED);
+    }
+
+    public String getCurrentExperienceString() {
+        return this.experienceCurrent;
     }
 
     public BigInteger getLevel() {
-        return new BigInteger(this.level);
+        return new BigInteger(this.level, 10);
+    }
+
+    public String getLevelString() {
+        return this.level;
     }
 
     public boolean addExperience(BigDecimal exp) {
@@ -72,12 +81,12 @@ public class LevelComponent implements Component<EntityStore> {
     }
 
     protected void addLevel() {
-        this.level = getLevel().add(new BigInteger("1")).toString();
+        this.level = getLevel().add(BigInteger.ONE).toString();
     }
 
     @Override
     public String toString() {
-        return "Level{level=" + level +
+        return "LevelComponent{level=" + level +
                 ", experience=" + experienceCurrent +
                 ", toNext=" + this.getExperienceToNextLevel() + "}";
     }

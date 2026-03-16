@@ -55,7 +55,7 @@ public class ManaKillEffectSystems {
                 if(level == null) return;
                 int l;
                 try {
-                    l = Integer.parseInt(level.getLevel().toString());
+                    l = Integer.parseInt(level.getLevelString());
                 }
                 catch (NumberFormatException e) {
                     l = Integer.MAX_VALUE;

@@ -76,7 +76,7 @@ public class StrengthComponent implements Component<EntityStore> {
     public float getDamageMultiplier() {
         int i;
         try {
-            i = Integer.parseInt(this.level.getLevel().toString());
+            i = Integer.parseInt(this.level.getLevelString());
         }
         catch (NumberFormatException e) {
             i = Integer.MAX_VALUE;

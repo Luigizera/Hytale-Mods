@@ -27,9 +27,21 @@ public class LevelCommand extends AbstractPlayerCommand {
         if(player == null) return;
         MainStatusComponent mainStatus = store.getComponent(ref, MainStatusComponent.getComponentType());
         if(mainStatus != null) {
-            player.sendMessage(Message.raw("Level: " + mainStatus.getStrength().getLevelComponent().getLevel()
-                    + " || " + mainStatus.getStrength().getLevelComponent().getCurrentExperience()
+            player.sendMessage(Message.raw("Main Level: " + mainStatus.getLevelComponent().getLevelString()
+                    + " || " + mainStatus.getLevelComponent().getCurrentExperienceString()
+                    + " || " + mainStatus.getLevelComponent().getExperienceToNextLevel()));
+            player.sendMessage(Message.raw("Strength Level: " + mainStatus.getStrength().getLevelComponent().getLevelString()
+                    + " || " + mainStatus.getStrength().getLevelComponent().getCurrentExperienceString()
                     + " || " + mainStatus.getStrength().getLevelComponent().getExperienceToNextLevel()));
+            player.sendMessage(Message.raw("Magic Level: " + mainStatus.getMagic().getLevelComponent().getLevelString()
+                    + " || " + mainStatus.getMagic().getLevelComponent().getCurrentExperienceString()
+                    + " || " + mainStatus.getMagic().getLevelComponent().getExperienceToNextLevel()));
+            player.sendMessage(Message.raw("Agility Level: " + mainStatus.getAgility().getLevelComponent().getLevelString()
+                    + " || " + mainStatus.getAgility().getLevelComponent().getCurrentExperienceString()
+                    + " || " + mainStatus.getAgility().getLevelComponent().getExperienceToNextLevel()));
+            player.sendMessage(Message.raw("Vitality Level: " + mainStatus.getVitality().getLevelComponent().getLevelString()
+                    + " || " + mainStatus.getVitality().getLevelComponent().getCurrentExperienceString()
+                    + " || " + mainStatus.getVitality().getLevelComponent().getExperienceToNextLevel()));
         }
         else {
             store.putComponent(ref, MainStatusComponent.getComponentType(), new MainStatusComponent());

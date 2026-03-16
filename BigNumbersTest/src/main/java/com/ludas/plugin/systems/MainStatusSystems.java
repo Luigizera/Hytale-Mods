@@ -102,8 +102,8 @@ public class MainStatusSystems {
             }
             else {
                 playerRef.sendMessage(Message.raw("Main Level: %s (%s XP)".formatted(
-                                status.getLevelComponent().getLevel(),
-                                status.getLevelComponent().getCurrentExperience()))
+                                status.getLevelComponent().getLevelString(),
+                                status.getLevelComponent().getCurrentExperienceString()))
                         .color(Color.ORANGE).bold(true));
             }
         }
@@ -314,7 +314,7 @@ public class MainStatusSystems {
                 if(level == null) return;
                 int l;
                 try {
-                    l = Integer.parseInt(level.getLevel().toString());
+                    l = Integer.parseInt(level.getLevelString());
                 }
                 catch (NumberFormatException e) {
                     l = Integer.MAX_VALUE;

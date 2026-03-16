@@ -45,12 +45,12 @@ public class GiveVitalityXPHandler implements Consumer<GiveVitalityXPEvent> {
             EventTitleUtil.showEventTitleToPlayer(
                     playerRef,
                     Message.raw("Vitality Up!"),
-                    Message.raw("Level atual: " + level.getLevel()),
+                    Message.raw("Level atual: " + level.getLevelString()),
                     true
             );
             int vitalityModifier;
             try {
-                vitalityModifier = Integer.parseInt(level.getLevel().toString());
+                vitalityModifier = Integer.parseInt(level.getLevelString());
             }
             catch (NumberFormatException e) {
                 vitalityModifier = Integer.MAX_VALUE;

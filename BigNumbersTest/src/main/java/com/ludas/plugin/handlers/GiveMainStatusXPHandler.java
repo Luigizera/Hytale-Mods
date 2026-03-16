@@ -34,7 +34,7 @@ public class GiveMainStatusXPHandler implements Consumer<GiveMainStatusXPEvent> 
             EventTitleUtil.showEventTitleToPlayer(
                     playerRef,
                     Message.raw("Main Status Up!"),
-                    Message.raw("Level atual: " + level.getLevel()),
+                    Message.raw("Level atual: " + level.getLevelString()),
                     true
             );
         }

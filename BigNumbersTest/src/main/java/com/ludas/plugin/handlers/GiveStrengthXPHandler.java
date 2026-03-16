@@ -39,7 +39,7 @@ public class GiveStrengthXPHandler implements Consumer<GiveStrengthXPEvent> {
             EventTitleUtil.showEventTitleToPlayer(
                     playerRef,
                     Message.raw("Strength Up!"),
-                    Message.raw("Level atual: " + level.getLevel()),
+                    Message.raw("Level atual: " + level.getLevelString()),
                     true
             );
         }

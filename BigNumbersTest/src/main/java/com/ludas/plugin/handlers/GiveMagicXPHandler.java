@@ -44,12 +44,12 @@ public class GiveMagicXPHandler implements Consumer<GiveMagicXPEvent> {
             EventTitleUtil.showEventTitleToPlayer(
                     playerRef,
                     Message.raw("Magic Up!"),
-                    Message.raw("Level atual: " + level.getLevel()),
+                    Message.raw("Level atual: " + level.getLevelString()),
                     true
             );
             int extraMana;
             try {
-                extraMana = Integer.parseInt(level.getLevel().toString());
+                extraMana = Integer.parseInt(level.getLevelString());
             }
             catch (NumberFormatException e) {
                 extraMana = Integer.MAX_VALUE;
